@@ -58,14 +58,8 @@ Rectangle {
         when: root.view !== null
     }
 
-    Text {
-        anchors.centerIn: content
-        width: content.width - 48
-        horizontalAlignment: Text.AlignHCenter
-        wrapMode: Text.WordWrap
-        color: root.palette.windowText
-        opacity: 0.7
-        font.pixelSize: 16
+    CenteredMessage {
+        anchors.fill: content
         text: root.contentError
         visible: root.contentError !== ""
     }

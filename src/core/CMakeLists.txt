@@ -5,6 +5,7 @@ qt_add_qml_module(keekcore
     VERSION 1.0
     OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Keek
     QML_FILES
+        CenteredMessage.qml
         ImageView.qml
         PlaceholderView.qml
         Popup.qml
