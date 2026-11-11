@@ -27,6 +27,10 @@ keek_add_test(renderers keekcore keekcoreplugin)
 add_test(NAME renderers COMMAND tst_renderers)
 set_tests_properties(renderers PROPERTIES ENVIRONMENT "${KEEK_TEST_ENVIRONMENT}" LABELS unit)
 
+keek_add_test(listing keekcore keekcoreplugin)
+add_test(NAME listing COMMAND tst_listing)
+set_tests_properties(listing PROPERTIES ENVIRONMENT "${KEEK_TEST_ENVIRONMENT}" LABELS unit)
+
 keek_add_test(controller keekcore keekcoreplugin)
 add_test(NAME controller COMMAND tst_controller)
 set_tests_properties(controller PROPERTIES ENVIRONMENT "${KEEK_TEST_ENVIRONMENT}" LABELS offscreen)

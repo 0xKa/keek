@@ -13,13 +13,34 @@ Rectangle {
 
     Keys.forwardTo: view ? [view] : []
     Keys.onPressed: event => {
-        if (event.isAutoRepeat) {
+        if ((event.modifiers & ~Qt.KeypadModifier) !== Qt.NoModifier) {
             return;
         }
-        if (event.key === Qt.Key_Space || event.key === Qt.Key_Escape) {
-            root.controller.hide();
-            event.accepted = true;
+        switch (event.key) {
+        case Qt.Key_Up:
+        case Qt.Key_Left:
+            root.controller.previous();
+            break;
+        case Qt.Key_Down:
+        case Qt.Key_Right:
+            root.controller.next();
+            break;
+        case Qt.Key_Space:
+        case Qt.Key_Escape:
+            if (!event.isAutoRepeat) {
+                root.controller.hide();
+            }
+            break;
+        case Qt.Key_Return:
+        case Qt.Key_Enter:
+            if (!event.isAutoRepeat) {
+                root.controller.openCurrentFile();
+            }
+            break;
+        default:
+            return;
         }
+        event.accepted = true;
     }
 
     Text {

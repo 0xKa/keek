@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSize>
 
+#include <functional>
 #include <memory>
 
 class QQuickView;
@@ -23,6 +24,7 @@ public:
 
     void show(const QString &activationToken);
     void hide();
+    void requestActivationToken(std::function<void(const QString &)> callback);
 
     bool isVisible() const;
     bool isActive() const;

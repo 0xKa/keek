@@ -87,7 +87,8 @@ cmake --build --preset dev --target uninstall
 
 The application ID is set once, as `KEEK_APP_ID` in the top-level `CMakeLists.txt`. The D-Bus service name and interface name are derived from it.
 
-- **`Controller`** holds the state: the files being shown, the renderer chosen for the first one, the last error, and whether the last request carried an activation token. It is the object the QML binds to.
+- **`Controller`** holds the state: the list of files to move through, the current one, its renderer, the last error, and whether the last request carried an activation token. It is the object the QML binds to.
+- **`folderlisting`** builds the list the arrow keys move through, in Dolphin's default order.
 - **`PopupWindow`** is the one place that creates and shows the window. A later move to a layer-shell overlay changes this class and nothing else.
 - **`RendererRegistry`** picks a renderer for a file from its MIME type.
 - **`DBusService`** exposes the controller on the session bus. It contains no logic of its own.
@@ -104,14 +105,39 @@ A renderer is a `Renderer` value: an ID, the name of a QML view, and a function 
 | `text` | `TextView.qml` | Every type that inherits `text/plain`. | Highlighted by file name. Only the first 512 KiB is loaded. A file with NUL bytes is reported as not text. |
 | `placeholder` | `PlaceholderView.qml` | Everything else. | Shows the type's description. |
 
-Up, Down, Page Up, Page Down, Home and End scroll the text view.
-
 To add a renderer:
 
 1. Add a `<name>renderer.cpp` that returns the `Renderer`, and declare it in `renderer.h`.
 2. Add a `<Name>View.qml` whose root is `PreviewView`. It reads the file from `controller.currentFileUrl`, and sets `ready` and `error`.
 3. Register it in `RendererRegistry`'s constructor, before the placeholder, and list the files in `src/core/CMakeLists.txt`.
 4. Add sample files to `tests/fixtures/`, rows to the tables in `tst_renderers.cpp` and `tst_previews.cpp`, and generate the reference screenshots.
+
+## Keys
+
+| Key | What it does |
+|---|---|
+| ↑ or ← | Show the previous file. |
+| ↓ or → | Show the next file. |
+| Ctrl + ↑ or ↓ | Scroll one line. |
+| Page Up, Page Down | Scroll one page. |
+| Home, End | Go to the top or the bottom. |
+| Enter | Close the popup and open the file in its default application. |
+| Space or Esc | Close the popup. |
+
+`Popup.qml` handles the arrows without modifiers, Enter, Space and Esc. Every other key goes to the view first.
+
+### Which files the arrows move through
+
+- **One file shown:** every file and folder next to it, in Dolphin's default order: folders first, then names in natural order (`file2` before `file10`), ignoring case. Hidden files are left out unless the shown file is hidden.
+- **Several files shown:** only those files, in the order they were given.
+- **At either end** the arrow does nothing. The list does not wrap.
+- **The list is built once per `show`.** Files added to the folder while the popup is open are not in it.
+
+Dolphin's selection does not follow. Dolphin offers no way to read or set it from outside.
+
+### Opening a file
+
+Enter asks KWin for an activation token, so the application that opens gets focus, and then opens the file with `KIO::OpenUrlJob`. Executables are not run. Tests replace the opener with `Controller::setFileOpener`, so they never start an application.
 
 ## Commands
 
@@ -122,6 +148,8 @@ To add a renderer:
 | `keek show <paths>` | Show the popup for these files. |
 | `keek toggle <paths>` | Show the popup, or hide it if it is already showing the first of these files. |
 | `keek hide` | Hide the popup. |
+| `keek next` | Show the next file, as ↓ does. It fails if the popup is hidden. |
+| `keek previous` | Show the previous file, as ↑ does. It fails if the popup is hidden. |
 | `keek state` | Print the current state as one line of JSON. |
 | `keek screenshot <file>` | Save what the popup is drawing to an image file. It fails if the popup is hidden. |
 | `keek quit` | Stop the daemon, and return once its bus name is free. |
@@ -150,6 +178,8 @@ Exit codes:
 | `status` | `hidden`, `loading`, `ready` or `error`. Wait for `ready` or `error` before taking a screenshot. |
 | `file` | The file being shown, or `null`. It keeps its value after the popup is hidden. |
 | `files` | Every file passed to the last `show`. |
+| `index` | The position of `file` in the list the arrows move through, from 0, or `null`. |
+| `count` | How many files that list holds. |
 | `renderer` | The renderer for `file`: `image`, `text` or `placeholder`, or `null`. |
 | `mimeType` | The MIME type of `file`, or `null`. |
 | `width`, `height` | The popup's size. |
@@ -161,7 +191,7 @@ Exit codes:
 - **Service:** `io.github._0xKa.keek`
 - **Object:** `/Keek`
 - **Interface:** `io.github._0xKa.keek.Keek`
-- **Methods:** `Show(as paths, s activationToken)`, `Toggle(as paths, s activationToken)`, `Hide()`, `State() → s`, `Screenshot(s file)`, `Quit()`
+- **Methods:** `Show(as paths, s activationToken)`, `Toggle(as paths, s activationToken)`, `Hide()`, `Next()`, `Previous()`, `State() → s`, `Screenshot(s file)`, `Quit()`
 
 Only one `keekd` can own the service name. A second one logs "keekd is already running" and exits with code 1.
 
@@ -200,7 +230,8 @@ This shows every file in `tests/fixtures/` in an offscreen daemon and writes `bu
 | Test | Label | What it covers |
 |---|---|---|
 | `renderers` | `unit` | Which renderer each sample file gets, text loading (encodings, truncation, binary data) and image sizes. |
-| `controller` | `offscreen` | The controller and the popup in one process: show, toggle, hide, the close keys and screenshots. |
+| `listing` | `unit` | The order of the list the arrows move through, and which files it leaves out. |
+| `controller` | `offscreen` | The controller and the popup in one process: show, toggle, hide, moving between files, Enter, the close keys and screenshots. |
 | `previews` | `offscreen` | Every sample file shown in the popup and compared with its reference screenshot, plus switching files and scrolling. |
 | `cli` | `session` | The real `keekd` and `keek` programs on a private session bus started by `dbus-run-session`. |
 | `dolphin` | `dolphin` | A real Dolphin in a headless KWin session with throwaway settings. It triggers the Quick Look action with two files selected and checks what reaches the popup. |

@@ -158,6 +158,25 @@ private Q_SLOTS:
         QCOMPARE(stableGrab(window), before);
         QCOMPARE(controller.state()["visible"_L1].toBool(), true);
     }
+
+    void controlDownScrollsTextByALine()
+    {
+        Controller controller;
+        controller.show({fixture(u"text-long.txt"_s)});
+        QTRY_COMPARE(status(controller), u"ready"_s);
+
+        QQuickWindow *window = controller.window()->quickWindow();
+        window->requestActivate();
+        QVERIFY(QTest::qWaitForWindowActive(window));
+
+        const QImage before = stableGrab(window);
+        QTest::keyClick(window, Qt::Key_Down, Qt::ControlModifier);
+        QVERIFY(differingFraction(before, stableGrab(window), 0) > 0.001);
+        QCOMPARE(controller.currentFile(), fixture(u"text-long.txt"_s));
+
+        QTest::keyClick(window, Qt::Key_Up, Qt::ControlModifier);
+        QCOMPARE(stableGrab(window), before);
+    }
 };
 
 QTEST_MAIN(PreviewsTest)

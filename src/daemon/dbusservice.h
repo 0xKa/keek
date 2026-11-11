@@ -22,12 +22,15 @@ public Q_SLOTS:
     void Show(const QStringList &paths, const QString &activationToken);
     void Toggle(const QStringList &paths, const QString &activationToken);
     void Hide();
+    void Next();
+    void Previous();
     QString State();
     void Screenshot(const QString &file);
     void Quit();
 
 private:
     bool rejectEmpty(const QStringList &paths);
+    void move(bool forward);
 
     Controller *m_controller;
 };

@@ -2,7 +2,10 @@
 
 #include "logging.h"
 
+#include <KWaylandExtras>
 #include <KWindowSystem>
+
+#include <QFuture>
 
 #include <QQmlError>
 #include <QQuickItem>
@@ -63,6 +66,15 @@ void PopupWindow::show(const QString &activationToken)
 void PopupWindow::hide()
 {
     m_view->hide();
+}
+
+void PopupWindow::requestActivationToken(std::function<void(const QString &)> callback)
+{
+    if (!KWindowSystem::isPlatformWayland()) {
+        callback({});
+        return;
+    }
+    KWaylandExtras::xdgActivationToken(m_view.get(), QString()).then(this, std::move(callback));
 }
 
 bool PopupWindow::isVisible() const

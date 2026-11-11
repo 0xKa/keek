@@ -2,6 +2,7 @@
 #include "fixtures.h"
 #include "popupwindow.h"
 
+#include <QFileInfo>
 #include <QImage>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -29,13 +30,40 @@ private:
 
     static bool showAndActivate(Controller &controller, const QString &file)
     {
-        controller.show({file});
+        return showAndActivate(controller, QStringList{file});
+    }
+
+    static bool showAndActivate(Controller &controller, const QStringList &files)
+    {
+        controller.show(files);
         QQuickWindow *window = controller.window()->quickWindow();
         window->requestActivate();
         return QTest::qWaitForWindowActive(window);
     }
 
+    static QString current(const Controller &controller)
+    {
+        return QFileInfo(controller.currentFile()).fileName();
+    }
+
+    QTemporaryDir m_folder;
+
+    QString inFolder(const QString &name) const
+    {
+        return m_folder.filePath(name);
+    }
+
 private Q_SLOTS:
+    void initTestCase()
+    {
+        QVERIFY(m_folder.isValid());
+        for (const QString &name : {u"a.txt"_s, u"b.txt"_s, u"c.txt"_s}) {
+            QFile file(inFolder(name));
+            QVERIFY(file.open(QIODevice::WriteOnly));
+            file.write("keek\n");
+        }
+    }
+
     void startsHiddenWithNoFile()
     {
         Controller controller;
@@ -141,6 +169,131 @@ private Q_SLOTS:
         QKeyEvent repeat(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier, u" "_s, true);
         QCoreApplication::sendEvent(controller.window()->quickWindow(), &repeat);
         QCOMPARE(controller.state()["visible"_L1].toBool(), true);
+    }
+
+    void oneFileBrowsesItsFolder()
+    {
+        Controller controller;
+        controller.show({inFolder(u"b.txt"_s)});
+        QCOMPARE(controller.state()["index"_L1].toInt(), 1);
+        QCOMPARE(controller.state()["count"_L1].toInt(), 3);
+        QCOMPARE(controller.state()["files"_L1].toArray().size(), 1);
+
+        QVERIFY(controller.next());
+        QCOMPARE(current(controller), u"c.txt"_s);
+        QVERIFY(!controller.next());
+        QCOMPARE(current(controller), u"c.txt"_s);
+
+        QVERIFY(controller.previous());
+        QVERIFY(controller.previous());
+        QCOMPARE(current(controller), u"a.txt"_s);
+        QVERIFY(!controller.previous());
+        QCOMPARE(controller.state()["index"_L1].toInt(), 0);
+    }
+
+    void severalFilesBrowseOnlyThemInTheGivenOrder()
+    {
+        Controller controller;
+        controller.show({inFolder(u"c.txt"_s), inFolder(u"a.txt"_s)});
+        QCOMPARE(controller.state()["count"_L1].toInt(), 2);
+        QCOMPARE(current(controller), u"c.txt"_s);
+
+        QVERIFY(controller.next());
+        QCOMPARE(current(controller), u"a.txt"_s);
+        QVERIFY(!controller.next());
+    }
+
+    void movingNeedsAVisiblePopup()
+    {
+        Controller controller;
+        QVERIFY(!controller.next());
+
+        controller.show({inFolder(u"a.txt"_s)});
+        controller.hide();
+        QVERIFY(!controller.next());
+        QCOMPARE(current(controller), u"a.txt"_s);
+    }
+
+    void movingPicksTheRendererForTheNewFile()
+    {
+        Controller controller;
+        controller.show({fixture("text-plain.txt"), fixture("image-small.png")});
+        QCOMPARE(controller.state()["renderer"_L1].toString(), u"text"_s);
+        QVERIFY(controller.next());
+        QCOMPARE(controller.state()["renderer"_L1].toString(), u"image"_s);
+        QCOMPARE(controller.state()["mimeType"_L1].toString(), u"image/png"_s);
+    }
+
+    void arrowKeysMove_data()
+    {
+        QTest::addColumn<Qt::Key>("key");
+        QTest::addColumn<Qt::KeyboardModifiers>("modifiers");
+        QTest::addColumn<QString>("expected");
+        QTest::newRow("down") << Qt::Key_Down << Qt::KeyboardModifiers() << u"c.txt"_s;
+        QTest::newRow("right") << Qt::Key_Right << Qt::KeyboardModifiers() << u"c.txt"_s;
+        QTest::newRow("up") << Qt::Key_Up << Qt::KeyboardModifiers() << u"a.txt"_s;
+        QTest::newRow("left") << Qt::Key_Left << Qt::KeyboardModifiers() << u"a.txt"_s;
+        QTest::newRow("ctrl+down") << Qt::Key_Down << Qt::KeyboardModifiers(Qt::ControlModifier) << u"b.txt"_s;
+        QTest::newRow("shift+right") << Qt::Key_Right << Qt::KeyboardModifiers(Qt::ShiftModifier) << u"b.txt"_s;
+    }
+
+    void arrowKeysMove()
+    {
+        QFETCH(Qt::Key, key);
+        QFETCH(Qt::KeyboardModifiers, modifiers);
+        QFETCH(QString, expected);
+
+        Controller controller;
+        QVERIFY(showAndActivate(controller, inFolder(u"b.txt"_s)));
+        QTest::keyClick(controller.window()->quickWindow(), key, modifiers);
+        QCOMPARE(current(controller), expected);
+        QCOMPARE(controller.state()["visible"_L1].toBool(), true);
+    }
+
+    void heldArrowKeepsMoving()
+    {
+        Controller controller;
+        QVERIFY(showAndActivate(controller, inFolder(u"a.txt"_s)));
+
+        QKeyEvent repeat(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier, QString(), true);
+        QCoreApplication::sendEvent(controller.window()->quickWindow(), &repeat);
+        QCOMPARE(current(controller), u"b.txt"_s);
+    }
+
+    void enterOpensTheCurrentFileAndCloses_data()
+    {
+        QTest::addColumn<Qt::Key>("key");
+        QTest::newRow("return") << Qt::Key_Return;
+        QTest::newRow("enter") << Qt::Key_Enter;
+    }
+
+    void enterOpensTheCurrentFileAndCloses()
+    {
+        QFETCH(Qt::Key, key);
+
+        Controller controller;
+        QStringList opened;
+        controller.setFileOpener([&opened](const QString &file, const QString &) {
+            opened.append(file);
+        });
+        QVERIFY(showAndActivate(controller, inFolder(u"a.txt"_s)));
+        QVERIFY(controller.next());
+
+        QTest::keyClick(controller.window()->quickWindow(), key);
+        QTRY_COMPARE(opened, QStringList{inFolder(u"b.txt"_s)});
+        QCOMPARE(controller.state()["visible"_L1].toBool(), false);
+    }
+
+    void openingNeedsAVisiblePopup()
+    {
+        Controller controller;
+        bool opened = false;
+        controller.setFileOpener([&opened](const QString &, const QString &) {
+            opened = true;
+        });
+        controller.openCurrentFile();
+        QTest::qWait(10);
+        QVERIFY(!opened);
     }
 
     void screenshotSavesWhatThePopupDraws()

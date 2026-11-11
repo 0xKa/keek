@@ -17,11 +17,18 @@ PreviewView {
     Keys.onPressed: event => {
         const line = metrics.lineSpacing * Metrics.linesPerScrollStep;
         const page = flickable.height - metrics.lineSpacing * Metrics.linesKeptOnPageScroll;
+        const lineKey = event.modifiers & Qt.ControlModifier;
         switch (event.key) {
         case Qt.Key_Down:
+            if (!lineKey) {
+                return;
+            }
             view.scrollBy(line);
             break;
         case Qt.Key_Up:
+            if (!lineKey) {
+                return;
+            }
             view.scrollBy(-line);
             break;
         case Qt.Key_PageDown:

@@ -94,6 +94,7 @@ private Q_SLOTS:
         QTest::newRow("toggle without paths") << QStringList{u"toggle"_s};
         QTest::newRow("screenshot without file") << QStringList{u"screenshot"_s};
         QTest::newRow("hide with argument") << QStringList{u"hide"_s, u"x"_s};
+        QTest::newRow("next with argument") << QStringList{u"next"_s, u"x"_s};
     }
 
     void usageErrors()
@@ -169,6 +170,22 @@ private Q_SLOTS:
         QCOMPARE(state()["activationToken"_L1].toBool(), true);
     }
 
+    void nextAndPreviousMoveThroughTheFolder()
+    {
+        QCOMPARE(keek({u"show"_s, m_fileA}).exitCode, 0);
+        QCOMPARE(state()["count"_L1].toInt(), 2);
+
+        QCOMPARE(keek({u"next"_s}).exitCode, 0);
+        QCOMPARE(state()["file"_L1].toString(), m_fileB);
+        QCOMPARE(state()["index"_L1].toInt(), 1);
+
+        QCOMPARE(keek({u"next"_s}).exitCode, 0);
+        QCOMPARE(state()["file"_L1].toString(), m_fileB);
+
+        QCOMPARE(keek({u"previous"_s}).exitCode, 0);
+        QCOMPARE(state()["file"_L1].toString(), m_fileA);
+    }
+
     void toggleHidesAndShows()
     {
         QCOMPARE(keek({u"toggle"_s, m_fileA}).exitCode, 0);
@@ -199,6 +216,13 @@ private Q_SLOTS:
         QCOMPARE(result.exitCode, 3);
         QVERIFY(result.err.contains("not visible"_L1));
         QVERIFY(!state()["lastError"_L1].isNull());
+    }
+
+    void nextFailsWhenHidden()
+    {
+        const Result result = keek({u"next"_s});
+        QCOMPARE(result.exitCode, 3);
+        QVERIFY(result.err.contains("not visible"_L1));
     }
 
     void secondDaemonRefusesToStart()

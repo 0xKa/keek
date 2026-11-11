@@ -17,6 +17,8 @@ qt_add_qml_module(keekcore
     SOURCES
         controller.cpp
         controller.h
+        folderlisting.cpp
+        folderlisting.h
         imageinfo.cpp
         imageinfo.h
         imagerenderer.cpp
@@ -34,4 +36,4 @@ qt_add_qml_module(keekcore
 )
 
 target_include_directories(keekcore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(keekcore PUBLIC Qt6::Quick KF6::WindowSystem keekconfig)
+target_link_libraries(keekcore PUBLIC Qt6::Quick KF6::WindowSystem KF6::KIOGui keekconfig)

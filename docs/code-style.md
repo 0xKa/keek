@@ -24,7 +24,7 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 | Declare members in dependency order | A member used by another member's constructor comes first. In `Controller`, `m_window` is last. |
 | Qt macros, not keywords | `Q_SIGNALS`, `Q_SLOTS` and `Q_EMIT`, never `signals`, `slots` or `emit`. |
 | String literals | `u"text"_s` for a `QString`, `"text"_L1` for comparisons and JSON keys, `QStringLiteral(MACRO)` when the text comes from a macro. No bare `"text"` where a `QString` is expected. |
-| Ownership | `std::unique_ptr` for an object with no Qt parent, a parent for a `QObject` that has one. No bare `new` without one of the two. |
+| Ownership | `std::unique_ptr` for an object with no Qt parent, a parent for a `QObject` that has one. No bare `new` without one of the two. A `KJob` is the exception: it deletes itself when it finishes. |
 | Properties for QML | Mark each `Q_PROPERTY` `FINAL`, and give every property that can change a `NOTIFY` signal. |
 | QML types | Register with `QML_ELEMENT` in the header and list the files in `src/core/CMakeLists.txt`. Add `QML_UNCREATABLE` when QML must not create the type. |
 | Errors | A function that can fail returns `bool` and fills a `QString *error`. No exceptions. |
@@ -43,8 +43,8 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 | Typed properties | `required property Controller controller`, not `var` or `QtObject`. Cast a `Loader` item with `as` before using it. |
 | Qualify by `id` | Write `root.controller` and `view.width`, never a bare name from an outer scope. |
 | Views extend `PreviewView` | The root of every view is `PreviewView`. It reads the file from `controller.currentFileUrl`. |
-| No close keys in views | Space and Esc belong to `Popup.qml`. A view handles only its own keys and leaves the rest unaccepted. |
-| Ignore key repeat on close | A close handler returns early when `event.isAutoRepeat` is set. |
+| No popup keys in views | Space, Esc, Enter and the arrows without modifiers belong to `Popup.qml`. A view handles only its own keys, such as Ctrl + ↑ or Page Down, and leaves the rest unaccepted. |
+| Ignore key repeat on close and open | The Space, Esc and Enter handlers return early when `event.isAutoRepeat` is set. Held arrows keep moving. |
 | Sizes from `Metrics` | Margins, heights, font sizes and opacities come from the `Metrics` singleton. No inline numbers for layout; add a named value there instead. |
 | Shared pieces | Use `CenteredMessage` for a centred note or error. Do not copy its `Text` block. |
 | Colours from the palette | Use `palette.window`, `palette.base` and `palette.text`. No hard-coded colours, so light and dark themes both work. |

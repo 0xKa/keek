@@ -31,6 +31,8 @@ void printUsage(QTextStream &out)
            "  show <paths>        Show the popup for these files\n"
            "  toggle <paths>      Show the popup, or hide it if it shows that file\n"
            "  hide                Hide the popup\n"
+           "  next                Show the next file\n"
+           "  previous            Show the previous file\n"
            "  state               Print the current state as JSON\n"
            "  screenshot <file>   Save what the popup is drawing to an image file\n"
            "  quit                Stop the daemon\n"
@@ -153,7 +155,8 @@ int main(int argc, char **argv)
         return call(u"Screenshot"_s, {absolutePaths(arguments).constFirst()});
     }
 
-    if (command != "hide"_L1 && command != "state"_L1 && command != "quit"_L1) {
+    const QStringList simpleCommands = {u"hide"_s, u"next"_s, u"previous"_s, u"state"_s, u"quit"_s};
+    if (!simpleCommands.contains(command)) {
         return usageError(u"unknown command %1"_s.arg(command));
     }
     if (!arguments.isEmpty()) {
@@ -162,6 +165,12 @@ int main(int argc, char **argv)
 
     if (command == "hide"_L1) {
         return call(u"Hide"_s);
+    }
+    if (command == "next"_L1) {
+        return call(u"Next"_s);
+    }
+    if (command == "previous"_L1) {
+        return call(u"Previous"_s);
     }
     if (command == "state"_L1) {
         QString json;

@@ -55,6 +55,31 @@ void DBusService::Hide()
     m_controller->hide();
 }
 
+void DBusService::Next()
+{
+    move(true);
+}
+
+void DBusService::Previous()
+{
+    move(false);
+}
+
+void DBusService::move(bool forward)
+{
+    if (!m_controller->isShowing()) {
+        if (calledFromDBus()) {
+            sendErrorReply(QDBusError::Failed, u"The popup is not visible"_s);
+        }
+        return;
+    }
+    if (forward) {
+        m_controller->next();
+    } else {
+        m_controller->previous();
+    }
+}
+
 QString DBusService::State()
 {
     return QString::fromUtf8(QJsonDocument(m_controller->state()).toJson(QJsonDocument::Compact));

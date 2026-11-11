@@ -11,7 +11,7 @@ QtObject {
     readonly property int textPaddingX: 16
     readonly property int textPaddingY: 12
     readonly property int tabWidthInCharacters: 4
-    readonly property int linesPerScrollStep: 3
+    readonly property int linesPerScrollStep: 1
     readonly property int linesKeptOnPageScroll: 2
     readonly property int noticeHeight: 28
 
