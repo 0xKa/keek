@@ -9,6 +9,8 @@ Column {
     property string iconName
     property list<string> details
     property bool thumbnails: true
+    property string message
+    property string messageIcon: "dialog-warning"
     readonly property bool finished: thumbnail.finished
 
     spacing: Metrics.detailSpacing
@@ -48,6 +50,34 @@ Column {
             opacity: index === 0 ? 1 : Metrics.mutedOpacity
             font.pixelSize: index === 0 ? Metrics.messageFontSize : Metrics.detailFontSize
             text: modelData
+        }
+    }
+
+    Item {
+        width: 1
+        height: Metrics.sectionSpacing - summary.spacing * 2
+        visible: summary.message !== ""
+    }
+
+    Row {
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: Metrics.detailSpacing
+        visible: summary.message !== ""
+
+        FileIcon {
+            anchors.verticalCenter: parent.verticalCenter
+            width: Metrics.messageIconSize
+            height: Metrics.messageIconSize
+            name: summary.messageIcon
+        }
+
+        Text {
+            anchors.verticalCenter: parent.verticalCenter
+            width: Math.min(implicitWidth, Metrics.messageWidth)
+            wrapMode: Text.WordWrap
+            color: summary.palette.windowText
+            font.pixelSize: Metrics.messageFontSize
+            text: summary.message
         }
     }
 }

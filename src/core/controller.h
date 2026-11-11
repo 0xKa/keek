@@ -22,6 +22,7 @@ class Controller : public QObject
     Q_PROPERTY(QString currentFileName READ currentFileName NOTIFY currentFileChanged FINAL)
     Q_PROPERTY(QUrl currentFileUrl READ currentFileUrl NOTIFY currentFileChanged FINAL)
     Q_PROPERTY(QString fileError READ fileError NOTIFY currentFileChanged FINAL)
+    Q_PROPERTY(QString notice READ notice NOTIFY currentFileChanged FINAL)
     Q_PROPERTY(QString rendererComponent READ rendererComponent NOTIFY currentFileChanged FINAL)
     Q_PROPERTY(bool showing READ isShowing NOTIFY showingChanged FINAL)
 
@@ -38,6 +39,7 @@ public:
     QString currentFileName() const;
     QUrl currentFileUrl() const;
     QString fileError() const;
+    QString notice() const;
     QString rendererComponent() const;
     bool isShowing() const;
 
@@ -47,7 +49,7 @@ public:
     Q_INVOKABLE bool next();
     Q_INVOKABLE bool previous();
     Q_INVOKABLE void openCurrentFile();
-    Q_INVOKABLE void useFallback();
+    Q_INVOKABLE void useFallback(const QString &reason = {});
     void setFileOpener(FileOpener opener);
     bool screenshot(const QString &file, QString *error = nullptr);
     QJsonObject state() const;
@@ -70,6 +72,7 @@ private:
     qsizetype m_index = 0;
     FileOpener m_opener;
     QString m_fileError;
+    QString m_notice;
     QString m_lastError;
     bool m_hadActivationToken = false;
     bool m_showing = false;

@@ -8,12 +8,13 @@ PreviewView {
     id: view
 
     property bool firstPageShown: false
+    property bool locked: false
     readonly property real pageWidth: Math.max(0, list.width - Metrics.margin * 2)
     readonly property size firstPage: document.status === PdfDocument.Ready && document.pageCount > 0 ? document.pagePointSize(0) : Qt.size(0, 0)
     readonly property real preferredZoom: firstPage.width <= 0 || firstPage.height <= 0 ? 0 : Math.min(Metrics.pdfMaximumZoom, (view.available.width - Metrics.margin * 2) / firstPage.width, (view.available.height - Metrics.pageSpacing * 2) / firstPage.height)
 
     ready: document.status === PdfDocument.Ready && (document.pageCount === 0 || view.firstPageShown)
-    error: document.status === PdfDocument.Error ? qsTr("This PDF could not be opened") : ""
+    error: view.locked ? qsTr("This PDF is protected by a password.") : document.status === PdfDocument.Error ? qsTr("This PDF could not be opened. It may be damaged.") : ""
     preferredWidth: view.preferredZoom > 0 ? Math.round(view.firstPage.width * view.preferredZoom) + Metrics.margin * 2 : 0
     preferredHeight: view.preferredZoom > 0 ? Math.round(view.firstPage.height * view.preferredZoom) + Metrics.pageSpacing * 2 : 0
 
@@ -33,7 +34,11 @@ PreviewView {
         id: document
 
         source: view.controller ? view.controller.currentFileUrl : ""
-        onSourceChanged: view.firstPageShown = false
+        onSourceChanged: {
+            view.firstPageShown = false;
+            view.locked = false;
+        }
+        onPasswordRequired: view.locked = true
     }
 
     ListView {

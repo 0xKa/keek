@@ -13,6 +13,8 @@ QtObject {
     readonly property int titleHeight: 40
     readonly property int titleFontSize: 14
     readonly property int messageFontSize: 16
+    readonly property int messageIconSize: 22
+    readonly property int messageWidth: 420
     readonly property real mutedOpacity: 0.7
 
     readonly property int iconSize: 128

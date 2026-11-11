@@ -16,7 +16,7 @@ PreviewView {
     property bool failed: false
 
     ready: image.status === Image.Ready
-    error: view.failed ? qsTr("This image could not be decoded") : ""
+    error: view.failed ? qsTr("This image could not be decoded. It may be damaged or in a format that is not supported.") : ""
 
     ImageInfo {
         id: info

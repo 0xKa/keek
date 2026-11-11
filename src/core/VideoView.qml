@@ -40,11 +40,7 @@ MediaView {
     Timer {
         interval: Metrics.firstFrameTimeoutMs
         running: view.loaded && !view.failed && !view.frameShown
-        onTriggered: {
-            if (view.controller) {
-                view.controller.useFallback();
-            }
-        }
+        onTriggered: view.giveUp()
     }
 
     MouseArea {

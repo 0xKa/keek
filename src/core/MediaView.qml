@@ -58,10 +58,16 @@ PreviewView {
         player.position = Math.max(0, Math.min(player.duration, player.position + ms));
     }
 
+    function giveUp() {
+        if (view.controller) {
+            view.controller.useFallback(view.video ? qsTr("This video cannot be played. It may need a codec that is not installed.") : qsTr("This audio file cannot be played. It may need a codec that is not installed."));
+        }
+    }
+
     ready: view.loaded && !view.failed && view.stageReady
     onFailedChanged: {
-        if (view.failed && view.controller) {
-            view.controller.useFallback();
+        if (view.failed) {
+            view.giveUp();
         }
     }
 

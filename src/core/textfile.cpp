@@ -140,7 +140,7 @@ void TextFile::load()
 
     QFile file(m_source.toLocalFile());
     if (!file.open(QIODevice::ReadOnly)) {
-        m_error = tr("This file could not be read");
+        m_error = tr("This file could not be read: %1.").arg(file.errorString());
         measure();
         Q_EMIT contentChanged();
         return;
@@ -158,7 +158,7 @@ void TextFile::load()
 
     const bool hasByteOrderMark = QStringConverter::encodingForData(data).has_value();
     if (!hasByteOrderMark && data.contains('\0')) {
-        m_error = tr("This file is not text");
+        m_error = tr("This file holds binary data, not text.");
         m_truncated = false;
         measure();
         Q_EMIT contentChanged();

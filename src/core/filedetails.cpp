@@ -6,6 +6,7 @@
 #include <QDateTime>
 #include <QFileInfo>
 #include <QLocale>
+#include <QMimeDatabase>
 
 FileDetails::FileDetails(QObject *parent)
     : QObject(parent)
@@ -32,8 +33,9 @@ void FileDetails::setSource(const QUrl &source)
         m_size = item.isDir() ? QString() : KFormat().formatByteSize(static_cast<double>(item.size()));
         m_modified = QLocale().toString(item.time(KFileItem::ModificationTime), QLocale::ShortFormat);
     } else {
-        m_iconName.clear();
-        m_typeName.clear();
+        const QMimeType mime = QMimeDatabase().mimeTypeForFile(source.toLocalFile(), QMimeDatabase::MatchExtension);
+        m_iconName = source.isEmpty() ? QString() : mime.iconName();
+        m_typeName = source.isEmpty() ? QString() : mime.comment();
         m_size.clear();
         m_modified.clear();
     }

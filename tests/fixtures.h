@@ -8,6 +8,7 @@
 #include <QString>
 #include <QTimeZone>
 
+#include <algorithm>
 #include <chrono>
 #include <filesystem>
 
@@ -19,6 +20,14 @@ inline QString fixture(QAnyStringView name)
 inline QDateTime fixtureTime()
 {
     return QDateTime(QDate(2026, 1, 2), QTime(3, 4), QTimeZone::UTC);
+}
+
+inline bool setFixtureTime(const QString &path)
+{
+    const std::chrono::sys_seconds time(std::chrono::seconds(fixtureTime().toSecsSinceEpoch()));
+    std::error_code error;
+    std::filesystem::last_write_time(path.toStdString(), std::chrono::clock_cast<std::chrono::file_clock>(time), error);
+    return !error;
 }
 
 inline bool copyFixtures(const QString &target)
@@ -34,13 +43,5 @@ inline bool copyFixtures(const QString &target)
         }
         copied.prepend(destination);
     }
-    const std::chrono::sys_seconds time(std::chrono::seconds(fixtureTime().toSecsSinceEpoch()));
-    for (const QString &path : std::as_const(copied)) {
-        std::error_code error;
-        std::filesystem::last_write_time(path.toStdString(), std::chrono::clock_cast<std::chrono::file_clock>(time), error);
-        if (error) {
-            return false;
-        }
-    }
-    return true;
+    return std::all_of(copied.cbegin(), copied.cend(), setFixtureTime);
 }

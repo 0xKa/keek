@@ -76,6 +76,11 @@ QString Controller::fileError() const
     return m_fileError;
 }
 
+QString Controller::notice() const
+{
+    return m_notice;
+}
+
 QString Controller::rendererComponent() const
 {
     return m_renderer->component;
@@ -116,14 +121,21 @@ void Controller::show(const QStringList &paths, const QString &activationToken)
 void Controller::selectCurrent()
 {
     m_fileError.clear();
-    if (QFileInfo::exists(currentFile())) {
-        const RendererRegistry::Match match = m_registry.select(currentFile());
-        m_renderer = match.renderer;
-        m_mimeType = match.mimeType;
-    } else {
+    m_notice.clear();
+    const QFileInfo info(currentFile());
+    if (!info.exists()) {
         m_renderer = &m_registry.fallback();
         m_mimeType = QMimeType();
-        m_fileError = tr("This file does not exist");
+        m_fileError = tr("This file does not exist. It may have been moved or deleted.");
+    } else {
+        const RendererRegistry::Match match = m_registry.select(currentFile());
+        m_mimeType = match.mimeType;
+        if (info.isReadable()) {
+            m_renderer = match.renderer;
+        } else {
+            m_renderer = &m_registry.fallback();
+            m_fileError = info.isDir() ? tr("You do not have permission to open this folder.") : tr("You do not have permission to read this file.");
+        }
     }
     Q_EMIT currentFileChanged();
 }
@@ -164,13 +176,14 @@ void Controller::openCurrentFile()
     });
 }
 
-void Controller::useFallback()
+void Controller::useFallback(const QString &reason)
 {
     if (m_renderer == &m_registry.fallback()) {
         return;
     }
     qCInfo(lcKeek).noquote() << "renderer" << m_renderer->id << "could not show" << currentFile() << "- using" << m_registry.fallback().id;
     m_renderer = &m_registry.fallback();
+    m_notice = reason;
     Q_EMIT currentFileChanged();
 }
 
@@ -255,6 +268,7 @@ QJsonObject Controller::state() const
         {u"count"_s, m_files.size()},
         {u"renderer"_s, hasFile ? QJsonValue(m_renderer->id) : QJsonValue()},
         {u"mimeType"_s, m_mimeType.isValid() ? QJsonValue(m_mimeType.name()) : QJsonValue()},
+        {u"notice"_s, m_notice.isEmpty() ? QJsonValue() : QJsonValue(m_notice)},
         {u"width"_s, size.width()},
         {u"height"_s, size.height()},
         {u"activationToken"_s, m_hadActivationToken},

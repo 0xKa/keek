@@ -8,8 +8,8 @@ qt_add_qml_module(keekcore
     OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Keek
     QML_FILES
         AudioView.qml
-        CenteredMessage.qml
         FallbackView.qml
+        FileOverview.qml
         FileSummary.qml
         FolderView.qml
         ImageView.qml

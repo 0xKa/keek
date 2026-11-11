@@ -44,7 +44,18 @@ private Q_SLOTS:
     void initTestCase()
     {
         QVERIFY(m_copies.isValid());
+        QVERIFY(QDir(m_copies.path()).mkdir(u"locked"_s));
+        QVERIFY(QFile::copy(fixture("text-plain.txt"), m_copies.filePath(u"unreadable.txt"_s)));
         QVERIFY(copyFixtures(m_copies.path()));
+        for (const QString &name : {u"unreadable.txt"_s, u"locked"_s}) {
+            QVERIFY(setFixtureTime(m_copies.filePath(name)));
+            QVERIFY(QFile::setPermissions(m_copies.filePath(name), QFile::Permissions()));
+        }
+    }
+
+    void cleanupTestCase()
+    {
+        QFile::setPermissions(m_copies.filePath(u"locked"_s), QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner);
     }
 
     void fixtures_data()
@@ -71,12 +82,16 @@ private Q_SLOTS:
         row("text-long.txt", "text", "ready");
         row("pdf-document.pdf", "pdf", "ready");
         row("pdf-broken.pdf", "pdf", "error");
+        row("pdf-password.pdf", "pdf", "error");
         row("video-clip.webm", "video", "ready");
         row("video-broken.mp4", "fallback", "ready");
         row("audio-tone.flac", "audio", "ready");
         row("binary.bin", "fallback", "ready");
         row("empty", "fallback", "ready");
         row("folder", "folder", "ready");
+        row("missing.png", "fallback", "error");
+        row("unreadable.txt", "fallback", "error");
+        row("locked", "fallback", "error");
     }
 
     void fixtures()
@@ -84,6 +99,10 @@ private Q_SLOTS:
         QFETCH(QString, file);
         QFETCH(QString, renderer);
         QFETCH(QString, status);
+
+        if ((file == "unreadable.txt"_L1 || file == "locked"_L1) && QFileInfo(m_copies.filePath(file)).isReadable()) {
+            QSKIP("Permissions are not enforced for this user");
+        }
 
         Controller controller;
         QVERIFY(controller.isReady());
@@ -125,7 +144,7 @@ private Q_SLOTS:
         QTest::newRow("portrait image") << fixture(u"image-portrait.jpg"_s) << QSize(480, 640);
         QTest::newRow("first PDF page whole") << fixture(u"pdf-document.pdf"_s) << QSize(608, 865);
         QTest::newRow("large image shrunk to the screen") << m_copies.filePath(u"large.png"_s) << QSize(1171, 918);
-        QTest::newRow("error at the minimum") << fixture(u"image-broken.png"_s) << QSize(480, 320);
+        QTest::newRow("error with its message") << fixture(u"image-broken.png"_s) << QSize(496, 356);
     }
 
     void thePopupFitsTheFile()
@@ -199,6 +218,17 @@ private Q_SLOTS:
         QCOMPARE(state["status"_L1].toString(), u"error"_s);
         QCOMPARE(state["renderer"_L1].toString(), u"fallback"_s);
         QVERIFY(!state["lastError"_L1].isNull());
+    }
+
+    void aVideoThatCannotBePlayedSaysWhy()
+    {
+        Controller controller;
+        controller.show({fixture(u"video-broken.mp4"_s)});
+        QTRY_COMPARE(controller.state()["renderer"_L1].toString(), u"fallback"_s);
+        QVERIFY(!controller.state()["notice"_L1].isNull());
+
+        controller.show({fixture(u"video-clip.webm"_s)});
+        QVERIFY(controller.state()["notice"_L1].isNull());
     }
 
     void pageDownScrollsLongText()

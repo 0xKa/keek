@@ -108,7 +108,7 @@ A renderer is a `Renderer` value: an ID, the name of a QML view, and a function 
 | `audio` | `AudioView.qml` | Every `audio/*` type that is not text. | Qt Multimedia. Shows the cover from Dolphin's thumbnailer or the icon, with the title, artist and album when Qt can read them. Starts playing with sound. |
 | `video` | `VideoView.qml` | Every `video/*` type. | Qt Multimedia. Starts playing without sound. Clicking the picture plays or pauses. |
 | `folder` | `FolderView.qml` | Folders. | Shows how many files and folders it holds, its total size, its modification date and its first eight entries. Hidden entries are left out of the counts and the list, but not the size. |
-| `fallback` | `FallbackView.qml` | Everything else, and a missing file. | Shows the thumbnail Dolphin would show, or the file's icon when there is none, with the type, size and modification date. |
+| `fallback` | `FallbackView.qml` | Everything else, a missing file and a file Keek may not read. | Shows the thumbnail Dolphin would show, or the file's icon when there is none, with the type, size and modification date. When another renderer gave up on the file, it also shows why. |
 
 To add a renderer:
 
@@ -130,10 +130,28 @@ The popup sizes itself to the file. Each view sets `preferredWidth` and `preferr
 | Audio, folder, fallback | Their summary block plus the margins. |
 
 - **Limits:** the popup is at least 480 × 320 and at most 85% of the screen's available area. The view is told the space it can use through its `available` property.
-- **Before the size is known:** the popup uses 960 × 640. A view with an error gets the minimum size.
+- **Before the size is known:** the popup uses 960 × 640. An error is sized to its message.
 - **Showing waits for the size.** `PopupWindow` keeps a hidden popup hidden until the root's `sized` is true, for at most 150 ms, so it opens at its final size. `keek state` already reports `visible` as true during the wait.
 - **KWin places the popup.** It centres a new window and keeps it centred when it resizes. A resize sent before the first frame is drawn can lose the centre, so `PopupWindow` holds resizes until then. When KWin answers with the old size, `PopupWindow` asks again, up to 3 times.
 - **The offscreen screen is 1920 × 1080.** The tests and the screenshot page use `tests/offscreen.json`, so the sizes do not depend on Qt's default offscreen screen.
+
+### Errors
+
+A view sets `error` to one sentence that says what went wrong. `Popup.qml` then hides the view and draws the file's icon, type, size and date with the message and a warning icon below, sized to fit. `FileOverview.qml` draws this block, and the fallback view uses it too.
+
+| Case | Who reports it | Message |
+|---|---|---|
+| The file does not exist | `Controller` | This file does not exist. It may have been moved or deleted. |
+| No read permission | `Controller` | You do not have permission to read this file. (For a folder: to open this folder.) |
+| An image that cannot be decoded | `ImageView` | This image could not be decoded. It may be damaged or in a format that is not supported. |
+| A damaged PDF | `PdfView` | This PDF could not be opened. It may be damaged. |
+| A PDF with a password | `PdfView` | This PDF is protected by a password. |
+| A text file that cannot be read | `TextView` | This file could not be read: the system's reason. |
+| A text file with NUL bytes | `TextView` | This file holds binary data, not text. |
+
+A status of `error` in `keek state` means one of these is showing.
+
+Audio and video that cannot be played are not errors. The view calls `Controller::useFallback(reason)`, the fallback view shows the file with the reason and an information icon, and `keek state` reports the reason as `notice`.
 
 ### Thumbnails and icons
 
@@ -156,7 +174,7 @@ The popup sizes itself to the file. Each view sets `preferredWidth` and `preferr
 
   These are the defaults when the file does not exist. `MediaSettings` reads and writes them.
 - **`KEEK_AUTOPLAY=0`** in `keekd`'s environment stops playback from starting on its own. The player pauses on the first frame instead. The tests and the screenshot page set it, so they never make a sound.
-- **Files that cannot be played fall back.** When the player reports an error, finds no picture in a video or no sound in an audio file, or no video frame arrives within 3 seconds, the view calls `Controller::useFallback()` and the popup shows the fallback view. This covers H.265 video on a Fedora install without RPM Fusion's codecs.
+- **Files that cannot be played fall back.** When the player reports an error, finds no picture in a video or no sound in an audio file, or no video frame arrives within 3 seconds, the view calls `Controller::useFallback()` and the popup shows the fallback view with the reason. This covers H.265 video on a Fedora install without RPM Fusion's codecs.
 - **A video is `ready`** once its first frame has arrived, so a screenshot taken then shows a picture.
 - **Qt reads tags only from the container.** FLAC and MP3 titles show; Ogg Vorbis and Opus titles do not, because they sit on the stream.
 
@@ -237,6 +255,7 @@ Exit codes:
 | `count` | How many files that list holds. |
 | `renderer` | The renderer for `file`: `image`, `pdf`, `text`, `audio`, `video`, `folder` or `fallback`, or `null`. |
 | `mimeType` | The MIME type of `file`, or `null`. |
+| `notice` | Why the fallback view is showing a file another renderer gave up on, such as a video that cannot be played, or `null`. |
 | `width`, `height` | The popup's size. |
 | `activationToken` | Whether the last `show` carried an activation token. |
 | `lastError` | The last error, or `null`. A successful `show` clears it. |
@@ -302,7 +321,7 @@ This shows every file in `tests/fixtures/` in an offscreen daemon and writes `bu
 
 The offscreen platform cannot draw video frames, so the video reference shows the control bar over an empty picture. A real or headless KWin session draws them; the commands under "Trying a change" work there too.
 
-The test shows copies of the sample files, all dated 2 January 2026 at 03:04, and runs with `TZ=UTC`, so the dates in the popup do not change between checkouts. A thumbnail depends on the plugins installed, so no reference screenshot shows one; `comic.cbz` is checked by a separate test that only asks whether a thumbnail appeared.
+Besides the sample files, it shows three cases made at run time: `missing.png`, which does not exist, and `unreadable.txt` and `locked/`, which have no permissions. The last two are skipped when run as root. The test shows copies of the sample files, all dated 2 January 2026 at 03:04, and runs with `TZ=UTC`, so the dates in the popup do not change between checkouts. A thumbnail depends on the plugins installed, so no reference screenshot shows one; `comic.cbz` is checked by a separate test that only asks whether a thumbnail appeared.
 
 The references depend on the fonts and the Breeze icons installed on the machine, so a font or Qt update can change them. After checking that the new output is right, regenerate them:
 

@@ -8,10 +8,11 @@ Rectangle {
     readonly property bool contentReady: view ? view.ready : false
     readonly property string contentError: view ? view.error : ""
     property size availableSize: Qt.size(Metrics.popupDefaultWidth, Metrics.popupDefaultHeight)
-    readonly property bool hasPreference: view !== null && contentError === "" && view.preferredWidth > 0 && view.preferredHeight > 0
-    readonly property bool sized: contentError !== "" || hasPreference || contentReady
-    readonly property real wantedWidth: hasPreference ? view.preferredWidth : contentError === "" ? Metrics.popupDefaultWidth : 0
-    readonly property real wantedHeight: (hasPreference ? view.preferredHeight : contentError === "" ? Metrics.popupDefaultHeight : 0) + Metrics.titleHeight
+    readonly property bool failed: contentError !== ""
+    readonly property bool hasPreference: view !== null && !failed && view.preferredWidth > 0 && view.preferredHeight > 0
+    readonly property bool sized: failed || hasPreference || contentReady
+    readonly property real wantedWidth: failed ? errorOverview.implicitWidth : hasPreference ? view.preferredWidth : Metrics.popupDefaultWidth
+    readonly property real wantedHeight: (failed ? errorOverview.implicitHeight : hasPreference ? view.preferredHeight : Metrics.popupDefaultHeight) + Metrics.titleHeight
     readonly property size preferredSize: Qt.size(Math.ceil(Math.min(availableSize.width, Math.max(Metrics.popupMinimumWidth, wantedWidth))), Math.ceil(Math.min(availableSize.height, Math.max(Metrics.popupMinimumHeight, wantedHeight))))
 
     color: palette.window
@@ -75,7 +76,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         active: root.controller.showing
         source: root.controller.rendererComponent + ".qml"
-        opacity: root.contentError === "" ? 1 : 0
+        opacity: root.failed ? 0 : 1
     }
 
     Binding {
@@ -92,9 +93,13 @@ Rectangle {
         when: root.view !== null
     }
 
-    CenteredMessage {
+    FileOverview {
+        id: errorOverview
+
         anchors.fill: content
-        text: root.contentError
-        visible: root.contentError !== ""
+        source: root.failed ? root.controller.currentFileUrl : ""
+        thumbnails: false
+        message: root.contentError
+        visible: root.failed
     }
 }
