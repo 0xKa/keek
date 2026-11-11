@@ -16,6 +16,16 @@ class ControllerTest : public QObject
     Q_OBJECT
 
 private:
+    static QString fileA()
+    {
+        return QStringLiteral(KEEK_FIXTURES_DIR "/text-plain.txt");
+    }
+
+    static QString fileB()
+    {
+        return QStringLiteral(KEEK_FIXTURES_DIR "/text-code.cpp");
+    }
+
     static bool showAndActivate(Controller &controller, const QString &file)
     {
         controller.show({file});
@@ -32,6 +42,7 @@ private Q_SLOTS:
 
         const QJsonObject state = controller.state();
         QCOMPARE(state["visible"_L1].toBool(), false);
+        QCOMPARE(state["status"_L1].toString(), u"hidden"_s);
         QVERIFY(state["file"_L1].isNull());
         QVERIFY(state["renderer"_L1].isNull());
         QVERIFY(state["lastError"_L1].isNull());
@@ -40,14 +51,15 @@ private Q_SLOTS:
     void showMakesThePopupVisible()
     {
         Controller controller;
-        controller.show({u"/tmp/a.txt"_s, u"/tmp/b.txt"_s});
+        controller.show({fileA(), fileB()});
 
         const QJsonObject state = controller.state();
         QCOMPARE(state["visible"_L1].toBool(), true);
-        QCOMPARE(state["file"_L1].toString(), u"/tmp/a.txt"_s);
+        QCOMPARE(state["file"_L1].toString(), fileA());
         QCOMPARE(state["files"_L1].toArray().size(), 2);
         QCOMPARE(state["activationToken"_L1].toBool(), false);
-        QCOMPARE(controller.currentFileName(), u"a.txt"_s);
+        QCOMPARE(state["mimeType"_L1].toString(), u"text/plain"_s);
+        QCOMPARE(controller.currentFileName(), u"text-plain.txt"_s);
         QVERIFY(state["width"_L1].toInt() > 0);
         QVERIFY(state["height"_L1].toInt() > 0);
     }
@@ -62,35 +74,35 @@ private Q_SLOTS:
     void showRecordsTheActivationToken()
     {
         Controller controller;
-        controller.show({u"/tmp/a.txt"_s}, u"token"_s);
+        controller.show({fileA()}, u"token"_s);
         QCOMPARE(controller.state()["activationToken"_L1].toBool(), true);
 
-        controller.show({u"/tmp/a.txt"_s});
+        controller.show({fileA()});
         QCOMPARE(controller.state()["activationToken"_L1].toBool(), false);
     }
 
     void toggleHidesTheSameFile()
     {
         Controller controller;
-        controller.toggle({u"/tmp/a.txt"_s});
+        controller.toggle({fileA()});
         QCOMPARE(controller.state()["visible"_L1].toBool(), true);
 
-        controller.toggle({u"/tmp/a.txt"_s});
+        controller.toggle({fileA()});
         QCOMPARE(controller.state()["visible"_L1].toBool(), false);
 
-        controller.toggle({u"/tmp/a.txt"_s});
+        controller.toggle({fileA()});
         QCOMPARE(controller.state()["visible"_L1].toBool(), true);
     }
 
     void toggleSwitchesToAnotherFile()
     {
         Controller controller;
-        controller.toggle({u"/tmp/a.txt"_s});
-        controller.toggle({u"/tmp/b.txt"_s});
+        controller.toggle({fileA()});
+        controller.toggle({fileB()});
 
         const QJsonObject state = controller.state();
         QCOMPARE(state["visible"_L1].toBool(), true);
-        QCOMPARE(state["file"_L1].toString(), u"/tmp/b.txt"_s);
+        QCOMPARE(state["file"_L1].toString(), fileB());
     }
 
     void closeKeys_data()
@@ -105,7 +117,7 @@ private Q_SLOTS:
         QFETCH(Qt::Key, key);
 
         Controller controller;
-        QVERIFY(showAndActivate(controller, u"/tmp/a.txt"_s));
+        QVERIFY(showAndActivate(controller, fileA()));
 
         QTest::keyClick(controller.window()->quickWindow(), key);
         QCOMPARE(controller.state()["visible"_L1].toBool(), false);
@@ -114,7 +126,7 @@ private Q_SLOTS:
     void otherKeysDoNotClose()
     {
         Controller controller;
-        QVERIFY(showAndActivate(controller, u"/tmp/a.txt"_s));
+        QVERIFY(showAndActivate(controller, fileA()));
 
         QTest::keyClick(controller.window()->quickWindow(), Qt::Key_A);
         QCOMPARE(controller.state()["visible"_L1].toBool(), true);
@@ -123,7 +135,7 @@ private Q_SLOTS:
     void heldSpaceDoesNotClose()
     {
         Controller controller;
-        QVERIFY(showAndActivate(controller, u"/tmp/a.txt"_s));
+        QVERIFY(showAndActivate(controller, fileA()));
 
         QKeyEvent repeat(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier, u" "_s, true);
         QCoreApplication::sendEvent(controller.window()->quickWindow(), &repeat);
@@ -137,7 +149,7 @@ private Q_SLOTS:
         const QString file = dir.filePath(u"popup.png"_s);
 
         Controller controller;
-        controller.show({u"/tmp/a.txt"_s});
+        controller.show({fileA()});
         QVERIFY(controller.screenshot(file));
 
         const QImage image(file);
@@ -172,7 +184,7 @@ private Q_SLOTS:
         QVERIFY(!QFile::exists(file));
         QCOMPARE(controller.state()["lastError"_L1].toString(), error);
 
-        controller.show({u"/tmp/a.txt"_s});
+        controller.show({fileA()});
         QVERIFY(controller.state()["lastError"_L1].isNull());
     }
 };

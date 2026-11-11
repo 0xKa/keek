@@ -1,0 +1,7 @@
+Keek fixture: plain text
+
+A short file with ordinary sentences. It has no syntax to highlight,
+so it should appear in the normal text colour.
+
+	This line starts with a tab.
+Unicode: café, naïve, 日本語, Ελληνικά, ✓

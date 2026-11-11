@@ -11,8 +11,11 @@ using namespace Qt::StringLiterals;
 
 Controller::Controller(QObject *parent)
     : QObject(parent)
+    , m_renderer(&m_registry.fallback())
     , m_window(std::make_unique<PopupWindow>(this))
 {
+    connect(m_window.get(), &PopupWindow::visibleChanged, this, &Controller::showingChanged);
+    m_window->load();
 }
 
 Controller::~Controller() = default;
@@ -37,22 +40,50 @@ QString Controller::currentFileName() const
     return QFileInfo(currentFile()).fileName();
 }
 
+QUrl Controller::currentFileUrl() const
+{
+    return m_files.isEmpty() ? QUrl() : QUrl::fromLocalFile(currentFile());
+}
+
+QString Controller::fileDescription() const
+{
+    return m_fileError.isEmpty() ? m_mimeType.comment() : m_fileError;
+}
+
+QString Controller::rendererComponent() const
+{
+    return m_renderer->component;
+}
+
+bool Controller::isShowing() const
+{
+    return m_window->isVisible();
+}
+
 void Controller::show(const QStringList &paths, const QString &activationToken)
 {
     if (paths.isEmpty()) {
         return;
     }
 
-    const bool fileChanged = currentFile() != paths.first();
     m_files = paths;
     m_hadActivationToken = !activationToken.isEmpty();
     m_lastError.clear();
-    if (fileChanged) {
-        Q_EMIT currentFileChanged();
+    m_fileError.clear();
+
+    if (QFileInfo::exists(currentFile())) {
+        const RendererRegistry::Match match = m_registry.select(currentFile());
+        m_renderer = match.renderer;
+        m_mimeType = match.mimeType;
+    } else {
+        m_renderer = &m_registry.fallback();
+        m_mimeType = QMimeType();
+        m_fileError = tr("This file does not exist");
     }
+    Q_EMIT currentFileChanged();
 
     m_window->show(activationToken);
-    qCInfo(lcKeek).noquote() << "show" << currentFile();
+    qCInfo(lcKeek).noquote() << "show" << currentFile() << "renderer" << m_renderer->id;
 }
 
 void Controller::toggle(const QStringList &paths, const QString &activationToken)
@@ -99,19 +130,38 @@ bool Controller::screenshot(const QString &file, QString *error)
     return false;
 }
 
+QString Controller::status() const
+{
+    if (!m_window->isVisible()) {
+        return u"hidden"_s;
+    }
+    if (!m_fileError.isEmpty() || !m_window->contentError().isEmpty()) {
+        return u"error"_s;
+    }
+    return m_window->isContentReady() ? u"ready"_s : u"loading"_s;
+}
+
 QJsonObject Controller::state() const
 {
     const QSize size = m_window->size();
     const bool hasFile = !m_files.isEmpty();
+
+    QString error = m_lastError;
+    if (error.isEmpty() && m_window->isVisible()) {
+        error = m_fileError.isEmpty() ? m_window->contentError() : m_fileError;
+    }
+
     return {
         {u"visible"_s, m_window->isVisible()},
         {u"active"_s, m_window->isActive()},
+        {u"status"_s, status()},
         {u"file"_s, hasFile ? QJsonValue(currentFile()) : QJsonValue()},
         {u"files"_s, QJsonArray::fromStringList(m_files)},
-        {u"renderer"_s, hasFile ? QJsonValue(u"placeholder"_s) : QJsonValue()},
+        {u"renderer"_s, hasFile ? QJsonValue(m_renderer->id) : QJsonValue()},
+        {u"mimeType"_s, m_mimeType.isValid() ? QJsonValue(m_mimeType.name()) : QJsonValue()},
         {u"width"_s, size.width()},
         {u"height"_s, size.height()},
         {u"activationToken"_s, m_hadActivationToken},
-        {u"lastError"_s, m_lastError.isEmpty() ? QJsonValue() : QJsonValue(m_lastError)},
+        {u"lastError"_s, error.isEmpty() ? QJsonValue() : QJsonValue(error)},
     };
 }

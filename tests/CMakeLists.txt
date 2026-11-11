@@ -1,17 +1,43 @@
 find_program(DBUS_RUN_SESSION dbus-run-session REQUIRED)
 
-qt_add_executable(tst_controller tst_controller.cpp)
-target_link_libraries(tst_controller PRIVATE keekcore keekcoreplugin Qt6::Test)
-add_test(NAME controller COMMAND tst_controller)
-set_tests_properties(controller PROPERTIES
-    ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
-    LABELS offscreen
+set(KEEK_TEST_HOME ${CMAKE_BINARY_DIR}/test-home)
+set(KEEK_TEST_ENVIRONMENT
+    QT_QPA_PLATFORM=offscreen
+    QT_QUICK_BACKEND=software
+    QT_SCALE_FACTOR=1
+    QT_FONT_DPI=96
+    LC_ALL=C.UTF-8
+    XDG_CONFIG_HOME=${KEEK_TEST_HOME}/config
+    XDG_DATA_HOME=${KEEK_TEST_HOME}/data
+    XDG_CACHE_HOME=${KEEK_TEST_HOME}/cache
+    XDG_STATE_HOME=${KEEK_TEST_HOME}/state
 )
 
-qt_add_executable(tst_cli tst_cli.cpp)
-target_link_libraries(tst_cli PRIVATE Qt6::Test Qt6::Gui)
+function(keek_add_test name)
+    qt_add_executable(tst_${name} tst_${name}.cpp)
+    target_link_libraries(tst_${name} PRIVATE Qt6::Test ${ARGN})
+    target_compile_definitions(tst_${name} PRIVATE
+        KEEK_FIXTURES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/fixtures"
+        KEEK_REFERENCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/reference"
+        KEEK_TEST_OUTPUT_DIR="${CMAKE_BINARY_DIR}/test-output"
+    )
+endfunction()
+
+keek_add_test(renderers keekcore keekcoreplugin)
+add_test(NAME renderers COMMAND tst_renderers)
+set_tests_properties(renderers PROPERTIES ENVIRONMENT "${KEEK_TEST_ENVIRONMENT}" LABELS unit)
+
+keek_add_test(controller keekcore keekcoreplugin)
+add_test(NAME controller COMMAND tst_controller)
+set_tests_properties(controller PROPERTIES ENVIRONMENT "${KEEK_TEST_ENVIRONMENT}" LABELS offscreen)
+
+keek_add_test(previews keekcore keekcoreplugin)
+add_test(NAME previews COMMAND tst_previews)
+set_tests_properties(previews PROPERTIES ENVIRONMENT "${KEEK_TEST_ENVIRONMENT}" LABELS offscreen)
+
+keek_add_test(cli Qt6::Gui)
 add_test(NAME cli COMMAND ${DBUS_RUN_SESSION} -- $<TARGET_FILE:tst_cli>)
 set_tests_properties(cli PROPERTIES
-    ENVIRONMENT "QT_QPA_PLATFORM=offscreen;KEEK_TEST_PRIVATE_BUS=1;KEEK_BIN=$<TARGET_FILE:keek>;KEEKD_BIN=$<TARGET_FILE:keekd>"
+    ENVIRONMENT "${KEEK_TEST_ENVIRONMENT};KEEK_TEST_PRIVATE_BUS=1;KEEK_BIN=$<TARGET_FILE:keek>;KEEKD_BIN=$<TARGET_FILE:keekd>"
     LABELS session
 )

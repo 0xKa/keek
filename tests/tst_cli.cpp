@@ -153,6 +153,8 @@ private Q_SLOTS:
         QCOMPARE(current["file"_L1].toString(), m_fileA);
         QCOMPARE(current["files"_L1].toArray().size(), 2);
         QCOMPARE(current["activationToken"_L1].toBool(), false);
+        QCOMPARE(current["renderer"_L1].toString(), u"text"_s);
+        QTRY_COMPARE(state()["status"_L1].toString(), u"ready"_s);
     }
 
     void relativePathsBecomeAbsolute()

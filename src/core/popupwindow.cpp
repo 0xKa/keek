@@ -5,6 +5,7 @@
 #include <KWindowSystem>
 
 #include <QQmlError>
+#include <QQuickItem>
 #include <QQuickView>
 
 using namespace Qt::StringLiterals;
@@ -18,6 +19,13 @@ PopupWindow::PopupWindow(QObject *controller, QObject *parent)
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->resize(960, 640);
     m_view->setInitialProperties({{u"controller"_s, QVariant::fromValue(controller)}});
+    connect(m_view.get(), &QWindow::visibleChanged, this, &PopupWindow::visibleChanged);
+}
+
+PopupWindow::~PopupWindow() = default;
+
+void PopupWindow::load()
+{
     m_view->loadFromModule("Keek", "Popup");
 
     const QList<QQmlError> errors = m_view->errors();
@@ -25,8 +33,6 @@ PopupWindow::PopupWindow(QObject *controller, QObject *parent)
         qCCritical(lcKeek).noquote() << error.toString();
     }
 }
-
-PopupWindow::~PopupWindow() = default;
 
 bool PopupWindow::isReady() const
 {
@@ -72,4 +78,16 @@ QSize PopupWindow::size() const
 QImage PopupWindow::grab()
 {
     return m_view->grabWindow();
+}
+
+bool PopupWindow::isContentReady() const
+{
+    const QQuickItem *root = m_view->rootObject();
+    return root && root->property("contentReady").toBool();
+}
+
+QString PopupWindow::contentError() const
+{
+    const QQuickItem *root = m_view->rootObject();
+    return root ? root->property("contentError").toString() : QString();
 }

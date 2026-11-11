@@ -17,6 +17,7 @@ public:
     explicit PopupWindow(QObject *controller, QObject *parent = nullptr);
     ~PopupWindow() override;
 
+    void load();
     bool isReady() const;
     QQuickWindow *quickWindow() const;
 
@@ -27,6 +28,12 @@ public:
     bool isActive() const;
     QSize size() const;
     QImage grab();
+
+    bool isContentReady() const;
+    QString contentError() const;
+
+Q_SIGNALS:
+    void visibleChanged();
 
 private:
     std::unique_ptr<QQuickView> m_view;

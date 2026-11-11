@@ -1,0 +1,7 @@
+{
+  "name": "keek",
+  "visible": true,
+  "size": { "width": 960, "height": 640 },
+  "renderers": ["image", "text", "placeholder"],
+  "lastError": null
+}
