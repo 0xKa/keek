@@ -22,6 +22,7 @@ qt_standard_project_setup(REQUIRES 6.8)
 add_compile_options(-Wall -Wextra -Wpedantic)
 
 add_subdirectory(src)
+add_subdirectory(data)
 
 if(BUILD_TESTING)
     add_subdirectory(tests)
