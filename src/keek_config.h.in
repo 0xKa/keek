@@ -1,0 +1,7 @@
+#pragma once
+
+#define KEEK_VERSION "@PROJECT_VERSION@"
+#define KEEK_APP_ID "@KEEK_APP_ID@"
+#define KEEK_DBUS_SERVICE "@KEEK_APP_ID@"
+#define KEEK_DBUS_PATH "/Keek"
+#define KEEK_DBUS_INTERFACE "@KEEK_APP_ID@.Keek"
