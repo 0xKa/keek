@@ -5,3 +5,4 @@ target_include_directories(keekconfig INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(core)
 add_subdirectory(daemon)
+add_subdirectory(cli)
