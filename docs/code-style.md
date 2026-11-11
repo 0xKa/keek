@@ -27,7 +27,9 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 | Ownership | `std::unique_ptr` for an object with no Qt parent, a parent for a `QObject` that has one. No bare `new` without one of the two. |
 | Properties for QML | Mark each `Q_PROPERTY` `FINAL`, and give every property that can change a `NOTIFY` signal. |
 | QML types | Register with `QML_ELEMENT` in the header and list the files in `src/core/CMakeLists.txt`. Add `QML_UNCREATABLE` when QML must not create the type. |
-| Errors | A function that can fail returns `bool` and fills a `QString *error`. No exceptions. Messages the user sees go through `tr()`. |
+| Errors | A function that can fail returns `bool` and fills a `QString *error`. No exceptions. |
+| Translation | Text shown in the popup goes through `tr()`. Command-line output, D-Bus error replies and log messages stay in plain English, so scripts and agents can match them. |
+| Formatting | `.clang-format` holds the style. Run `cmake --build --preset dev --target clang-format` before committing C++ changes. |
 | Logging | `qCInfo(lcKeek)` and `qCWarning(lcKeek)`. Never `qDebug()` or `std::cout` in the daemon; they break the JSON log. |
 | File-local helpers | Put them in an anonymous namespace, not `static`. |
 | Headers | `#pragma once`. Include the file's own header first, then project headers, KDE, Qt, and the standard library. |
@@ -43,6 +45,8 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 | Views extend `PreviewView` | The root of every view is `PreviewView`. It reads the file from `controller.currentFileUrl`. |
 | No close keys in views | Space and Esc belong to `Popup.qml`. A view handles only its own keys and leaves the rest unaccepted. |
 | Ignore key repeat on close | A close handler returns early when `event.isAutoRepeat` is set. |
+| Sizes from `Metrics` | Margins, heights, font sizes and opacities come from the `Metrics` singleton. No inline numbers for layout; add a named value there instead. |
+| Shared pieces | Use `CenteredMessage` for a centred note or error. Do not copy its `Text` block. |
 | Colours from the palette | Use `palette.window`, `palette.base` and `palette.text`. No hard-coded colours, so light and dark themes both work. |
 | No stale content | Set `cache: false` on an `Image`, and keep the `Loader` inactive while the popup is hidden. |
 | Text for the user | Wrap it in `qsTr()`. |
@@ -63,4 +67,5 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 |---|---|
 | One source for names | The application ID is `KEEK_APP_ID` in the top-level file. Files that need it are generated with `configure_file`. |
 | New tests go through `keek_add_test` | Then add the test with a label: `unit`, `offscreen`, `session` or `dolphin`. Give it `KEEK_TEST_ENVIRONMENT` so it cannot read the user's settings. |
+| Shared test helpers | `tests/fixtures.h` gives the path of a sample file, and `tests/imagecompare.h` compares screenshots. Do not redefine them in a test. |
 | Link only what is used | Do not add a Qt or KDE component to `find_package` until code needs it. |
