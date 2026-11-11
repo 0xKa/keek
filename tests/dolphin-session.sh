@@ -123,10 +123,28 @@ close_dolphin() {
     dolphin_pid=""
 }
 
+selection_shortcut() {
+    busctl --user get-property "org.kde.dolphin-$dolphin_pid" /dolphin/Dolphin_1/actions/toggle_selection_mode org.qtproject.Qt.QAction shortcut
+}
+
 KEEK_AUTOPLAY=0 "$KEEK_BIN_DIR/keekd" 2>"$dir/keekd.log" &
 wait_for 100 "$keek" state || fail "keekd did not start"
 
+shortcut="$(dirname "$0")/../scripts/dolphin-shortcut.sh"
+rc="$dir/data/kxmlgui5/dolphin/dolphinui.rc"
+"$shortcut" bind || fail "shortcut: bind failed on a fresh account"
+
 start_dolphin selection --select "$dir/files/a.png" "$dir/files/b.txt"
+wait_for 50 grep -q '<ToolBar' "$rc" || fail "shortcut: Dolphin did not merge its own layout into the stub: $(cat "$rc")"
+grep -q 'version="1"' "$rc" && fail "shortcut: the merged file kept the stub's version"
+[ "$("$shortcut" status)" = bound ] || fail "shortcut: the merged file lost the Quick Look shortcut"
+[ "$(selection_shortcut)" = "(ai) 4 0 0 0 0" ] || fail "shortcut: selection mode still has a shortcut: $(selection_shortcut)"
+"$shortcut" check 2>/dev/null && fail "shortcut: check passed while Dolphin was open"
+"$shortcut" bind || fail "shortcut: binding again while Dolphin is open should change nothing and succeed"
+"$shortcut" unbind 2>/dev/null && fail "shortcut: unbind changed the file while Dolphin was open"
+[ "$("$shortcut" status)" = bound ] || fail "shortcut: the refused unbind still changed the file"
+echo "ok: on a fresh account Dolphin merges the stub, Space leaves selection mode, and edits wait for Dolphin to close"
+
 trigger_until selection '"visible":true' "\"$dir/files/a.png\"" "\"$dir/files/b.txt\"" '"activationToken":true'
 wait_for 50 state_has '"status":"ready"' || fail "selection: the preview did not become ready"
 wait_for 50 state_has '"active":true' || fail "selection: the popup did not get keyboard focus"
@@ -140,6 +158,13 @@ wait_for 30 popup_centred || fail "next: the popup is not centred at its new siz
 wait_for 50 state_has '"status":"ready"' '"renderer":"video"' || fail "video: the video preview did not become ready"
 wait_for 30 popup_centred || fail "video: the popup is not centred once the video has loaded: $(popup_geometry)"
 echo "ok: the popup is centred at its own size, and stays centred when the next file has another size or loads late"
+close_dolphin
+
+"$shortcut" unbind || fail "shortcut: unbind failed once Dolphin was closed"
+[ "$("$shortcut" status)" = unbound ] || fail "shortcut: still bound after unbind"
+start_dolphin unbound "$dir/files"
+[ "$(selection_shortcut)" = "(ai) 4 32 0 0 0" ] || fail "shortcut: Space is not back on selection mode: $(selection_shortcut)"
+echo "ok: unbinding gives Space back to selection mode"
 close_dolphin
 
 "$keek" quit || fail "keekd did not quit"

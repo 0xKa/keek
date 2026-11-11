@@ -48,12 +48,22 @@ cmake --build --preset dev --target clang-format
 
 Everything installs under `~/.local`, with no `sudo`. `keekd` also writes `~/.config/keekrc` the first time a mute button is pressed.
 
+Build first, close every Dolphin window, then run:
+
 ```bash
-cmake --install build
-keek quit
+scripts/install.sh               # install and bind Space in Dolphin
+scripts/install.sh --autostart   # also start keekd at login
+scripts/install.sh --no-shortcut # leave Dolphin's shortcuts alone
+scripts/uninstall.sh             # remove everything and give Space back
 ```
 
-The install writes five files:
+`install.sh` does these steps in order:
+
+1. **Refuses to go on while a Dolphin window is open**, unless `--no-shortcut` is given. A running Dolphin can overwrite the shortcut change.
+2. **Runs `cmake --install build`**, which writes the five files below.
+3. **Asks D-Bus to reread its service files**, so the first `keek` call can start the new `keekd`, and stops a running daemon with `keek quit`.
+4. **Binds Space** with `scripts/dolphin-shortcut.sh bind`. The details are in [dolphin-shortcut.md](dolphin-shortcut.md).
+5. **With `--autostart`, copies the autostart entry** to `~/.config/autostart/keekd.desktop`.
 
 | File | Purpose |
 |---|---|
@@ -61,20 +71,12 @@ The install writes five files:
 | `~/.local/bin/keekd` | The daemon. |
 | `~/.local/share/kio/servicemenus/keek.desktop` | The "Quick Look" action for Dolphin. |
 | `~/.local/share/dbus-1/services/io.github._0xKa.keek.service` | Lets D-Bus start `keekd` on the first call. |
-| `~/.local/share/keek/keekd.desktop` | The autostart entry, unused until it is copied to `~/.config/autostart/`. |
+| `~/.local/share/keek/keekd.desktop` | The autostart entry. Plasma reads only `~/.config/autostart/`, which is outside the install prefix, so `install.sh --autostart` copies it there. |
 
-- **`keek quit` after an install** stops the old daemon. The next call starts the new one.
-- **Starting at login is optional.** Without it, D-Bus starts `keekd` on the first Space press, which makes that one press slower. To start it at login, copy the entry: `cp ~/.local/share/keek/keekd.desktop ~/.config/autostart/`. Plasma reads only `~/.config/autostart/`, which is outside the install prefix, so `cmake --install` cannot put it there itself. If D-Bus has already started a daemon, the one from autostart logs "keekd is already running" and exits.
-- **The first install on a login session** may need D-Bus to reread its service files: `busctl --user call org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus ReloadConfig`.
-- **Binding Space** is a separate, manual step. See [dolphin-shortcut.md](dolphin-shortcut.md).
-
-To remove the five files, the autostart copy and the settings:
-
-```bash
-keek quit
-cmake --build --preset dev --target uninstall
-rm -f ~/.config/autostart/keekd.desktop ~/.config/keekrc
-```
+- **Starting at login is optional.** Without it, D-Bus starts `keekd` on the first Space press, which makes that one press slower. If D-Bus has already started a daemon, the one from autostart logs "keekd is already running" and exits.
+- **`uninstall.sh` reverses all of it:** it stops the daemon, unbinds Space, removes the autostart copy and `~/.config/keekrc`, and runs the `uninstall` target, which reads `build/install_manifest.txt`. It too refuses while a Dolphin window is open, if Space is still bound.
+- **Both scripts read the prefix from `build/`.** Set `KEEK_BUILD_DIR` to use another build folder.
+- **During development**, `cmake --install build && keek quit` is enough to try a new build. It does not touch Dolphin's shortcuts.
 
 ## Layout
 
@@ -85,7 +87,7 @@ rm -f ~/.config/autostart/keekd.desktop ~/.config/keekrc
 | `src/cli/` | `keek`: the command-line client. It links only Qt Core and Qt D-Bus. |
 | `src/keek_config.h.in` | The version, application ID and D-Bus names, filled in by CMake. |
 | `data/` | The service-menu file, the D-Bus service file and the autostart entry, filled in by CMake. |
-| `scripts/` | The screenshot page. |
+| `scripts/` | The install and uninstall scripts, the Dolphin shortcut script and the screenshot page. |
 | `tests/` | The automated tests, the sample files in `fixtures/` and the reference screenshots in `reference/`. |
 
 The application ID is set once, as `KEEK_APP_ID` in the top-level `CMakeLists.txt`. The D-Bus service name and interface name are derived from it.
@@ -318,7 +320,8 @@ This shows every file in `tests/fixtures/` in an offscreen daemon and writes `bu
 | `controller` | `offscreen` | The controller and the popup in one process: show, toggle, hide, moving between files, Enter, the close keys and screenshots. |
 | `previews` | `offscreen` | Every sample file shown in the popup and compared with its reference screenshot, plus the popup's size, the fade-in, switching files, scrolling, the media keys and a thumbnail. |
 | `cli` | `session` | The real `keekd` and `keek` programs on a private session bus started by `dbus-run-session`. |
-| `dolphin` | `dolphin` | A real Dolphin in a headless KWin session with throwaway settings. It triggers the Quick Look action with two files selected, checks what reaches the popup, and checks that KWin keeps the popup centred as it changes size. |
+| `dolphin` | `dolphin` | A real Dolphin in a headless KWin session with throwaway settings. It triggers the Quick Look action with two files selected, checks what reaches the popup, and checks that KWin keeps the popup centred as it changes size. It also binds Space on a fresh account and checks that Dolphin merges the stub, that selection mode loses Space and gets it back, and that edits wait for Dolphin to close. |
+| `shortcut` | `unit` | `scripts/dolphin-shortcut.sh` on a sample `dolphinui.rc` and on variants of it: binding, unbinding, a missing file, a custom shortcut and a layout it must refuse. |
 | `appstreamtest` | none | Added by a KDE build module. It passes because there is no metadata to check yet. |
 
 - **The tests use their own settings.** They run with `QT_QPA_PLATFORM=offscreen`, the software renderer, and `XDG_*` folders under `build/test-home/`, so the user's settings and an installed Keek do not affect them.

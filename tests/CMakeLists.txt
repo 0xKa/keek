@@ -48,6 +48,9 @@ set_tests_properties(cli PROPERTIES
     LABELS session
 )
 
+add_test(NAME shortcut COMMAND ${DBUS_RUN_SESSION} -- ${CMAKE_CURRENT_SOURCE_DIR}/shortcut-test.sh)
+set_tests_properties(shortcut PROPERTIES LABELS unit)
+
 add_test(NAME dolphin COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/dolphin-session.sh)
 set_tests_properties(dolphin PROPERTIES
     ENVIRONMENT "KEEK_BIN_DIR=$<TARGET_FILE_DIR:keek>;KEEK_SERVICE_MENU=${CMAKE_BINARY_DIR}/data/keek.desktop;KEEK_FIXTURES_DIR=${CMAKE_CURRENT_SOURCE_DIR}/fixtures"

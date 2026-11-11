@@ -50,13 +50,51 @@ Dolphin saves it in `~/.local/share/kxmlgui5/dolphin/dolphinui.rc`, inside the `
 ## What an installer has to do
 
 1. **Install the service-menu file** and make it executable. `cmake --install build` already does this.
-2. **Set the two shortcut lines.** If `dolphinui.rc` exists, back it up and merge the two `Action` lines into its `ActionProperties` element, leaving everything else alone. If it does not exist, the installer cannot write a two-line file, because the file also carries the layout and its version. How to handle that case is still open; the options are to ask the user to bind Space by hand, or to generate the file from Dolphin's own shipped layout.
-3. **Ask the user to restart Dolphin.** See "When Dolphin reads the file" below.
+2. **Set the two shortcut lines.** If `dolphinui.rc` exists, back it up and merge the two `Action` lines into its `ActionProperties` element, leaving everything else alone. If it does not exist, write a stub with `version="1"` that holds only the `ActionProperties` element. See "A fresh account" below.
+3. **Make sure Dolphin is closed.** See "When Dolphin reads the file" below.
 4. **Uninstall in reverse:** remove the Quick Look line, restore Space on `toggle_selection_mode` by removing its line, and delete the service-menu file.
 
-Edit `dolphinui.rc` only while Dolphin is closed. A running Dolphin holds the shortcuts in memory and writes the file when they change, so it can overwrite the edit. This has not been tested.
+Edit `dolphinui.rc` only while Dolphin is closed. A running Dolphin holds the shortcuts in memory and writes the file when they change, so it can overwrite the edit.
+
+### A fresh account
+
+From the KXMLGUI source (`kxmlguiversionhandler.cpp`), checked in the `dolphin` test: when the local file has a lower `version` than the layout Dolphin ships, KXMLGUI loads the shipped layout, copies the local `ActionProperties` entries into it, and writes the result over the local file. So a stub like this is enough:
+
+```xml
+<!DOCTYPE gui>
+<gui name="dolphin" version="1">
+ <ActionProperties scheme="Default">
+  <Action name="toggle_selection_mode" shortcut="; "/>
+  <Action name="servicemenu_keek.desktop::quicklook" shortcut="Space"/>
+ </ActionProperties>
+</gui>
+```
+
+On the first start, Dolphin turns it into its full 142-line file at version 49, with the two lines kept. Dolphin writes them back in its own order, Quick Look first.
+
+### `scripts/dolphin-shortcut.sh`
+
+This script does steps 2 and 4 for the installer:
+
+```bash
+scripts/dolphin-shortcut.sh bind      # give Space to Quick Look
+scripts/dolphin-shortcut.sh unbind    # give it back to selection mode
+scripts/dolphin-shortcut.sh status    # prints bound or unbound
+scripts/dolphin-shortcut.sh check     # fails while a Dolphin window is open
+```
+
+Each takes an optional path to the file, which defaults to `~/.local/share/kxmlgui5/dolphin/dolphinui.rc` (or the same path under `XDG_DATA_HOME`).
+
+- **Only the `ActionProperties` element is edited.** The `toggle_selection_mode` entries in the menus and the toolbar look the same, so the script edits lines only inside that element. It expects one element per line, as Dolphin writes them. If the file has another layout, it exits with code 2 and leaves the file alone.
+- **Selection mode keeps its other keys.** If the user gave it more than one shortcut, only Space is removed. Unbinding removes the line only when it is exactly `shortcut="; "`, the line `bind` writes, so a shortcut the user set is kept.
+- **The first change makes a backup**, `dolphinui.rc.before-keek`. `unbind` deletes it once it has undone the change.
+- **A missing file gets the stub**, and `unbind` deletes the stub if Dolphin has not started since.
+- **Nothing is written when nothing would change**, so binding twice is harmless.
+- **A change is refused while Dolphin is open**, with exit code 4. A Dolphin window registers `org.kde.dolphin-<pid>` with a `/dolphin/Dolphin_1` object on the session bus. `dolphin --daemon` has no window and never writes the file, so it does not count.
 
 ### Binding by hand
+
+`scripts/install.sh` does this unless it is given `--no-shortcut`. To do it in Dolphin instead:
 
 1. Close every Dolphin window and open Dolphin again.
 2. Open Configure Keyboard Shortcuts (Ctrl+Alt+,) and search for "Quick Look".
@@ -88,6 +126,14 @@ qdbus-qt6 "$svc" /dolphin/Dolphin_1 org.kde.KMainWindow.activateAction "servicem
 ```
 
 The action does not appear under `/dolphin/Dolphin_1/actions/`, unlike Dolphin's built-in actions, so `activateAction` is the way in. The `dolphin` test in `tests/dolphin-session.sh` does this in an isolated headless session; it does not exercise the real Space key.
+
+The built-in actions show their shortcut as a list of key codes, which is how the `dolphin` test checks that Space left selection mode and came back:
+
+```bash
+busctl --user get-property "$svc" /dolphin/Dolphin_1/actions/toggle_selection_mode org.qtproject.Qt.QAction shortcut
+```
+
+`(ai) 4 32 0 0 0` is Space, the default. `(ai) 4 0 0 0 0` is no shortcut.
 
 ## What the real Space-key test covered
 

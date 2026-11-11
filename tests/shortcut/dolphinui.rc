@@ -1,0 +1,24 @@
+<?xml version='1.0'?>
+<!DOCTYPE gui SYSTEM 'kpartgui.dtd'>
+<gui name="dolphin" version="49" translationDomain="dolphin">
+ <MenuBar alreadyVisited="1">
+  <Menu name="edit" alreadyVisited="1">
+   <Action name="toggle_selection_mode"/>
+   <Action name="invert_selection"/>
+  </Menu>
+ </MenuBar>
+ <State name="new_file">
+  <disable>
+   <Action name="edit_undo"/>
+  </disable>
+ </State>
+ <ToolBar noMerge="1" name="mainToolBar" alreadyVisited="1">
+  <text context="@title:menu">Main Toolbar</text>
+  <Action name="go_back"/>
+  <Action name="toggle_selection_mode"/>
+ </ToolBar>
+ <ActionProperties scheme="Default">
+  <Action name="go_back" priority="0"/>
+  <Action name="show_preview" shortcut="Ctrl+Shift+F9"/>
+ </ActionProperties>
+</gui>
