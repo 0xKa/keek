@@ -4,6 +4,7 @@ RendererRegistry::RendererRegistry()
 {
     m_renderers.push_back(imageRenderer());
     m_renderers.push_back(textRenderer());
+    m_renderers.push_back(folderRenderer());
     m_renderers.push_back(fallbackRenderer());
 }
 

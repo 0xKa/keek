@@ -103,6 +103,7 @@ A renderer is a `Renderer` value: an ID, the name of a QML view, and a function 
 |---|---|---|---|
 | `image` | `ImageView.qml` | Every type Qt's image reader can decode on this system, except PDF. | Shown at natural size, and shrunk only when larger than the popup. Vector images are scaled to fit. |
 | `text` | `TextView.qml` | Every type that inherits `text/plain`. | Highlighted by file name. Only the first 512 KiB is loaded. A file with NUL bytes is reported as not text. |
+| `folder` | `FolderView.qml` | Folders. | Shows how many files and folders it holds, its total size, its modification date and its first eight entries. Hidden entries are left out of the counts and the list, but not the size. |
 | `fallback` | `FallbackView.qml` | Everything else, and a missing file. | Shows the thumbnail Dolphin would show, or the file's icon when there is none, with the type, size and modification date. |
 
 To add a renderer:
@@ -118,6 +119,10 @@ To add a renderer:
 - **`FileIcon`** draws an icon from the icon theme. When no platform theme sets one, as in the offscreen tests, `PopupWindow` falls back to Breeze from the system icon folders.
 - **`FileDetails`** gives a file's icon name, type, size and modification date, read through `KFileItem`.
 - **`FileSummary.qml`** puts the thumbnail or icon above a few lines of details.
+
+### Folder size
+
+`FolderInfo` adds up the size of every file under the folder on a Qt Concurrent worker thread, without following symbolic links. The popup shows the running total every 200 ms and the status stays `loading` until the count is done. Showing another file cancels the count.
 
 ## Keys
 
@@ -187,7 +192,7 @@ Exit codes:
 | `files` | Every file passed to the last `show`. |
 | `index` | The position of `file` in the list the arrows move through, from 0, or `null`. |
 | `count` | How many files that list holds. |
-| `renderer` | The renderer for `file`: `image`, `text` or `fallback`, or `null`. |
+| `renderer` | The renderer for `file`: `image`, `text`, `folder` or `fallback`, or `null`. |
 | `mimeType` | The MIME type of `file`, or `null`. |
 | `width`, `height` | The popup's size. |
 | `activationToken` | Whether the last `show` carried an activation token. |

@@ -10,6 +10,7 @@ qt_add_qml_module(keekcore
         CenteredMessage.qml
         FallbackView.qml
         FileSummary.qml
+        FolderView.qml
         ImageView.qml
         Metrics.qml
         Popup.qml
@@ -23,6 +24,9 @@ qt_add_qml_module(keekcore
         filedetails.h
         fileicon.cpp
         fileicon.h
+        folderrenderer.cpp
+        folderinfo.cpp
+        folderinfo.h
         folderlisting.cpp
         folderlisting.h
         imageinfo.cpp
@@ -43,4 +47,4 @@ qt_add_qml_module(keekcore
 )
 
 target_include_directories(keekcore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(keekcore PUBLIC Qt6::Quick KF6::WindowSystem KF6::KIOGui KF6::CoreAddons KF6::ConfigCore keekconfig)
+target_link_libraries(keekcore PUBLIC Qt6::Quick KF6::WindowSystem KF6::KIOGui KF6::CoreAddons KF6::ConfigCore Qt6::Concurrent keekconfig)

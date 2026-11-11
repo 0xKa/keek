@@ -69,6 +69,7 @@ private Q_SLOTS:
         row("text-long.txt", "text", "ready");
         row("binary.bin", "fallback", "ready");
         row("empty", "fallback", "ready");
+        row("folder", "folder", "ready");
     }
 
     void fixtures()

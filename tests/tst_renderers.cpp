@@ -1,4 +1,5 @@
 #include "fixtures.h"
+#include "folderinfo.h"
 #include "imageinfo.h"
 #include "rendererregistry.h"
 #include "textfile.h"
@@ -46,7 +47,7 @@ private Q_SLOTS:
         QTest::newRow("ini, by content") << fixture("text-settings.ini") << u"text"_s;
         QTest::newRow("binary") << fixture("binary.bin") << u"fallback"_s;
         QTest::newRow("empty") << fixture("empty") << u"fallback"_s;
-        QTest::newRow("folder") << QStringLiteral(KEEK_FIXTURES_DIR) << u"fallback"_s;
+        QTest::newRow("folder") << fixture("folder") << u"folder"_s;
         QTest::newRow("pdf, by name") << u"/nonexistent/document.pdf"_s << u"fallback"_s;
         QTest::newRow("png, by name") << u"/nonexistent/picture.png"_s << u"image"_s;
     }
@@ -155,6 +156,44 @@ private Q_SLOTS:
         info.setSource(QUrl::fromLocalFile(fixture("image-vector.svg")));
         QCOMPARE(info.size(), QSize(200, 120));
         QVERIFY(info.isScalable());
+    }
+
+    void folderInfoCountsAndListsTheVisibleEntries()
+    {
+        FolderInfo info;
+        info.setMaximumEntries(3);
+        info.setSource(QUrl::fromLocalFile(fixture("folder")));
+
+        QCOMPARE(info.fileCount(), 7);
+        QCOMPARE(info.folderCount(), 2);
+        QCOMPARE(info.entries().size(), 3);
+        const QVariantMap first = info.entries().constFirst().toMap();
+        QCOMPARE(first["name"_L1].toString(), u"Documents"_s);
+        QVERIFY(!first["iconName"_L1].toString().isEmpty());
+
+        QTRY_VERIFY(!info.isCounting());
+        QCOMPARE(info.totalSize(), u"1.1 KiB"_s);
+    }
+
+    void folderInfoHandlesAnEmptyFolder()
+    {
+        QTemporaryDir dir;
+        FolderInfo info;
+        info.setSource(QUrl::fromLocalFile(dir.path()));
+        QCOMPARE(info.fileCount(), 0);
+        QCOMPARE(info.folderCount(), 0);
+        QVERIFY(info.entries().isEmpty());
+        QTRY_VERIFY(!info.isCounting());
+        QCOMPARE(info.totalSize(), u"0 B"_s);
+    }
+
+    void folderInfoCanBeDestroyedWhileCounting()
+    {
+        for (int i = 0; i < 20; ++i) {
+            FolderInfo info;
+            info.setSource(QUrl::fromLocalFile(u"/usr"_s));
+            info.setSource(QUrl::fromLocalFile(fixture("folder")));
+        }
     }
 
     void imageInfoHasNoSizeForOtherFiles()

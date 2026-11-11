@@ -13,4 +13,5 @@ struct Renderer {
 
 Renderer imageRenderer();
 Renderer textRenderer();
+Renderer folderRenderer();
 Renderer fallbackRenderer();

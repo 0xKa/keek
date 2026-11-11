@@ -13,6 +13,14 @@ QtObject {
     readonly property int detailSpacing: 6
     readonly property int detailFontSize: 13
 
+    readonly property int sectionSpacing: 20
+    readonly property int folderEntries: 8
+    readonly property int entryListWidth: 360
+    readonly property int entryHeight: 28
+    readonly property int entryIconSize: 22
+    readonly property int entryPadding: 8
+    readonly property int cornerRadius: 6
+
     readonly property int textPaddingX: 16
     readonly property int textPaddingY: 12
     readonly property int tabWidthInCharacters: 4
