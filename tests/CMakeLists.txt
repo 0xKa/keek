@@ -41,3 +41,11 @@ set_tests_properties(cli PROPERTIES
     ENVIRONMENT "${KEEK_TEST_ENVIRONMENT};KEEK_TEST_PRIVATE_BUS=1;KEEK_BIN=$<TARGET_FILE:keek>;KEEKD_BIN=$<TARGET_FILE:keekd>"
     LABELS session
 )
+
+add_test(NAME dolphin COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/dolphin-session.sh)
+set_tests_properties(dolphin PROPERTIES
+    ENVIRONMENT "KEEK_BIN_DIR=$<TARGET_FILE_DIR:keek>;KEEK_SERVICE_MENU=${CMAKE_BINARY_DIR}/data/keek.desktop;KEEK_FIXTURES_DIR=${CMAKE_CURRENT_SOURCE_DIR}/fixtures"
+    SKIP_RETURN_CODE 77
+    TIMEOUT 120
+    LABELS dolphin
+)
