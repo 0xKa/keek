@@ -9,11 +9,11 @@ Item {
         id: label
 
         anchors.centerIn: parent
-        width: parent.width - 48
+        width: parent.width - Metrics.margin * 2
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         color: message.palette.windowText
-        opacity: 0.7
-        font.pixelSize: 16
+        opacity: Metrics.mutedOpacity
+        font.pixelSize: Metrics.messageFontSize
     }
 }

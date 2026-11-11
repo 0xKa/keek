@@ -28,14 +28,14 @@ Rectangle {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: 24
-        anchors.rightMargin: 24
-        height: 40
+        anchors.leftMargin: Metrics.margin
+        anchors.rightMargin: Metrics.margin
+        height: Metrics.titleHeight
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideMiddle
         color: root.palette.windowText
-        font.pixelSize: 14
+        font.pixelSize: Metrics.titleFontSize
         text: root.controller.currentFileName
     }
 

@@ -1,5 +1,7 @@
 qt_add_library(keekcore STATIC)
 
+set_source_files_properties(Metrics.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
 qt_add_qml_module(keekcore
     URI Keek
     VERSION 1.0
@@ -7,6 +9,7 @@ qt_add_qml_module(keekcore
     QML_FILES
         CenteredMessage.qml
         ImageView.qml
+        Metrics.qml
         PlaceholderView.qml
         Popup.qml
         PreviewView.qml

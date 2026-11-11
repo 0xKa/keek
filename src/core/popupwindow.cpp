@@ -10,6 +10,11 @@
 
 using namespace Qt::StringLiterals;
 
+namespace
+{
+constexpr QSize defaultSize(960, 640);
+}
+
 PopupWindow::PopupWindow(QObject *controller, QObject *parent)
     : QObject(parent)
     , m_view(std::make_unique<QQuickView>())
@@ -17,7 +22,7 @@ PopupWindow::PopupWindow(QObject *controller, QObject *parent)
     m_view->setTitle(u"Keek"_s);
     m_view->setFlags(Qt::Window | Qt::FramelessWindowHint);
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
-    m_view->resize(960, 640);
+    m_view->resize(defaultSize);
     m_view->setInitialProperties({{u"controller"_s, QVariant::fromValue(controller)}});
     connect(m_view.get(), &QWindow::visibleChanged, this, &PopupWindow::visibleChanged);
 }

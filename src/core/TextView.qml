@@ -15,8 +15,8 @@ PreviewView {
     error: file.error
 
     Keys.onPressed: event => {
-        const line = metrics.lineSpacing * 3;
-        const page = flickable.height - metrics.lineSpacing * 2;
+        const line = metrics.lineSpacing * Metrics.linesPerScrollStep;
+        const page = flickable.height - metrics.lineSpacing * Metrics.linesKeptOnPageScroll;
         switch (event.key) {
         case Qt.Key_Down:
             view.scrollBy(line);
@@ -65,22 +65,22 @@ PreviewView {
         anchors.fill: parent
         anchors.bottomMargin: notice.visible ? notice.height : 0
         contentWidth: width
-        contentHeight: text.height + 24
+        contentHeight: text.height + Metrics.textPaddingY * 2
         boundsBehavior: Flickable.StopAtBounds
         clip: true
 
         TextEdit {
             id: text
 
-            x: 16
-            y: 12
-            width: flickable.width - 40
+            x: Metrics.textPaddingX
+            y: Metrics.textPaddingY
+            width: flickable.width - Metrics.textPaddingX - Metrics.margin
             text: file.text
             font: file.fixedFont
             color: view.palette.text
             textFormat: TextEdit.PlainText
             wrapMode: TextEdit.WrapAtWordBoundaryOrAnywhere
-            tabStopDistance: metrics.averageCharacterWidth * 4
+            tabStopDistance: metrics.averageCharacterWidth * Metrics.tabWidthInCharacters
             readOnly: true
             selectByMouse: false
             activeFocusOnPress: false
@@ -89,13 +89,13 @@ PreviewView {
 
     Rectangle {
         anchors.right: parent.right
-        anchors.rightMargin: 4
+        anchors.rightMargin: Metrics.scrollBarMargin
         y: flickable.visibleArea.yPosition * flickable.height
-        width: 6
-        height: Math.max(24, flickable.visibleArea.heightRatio * flickable.height)
-        radius: 3
+        width: Metrics.scrollBarWidth
+        height: Math.max(Metrics.scrollBarMinimumLength, flickable.visibleArea.heightRatio * flickable.height)
+        radius: Metrics.scrollBarWidth / 2
         color: view.palette.text
-        opacity: 0.35
+        opacity: Metrics.scrollBarOpacity
         visible: flickable.visibleArea.heightRatio < 1
     }
 
@@ -105,7 +105,7 @@ PreviewView {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        height: 28
+        height: Metrics.noticeHeight
         color: view.palette.window
         visible: file.truncated
 
