@@ -26,3 +26,10 @@ add_subdirectory(src)
 if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()
+
+add_custom_target(screenshot-page
+    COMMAND ${CMAKE_COMMAND} -E env KEEK_BIN_DIR=$<TARGET_FILE_DIR:keek>
+        ${CMAKE_SOURCE_DIR}/scripts/screenshot-page.sh ${CMAKE_BINARY_DIR}/screenshots
+    DEPENDS keek keekd
+    USES_TERMINAL
+)
