@@ -1,0 +1,25 @@
+---
+Language: Cpp
+BasedOnStyle: WebKit
+Standard: c++20
+TabWidth: 4
+ColumnLimit: 160
+SortIncludes: true
+BreakBeforeBraces: Linux
+PointerAlignment: Right
+AlignAfterOpenBracket: Align
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllArgumentsOnNextLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortEnumsOnASingleLine: false
+AllowShortLambdasOnASingleLine: Empty
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: true
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBinaryOperators: NonAssignment
+Cpp11BracedListStyle: true
+SpaceBeforeCpp11BracedList: false
+KeepEmptyLinesAtTheStartOfBlocks: false
+NamespaceIndentation: None
+SpaceAfterTemplateKeyword: false

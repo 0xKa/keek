@@ -38,7 +38,11 @@ ctest --preset dev -L dolphin
 cmake --build --preset dev --target all_qmllint
 ```
 
-No C++ formatter is set up yet.
+To format the C++ code, which needs `clang-format` from the `clang-tools-extra` package:
+
+```bash
+cmake --build --preset dev --target clang-format
+```
 
 ## Install and uninstall
 

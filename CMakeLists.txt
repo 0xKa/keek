@@ -28,6 +28,10 @@ if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()
 
+include(KDEClangFormat)
+file(GLOB_RECURSE KEEK_CXX_SOURCES src/*.cpp src/*.h tests/*.cpp tests/*.h)
+kde_clang_format(${KEEK_CXX_SOURCES})
+
 add_custom_target(screenshot-page
     COMMAND ${CMAKE_COMMAND} -E env KEEK_BIN_DIR=$<TARGET_FILE_DIR:keek>
         ${CMAKE_SOURCE_DIR}/scripts/screenshot-page.sh ${CMAKE_BINARY_DIR}/screenshots
