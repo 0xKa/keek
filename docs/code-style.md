@@ -46,8 +46,10 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 | No popup keys in views | Space, Esc, Enter and the arrows without modifiers belong to `Popup.qml`. A view handles only its own keys, such as Ctrl + ↑ or Page Down, and leaves the rest unaccepted. |
 | Ignore key repeat on close and open | The Space, Esc and Enter handlers return early when `event.isAutoRepeat` is set. Held arrows keep moving. |
 | Sizes from `Metrics` | Margins, heights, font sizes and opacities come from the `Metrics` singleton. No inline numbers for layout; add a named value there instead. |
-| Shared pieces | Use `CenteredMessage` for a centred note or error. Do not copy its `Text` block. |
-| Colours from the palette | Use `palette.window`, `palette.base` and `palette.text`. No hard-coded colours, so light and dark themes both work. |
+| Shared pieces | Use `CenteredMessage` for a centred note or error, `KeyScroller` for scrolling keys, `ScrollMarker` for a scroll position and `FileSummary` for an icon with details. Do not copy their blocks. |
+| Colours from the palette | Use `palette.window`, `palette.base` and `palette.text`. No hard-coded colours, so light and dark themes both work. The one exception is the white behind a PDF page, which is paper. |
+| Names that do not shadow | Do not name a property after one `Item` already has, such as `scale`, `opacity` or `state`. It replaces the built-in one and moves things in odd ways. |
+| Centre `ListView` delegates from inside | A `ListView` places its delegates at x = 0. Make the delegate as wide as the list and centre the content inside it. |
 | No stale content | Set `cache: false` on an `Image`, and keep the `Loader` inactive while the popup is hidden. |
 | Text for the user | Wrap it in `qsTr()`. |
 

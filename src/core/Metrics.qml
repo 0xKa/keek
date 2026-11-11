@@ -28,6 +28,10 @@ QtObject {
     readonly property int linesKeptOnPageScroll: 2
     readonly property int noticeHeight: 28
 
+    readonly property int pageSpacing: 16
+    readonly property int pdfLineStep: 40
+    readonly property real pdfMaximumZoom: 96 / 72
+
     readonly property int scrollBarWidth: 6
     readonly property int scrollBarMargin: 4
     readonly property int scrollBarMinimumLength: 24

@@ -12,9 +12,12 @@ qt_add_qml_module(keekcore
         FileSummary.qml
         FolderView.qml
         ImageView.qml
+        KeyScroller.qml
         Metrics.qml
         Popup.qml
+        PdfView.qml
         PreviewView.qml
+        ScrollMarker.qml
         TextView.qml
     SOURCES
         controller.cpp
@@ -34,6 +37,7 @@ qt_add_qml_module(keekcore
         imagerenderer.cpp
         logging.cpp
         logging.h
+        pdfrenderer.cpp
         popupwindow.cpp
         popupwindow.h
         renderer.h

@@ -12,6 +12,7 @@ struct Renderer {
 };
 
 Renderer imageRenderer();
+Renderer pdfRenderer();
 Renderer textRenderer();
 Renderer folderRenderer();
 Renderer fallbackRenderer();

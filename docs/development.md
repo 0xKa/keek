@@ -102,6 +102,7 @@ A renderer is a `Renderer` value: an ID, the name of a QML view, and a function 
 | ID | View | Accepts | Notes |
 |---|---|---|---|
 | `image` | `ImageView.qml` | Every type Qt's image reader can decode on this system, except PDF. | Shown at natural size, and shrunk only when larger than the popup. Vector images are scaled to fit. |
+| `pdf` | `PdfView.qml` | PDF documents. | Every page in one scrolling list, as wide as the popup allows but never above 100% zoom (72 points to 96 pixels). Pages are drawn on white paper in both themes. |
 | `text` | `TextView.qml` | Every type that inherits `text/plain`. | Highlighted by file name. Only the first 512 KiB is loaded. A file with NUL bytes is reported as not text. |
 | `folder` | `FolderView.qml` | Folders. | Shows how many files and folders it holds, its total size, its modification date and its first eight entries. Hidden entries are left out of the counts and the list, but not the size. |
 | `fallback` | `FallbackView.qml` | Everything else, and a missing file. | Shows the thumbnail Dolphin would show, or the file's icon when there is none, with the type, size and modification date. |
@@ -136,7 +137,7 @@ To add a renderer:
 | Enter | Close the popup and open the file in its default application. |
 | Space or Esc | Close the popup. |
 
-`Popup.qml` handles the arrows without modifiers, Enter, Space and Esc. Every other key goes to the view first.
+`Popup.qml` handles the arrows without modifiers, Enter, Space and Esc. Every other key goes to the view first. The text and PDF views scroll with `KeyScroller.qml` and show their position with `ScrollMarker.qml`.
 
 ### Which files the arrows move through
 
@@ -192,7 +193,7 @@ Exit codes:
 | `files` | Every file passed to the last `show`. |
 | `index` | The position of `file` in the list the arrows move through, from 0, or `null`. |
 | `count` | How many files that list holds. |
-| `renderer` | The renderer for `file`: `image`, `text`, `folder` or `fallback`, or `null`. |
+| `renderer` | The renderer for `file`: `image`, `pdf`, `text`, `folder` or `fallback`, or `null`. |
 | `mimeType` | The MIME type of `file`, or `null`. |
 | `width`, `height` | The popup's size. |
 | `activationToken` | Whether the last `show` carried an activation token. |

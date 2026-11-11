@@ -67,6 +67,8 @@ private Q_SLOTS:
         row("text-notes.md", "text", "ready");
         row("text-settings.ini", "text", "ready");
         row("text-long.txt", "text", "ready");
+        row("pdf-document.pdf", "pdf", "ready");
+        row("pdf-broken.pdf", "pdf", "error");
         row("binary.bin", "fallback", "ready");
         row("empty", "fallback", "ready");
         row("folder", "folder", "ready");
@@ -172,6 +174,25 @@ private Q_SLOTS:
         QTest::keyClick(window, Qt::Key_Home);
         QCOMPARE(stableGrab(window), before);
         QCOMPARE(controller.state()["visible"_L1].toBool(), true);
+    }
+
+    void pageDownScrollsAPdf()
+    {
+        Controller controller;
+        controller.show({fixture(u"pdf-document.pdf"_s)});
+        QTRY_COMPARE(status(controller), u"ready"_s);
+
+        QQuickWindow *window = controller.window()->quickWindow();
+        window->requestActivate();
+        QVERIFY(QTest::qWaitForWindowActive(window));
+
+        const QImage before = stableGrab(window);
+        QTest::keyClick(window, Qt::Key_PageDown);
+        QVERIFY(differingFraction(before, stableGrab(window), 0) > 0.001);
+        QTest::keyClick(window, Qt::Key_Down, Qt::ControlModifier);
+        QTest::keyClick(window, Qt::Key_Home);
+        QCOMPARE(stableGrab(window), before);
+        QCOMPARE(controller.currentFile(), fixture(u"pdf-document.pdf"_s));
     }
 
     void aThumbnailReplacesTheIcon()

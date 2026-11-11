@@ -6,47 +6,19 @@ PreviewView {
 
     readonly property bool dark: palette.base.hslLightness < 0.5
 
-    function scrollBy(distance: real) {
-        const limit = Math.max(0, flickable.contentHeight - flickable.height);
-        flickable.contentY = Math.max(0, Math.min(limit, flickable.contentY + distance));
-    }
-
     ready: file.ready
     error: file.error
 
     Keys.onPressed: event => {
-        const line = metrics.lineSpacing * Metrics.linesPerScrollStep;
-        const page = flickable.height - metrics.lineSpacing * Metrics.linesKeptOnPageScroll;
-        const lineKey = event.modifiers & Qt.ControlModifier;
-        switch (event.key) {
-        case Qt.Key_Down:
-            if (!lineKey) {
-                return;
-            }
-            view.scrollBy(line);
-            break;
-        case Qt.Key_Up:
-            if (!lineKey) {
-                return;
-            }
-            view.scrollBy(-line);
-            break;
-        case Qt.Key_PageDown:
-            view.scrollBy(page);
-            break;
-        case Qt.Key_PageUp:
-            view.scrollBy(-page);
-            break;
-        case Qt.Key_Home:
-            view.scrollBy(-flickable.contentHeight);
-            break;
-        case Qt.Key_End:
-            view.scrollBy(flickable.contentHeight);
-            break;
-        default:
-            return;
-        }
-        event.accepted = true;
+        event.accepted = scroller.handle(event);
+    }
+
+    KeyScroller {
+        id: scroller
+
+        flickable: flickable
+        lineStep: metrics.lineSpacing * Metrics.linesPerScrollStep
+        pageOverlap: metrics.lineSpacing * Metrics.linesKeptOnPageScroll
     }
 
     TextFile {
@@ -94,16 +66,8 @@ PreviewView {
         }
     }
 
-    Rectangle {
-        anchors.right: parent.right
-        anchors.rightMargin: Metrics.scrollBarMargin
-        y: flickable.visibleArea.yPosition * flickable.height
-        width: Metrics.scrollBarWidth
-        height: Math.max(Metrics.scrollBarMinimumLength, flickable.visibleArea.heightRatio * flickable.height)
-        radius: Metrics.scrollBarWidth / 2
-        color: view.palette.text
-        opacity: Metrics.scrollBarOpacity
-        visible: flickable.visibleArea.heightRatio < 1
+    ScrollMarker {
+        flickable: flickable
     }
 
     Rectangle {

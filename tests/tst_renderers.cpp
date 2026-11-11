@@ -48,7 +48,9 @@ private Q_SLOTS:
         QTest::newRow("binary") << fixture("binary.bin") << u"fallback"_s;
         QTest::newRow("empty") << fixture("empty") << u"fallback"_s;
         QTest::newRow("folder") << fixture("folder") << u"folder"_s;
-        QTest::newRow("pdf, by name") << u"/nonexistent/document.pdf"_s << u"fallback"_s;
+        QTest::newRow("pdf") << fixture("pdf-document.pdf") << u"pdf"_s;
+        QTest::newRow("broken pdf") << fixture("pdf-broken.pdf") << u"pdf"_s;
+        QTest::newRow("pdf, by name") << u"/nonexistent/document.pdf"_s << u"pdf"_s;
         QTest::newRow("png, by name") << u"/nonexistent/picture.png"_s << u"image"_s;
     }
 
