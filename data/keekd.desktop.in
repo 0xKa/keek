@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Keek
+Comment=Starts the Keek daemon so the first Quick Look after login is fast
+Icon=view-preview
+Exec=@KDE_INSTALL_FULL_BINDIR@/keekd
+NoDisplay=true
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=2

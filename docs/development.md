@@ -53,7 +53,7 @@ cmake --install build
 keek quit
 ```
 
-The install writes four files:
+The install writes five files:
 
 | File | Purpose |
 |---|---|
@@ -61,17 +61,19 @@ The install writes four files:
 | `~/.local/bin/keekd` | The daemon. |
 | `~/.local/share/kio/servicemenus/keek.desktop` | The "Quick Look" action for Dolphin. |
 | `~/.local/share/dbus-1/services/io.github._0xKa.keek.service` | Lets D-Bus start `keekd` on the first call. |
+| `~/.local/share/keek/keekd.desktop` | The autostart entry, unused until it is copied to `~/.config/autostart/`. |
 
 - **`keek quit` after an install** stops the old daemon. The next call starts the new one.
+- **Starting at login is optional.** Without it, D-Bus starts `keekd` on the first Space press, which makes that one press slower. To start it at login, copy the entry: `cp ~/.local/share/keek/keekd.desktop ~/.config/autostart/`. Plasma reads only `~/.config/autostart/`, which is outside the install prefix, so `cmake --install` cannot put it there itself. If D-Bus has already started a daemon, the one from autostart logs "keekd is already running" and exits.
 - **The first install on a login session** may need D-Bus to reread its service files: `busctl --user call org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus ReloadConfig`.
 - **Binding Space** is a separate, manual step. See [dolphin-shortcut.md](dolphin-shortcut.md).
 
-To remove the four files and the settings:
+To remove the five files, the autostart copy and the settings:
 
 ```bash
 keek quit
 cmake --build --preset dev --target uninstall
-rm -f ~/.config/keekrc
+rm -f ~/.config/autostart/keekd.desktop ~/.config/keekrc
 ```
 
 ## Layout
@@ -82,7 +84,7 @@ rm -f ~/.config/keekrc
 | `src/daemon/` | `keekd`: start-up, the D-Bus service and the JSON log. |
 | `src/cli/` | `keek`: the command-line client. It links only Qt Core and Qt D-Bus. |
 | `src/keek_config.h.in` | The version, application ID and D-Bus names, filled in by CMake. |
-| `data/` | The service-menu file and the D-Bus service file, filled in by CMake. |
+| `data/` | The service-menu file, the D-Bus service file and the autostart entry, filled in by CMake. |
 | `scripts/` | The screenshot page. |
 | `tests/` | The automated tests, the sample files in `fixtures/` and the reference screenshots in `reference/`. |
 
