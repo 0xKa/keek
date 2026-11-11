@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "fixtures.h"
 #include "imagecompare.h"
 #include "popupwindow.h"
 
@@ -12,11 +13,6 @@ using namespace Qt::StringLiterals;
 namespace
 {
 constexpr double maximumDifferingFraction = 0.001;
-
-QString fixture(const QString &name)
-{
-    return QStringLiteral(KEEK_FIXTURES_DIR "/") + name;
-}
 
 QString status(const Controller &controller)
 {

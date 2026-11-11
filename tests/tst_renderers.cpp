@@ -1,3 +1,4 @@
+#include "fixtures.h"
 #include "imageinfo.h"
 #include "rendererregistry.h"
 #include "textfile.h"
@@ -10,11 +11,6 @@ using namespace Qt::StringLiterals;
 
 namespace
 {
-QString fixture(const char *name)
-{
-    return QStringLiteral(KEEK_FIXTURES_DIR "/") + QString::fromUtf8(name);
-}
-
 QString writeFile(const QTemporaryDir &dir, const QString &name, const QByteArray &data)
 {
     const QString path = dir.filePath(name);

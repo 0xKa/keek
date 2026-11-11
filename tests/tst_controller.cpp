@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "fixtures.h"
 #include "popupwindow.h"
 
 #include <QImage>
@@ -18,12 +19,12 @@ class ControllerTest : public QObject
 private:
     static QString fileA()
     {
-        return QStringLiteral(KEEK_FIXTURES_DIR "/text-plain.txt");
+        return fixture("text-plain.txt");
     }
 
     static QString fileB()
     {
-        return QStringLiteral(KEEK_FIXTURES_DIR "/text-code.cpp");
+        return fixture("text-code.cpp");
     }
 
     static bool showAndActivate(Controller &controller, const QString &file)
