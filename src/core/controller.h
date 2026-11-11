@@ -58,6 +58,7 @@ Q_SIGNALS:
 
 private:
     QString status() const;
+    void setShowing(bool showing);
     bool moveBy(int step);
     void selectCurrent();
 
@@ -71,5 +72,6 @@ private:
     QString m_fileError;
     QString m_lastError;
     bool m_hadActivationToken = false;
+    bool m_showing = false;
     std::unique_ptr<PopupWindow> m_window;
 };

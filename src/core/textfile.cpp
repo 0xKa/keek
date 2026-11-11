@@ -5,6 +5,8 @@
 #include <QFontDatabase>
 #include <QStringDecoder>
 
+#include <algorithm>
+
 using namespace Qt::StringLiterals;
 
 namespace
@@ -22,6 +24,23 @@ QString decode(const QByteArray &data)
         return QString::fromLatin1(data);
     }
     return text;
+}
+
+int longestLine(QStringView text, int tabWidth)
+{
+    int longest = 0;
+    int column = 0;
+    for (const QChar character : text) {
+        if (character == u'\n') {
+            longest = std::max(longest, column);
+            column = 0;
+        } else if (character == u'\t') {
+            column += tabWidth - column % tabWidth;
+        } else if (!character.isLowSurrogate()) {
+            ++column;
+        }
+    }
+    return std::max(longest, column);
 }
 }
 
@@ -75,6 +94,37 @@ QFont TextFile::fixedFont() const
     return QFontDatabase::systemFont(QFontDatabase::FixedFont);
 }
 
+int TextFile::tabWidth() const
+{
+    return m_tabWidth;
+}
+
+void TextFile::setTabWidth(int tabWidth)
+{
+    tabWidth = std::max(1, tabWidth);
+    if (m_tabWidth == tabWidth) {
+        return;
+    }
+    m_tabWidth = tabWidth;
+    Q_EMIT tabWidthChanged();
+    measure();
+}
+
+int TextFile::columns() const
+{
+    return m_columns;
+}
+
+void TextFile::measure()
+{
+    const int columns = longestLine(m_text, m_tabWidth);
+    if (m_columns == columns) {
+        return;
+    }
+    m_columns = columns;
+    Q_EMIT columnsChanged();
+}
+
 void TextFile::load()
 {
     m_text.clear();
@@ -83,6 +133,7 @@ void TextFile::load()
     m_truncated = false;
 
     if (m_source.isEmpty()) {
+        measure();
         Q_EMIT contentChanged();
         return;
     }
@@ -90,6 +141,7 @@ void TextFile::load()
     QFile file(m_source.toLocalFile());
     if (!file.open(QIODevice::ReadOnly)) {
         m_error = tr("This file could not be read");
+        measure();
         Q_EMIT contentChanged();
         return;
     }
@@ -108,11 +160,13 @@ void TextFile::load()
     if (!hasByteOrderMark && data.contains('\0')) {
         m_error = tr("This file is not text");
         m_truncated = false;
+        measure();
         Q_EMIT contentChanged();
         return;
     }
 
     m_text = decode(data);
     m_ready = true;
+    measure();
     Q_EMIT contentChanged();
 }

@@ -13,7 +13,7 @@ if [ -z "${KEEK_PRIVATE_BUS:-}" ]; then
     env KEEK_PRIVATE_BUS=1 KEEK_AUTOPLAY=0 \
         XDG_CONFIG_HOME="$home/config" XDG_DATA_HOME="$home/data" \
         XDG_CACHE_HOME="$home/cache" XDG_STATE_HOME="$home/state" \
-        QT_QPA_PLATFORM="${KEEK_PLATFORM:-offscreen}" \
+        QT_QPA_PLATFORM="${KEEK_PLATFORM:-offscreen:configfile=$root/tests/offscreen.json}" \
         dbus-run-session -- "$0" "$out_dir"
     exit $?
 fi
@@ -45,7 +45,7 @@ cat >"$page" <<'HTML'
 body { font-family: sans-serif; margin: 24px; background: #808080; color: #fff; }
 main { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 24px; }
 figure { margin: 0; }
-img { width: 100%; display: block; }
+img { max-width: 100%; display: block; }
 figcaption { padding: 6px 0; font-size: 14px; }
 .error { color: #ffd0d0; }
 </style>

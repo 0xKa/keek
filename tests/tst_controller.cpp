@@ -214,6 +214,20 @@ private Q_SLOTS:
         QCOMPARE(current(controller), u"a.txt"_s);
     }
 
+    void hidingBeforeThePopupAppearsStopsThePreview()
+    {
+        Controller controller;
+        controller.show({fixture("video-clip.webm")});
+        QVERIFY(controller.isShowing());
+        QVERIFY(!controller.window()->quickWindow()->isVisible());
+
+        controller.hide();
+        QVERIFY(!controller.isShowing());
+        QCOMPARE(controller.state()["visible"_L1].toBool(), false);
+        QTest::qWait(300);
+        QVERIFY(!controller.window()->quickWindow()->isVisible());
+    }
+
     void movingPicksTheRendererForTheNewFile()
     {
         Controller controller;

@@ -2,7 +2,7 @@ find_program(DBUS_RUN_SESSION dbus-run-session REQUIRED)
 
 set(KEEK_TEST_HOME ${CMAKE_BINARY_DIR}/test-home)
 set(KEEK_TEST_ENVIRONMENT
-    QT_QPA_PLATFORM=offscreen
+    QT_QPA_PLATFORM=offscreen:configfile=${CMAKE_CURRENT_SOURCE_DIR}/offscreen.json
     QT_QUICK_BACKEND=software
     QT_SCALE_FACTOR=1
     QT_FONT_DPI=96

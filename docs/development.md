@@ -113,9 +113,27 @@ A renderer is a `Renderer` value: an ID, the name of a QML view, and a function 
 To add a renderer:
 
 1. Add a `<name>renderer.cpp` that returns the `Renderer`, and declare it in `renderer.h`.
-2. Add a `<Name>View.qml` whose root is `PreviewView`. It reads the file from `controller.currentFileUrl`, and sets `ready` and `error`.
+2. Add a `<Name>View.qml` whose root is `PreviewView`. It reads the file from `controller.currentFileUrl`, sets `ready` and `error`, and sets `preferredWidth` and `preferredHeight` once it knows them. See "Popup size and placement" below.
 3. Register it in `RendererRegistry`'s constructor, before the fallback, and list the files in `src/core/CMakeLists.txt`.
 4. Add sample files to `tests/fixtures/`, rows to the tables in `tst_renderers.cpp` and `tst_previews.cpp`, and generate the reference screenshots.
+
+### Popup size and placement
+
+The popup sizes itself to the file. Each view sets `preferredWidth` and `preferredHeight`, the space its content wants below the title, and `Popup.qml` turns that into the window size. `PopupWindow` applies it.
+
+| View | Size it asks for |
+|---|---|
+| Image | The image at its natural size, shrunk to fit the space available. A vector image is drawn with its longer side at 512 pixels. |
+| PDF | The first page whole, at up to 100% zoom. |
+| Text | As wide as the longest line, up to 100 columns, and as tall as the text. |
+| Video | The video's resolution, shrunk to fit, plus the control bar. |
+| Audio, folder, fallback | Their summary block plus the margins. |
+
+- **Limits:** the popup is at least 480 × 320 and at most 85% of the screen's available area. The view is told the space it can use through its `available` property.
+- **Before the size is known:** the popup uses 960 × 640. A view with an error gets the minimum size.
+- **Showing waits for the size.** `PopupWindow` keeps a hidden popup hidden until the root's `sized` is true, for at most 150 ms, so it opens at its final size. `keek state` already reports `visible` as true during the wait.
+- **KWin places the popup.** It centres a new window and keeps it centred when it resizes. A resize sent before the first frame is drawn can lose the centre, so `PopupWindow` holds resizes until then. When KWin answers with the old size, `PopupWindow` asks again, up to 3 times.
+- **The offscreen screen is 1920 × 1080.** The tests and the screenshot page use `tests/offscreen.json`, so the sizes do not depend on Qt's default offscreen screen.
 
 ### Thumbnails and icons
 
@@ -269,9 +287,9 @@ This shows every file in `tests/fixtures/` in an offscreen daemon and writes `bu
 | `renderers` | `unit` | Which renderer each sample file gets, text loading (encodings, truncation, binary data) and image sizes. |
 | `listing` | `unit` | The order of the list the arrows move through, and which files it leaves out. |
 | `controller` | `offscreen` | The controller and the popup in one process: show, toggle, hide, moving between files, Enter, the close keys and screenshots. |
-| `previews` | `offscreen` | Every sample file shown in the popup and compared with its reference screenshot, plus switching files, scrolling, the media keys and a thumbnail. |
+| `previews` | `offscreen` | Every sample file shown in the popup and compared with its reference screenshot, plus the popup's size, switching files, scrolling, the media keys and a thumbnail. |
 | `cli` | `session` | The real `keekd` and `keek` programs on a private session bus started by `dbus-run-session`. |
-| `dolphin` | `dolphin` | A real Dolphin in a headless KWin session with throwaway settings. It triggers the Quick Look action with two files selected and checks what reaches the popup. |
+| `dolphin` | `dolphin` | A real Dolphin in a headless KWin session with throwaway settings. It triggers the Quick Look action with two files selected, checks what reaches the popup, and checks that KWin keeps the popup centred as it changes size. |
 | `appstreamtest` | none | Added by a KDE build module. It passes because there is no metadata to check yet. |
 
 - **The tests use their own settings.** They run with `QT_QPA_PLATFORM=offscreen`, the software renderer, and `XDG_*` folders under `build/test-home/`, so the user's settings and an installed Keek do not affect them.

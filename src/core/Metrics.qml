@@ -2,6 +2,13 @@ pragma Singleton
 import QtQuick
 
 QtObject {
+    readonly property int popupMinimumWidth: 480
+    readonly property int popupMinimumHeight: 320
+    readonly property int popupDefaultWidth: 960
+    readonly property int popupDefaultHeight: 640
+    readonly property int textColumns: 100
+    readonly property int vectorImageSize: 512
+
     readonly property int margin: 24
     readonly property int titleHeight: 40
     readonly property int titleFontSize: 14

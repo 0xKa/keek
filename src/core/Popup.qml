@@ -7,6 +7,12 @@ Rectangle {
     readonly property PreviewView view: content.item as PreviewView
     readonly property bool contentReady: view ? view.ready : false
     readonly property string contentError: view ? view.error : ""
+    property size availableSize: Qt.size(Metrics.popupDefaultWidth, Metrics.popupDefaultHeight)
+    readonly property bool hasPreference: view !== null && contentError === "" && view.preferredWidth > 0 && view.preferredHeight > 0
+    readonly property bool sized: contentError !== "" || hasPreference || contentReady
+    readonly property real wantedWidth: hasPreference ? view.preferredWidth : contentError === "" ? Metrics.popupDefaultWidth : 0
+    readonly property real wantedHeight: (hasPreference ? view.preferredHeight : contentError === "" ? Metrics.popupDefaultHeight : 0) + Metrics.titleHeight
+    readonly property size preferredSize: Qt.size(Math.ceil(Math.min(availableSize.width, Math.max(Metrics.popupMinimumWidth, wantedWidth))), Math.ceil(Math.min(availableSize.height, Math.max(Metrics.popupMinimumHeight, wantedHeight))))
 
     color: palette.window
     focus: true
@@ -76,6 +82,13 @@ Rectangle {
         target: root.view
         property: "controller"
         value: root.controller
+        when: root.view !== null
+    }
+
+    Binding {
+        target: root.view
+        property: "available"
+        value: Qt.size(root.availableSize.width, root.availableSize.height - Metrics.titleHeight)
         when: root.view !== null
     }
 

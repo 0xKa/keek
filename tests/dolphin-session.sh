@@ -20,12 +20,13 @@ if [ -z "${KEEK_SESSION_DIR:-}" ]; then
     chmod +x "$dir/data/kio/servicemenus/keek.desktop"
     cp "$KEEK_FIXTURES_DIR/image-landscape.png" "$dir/files/a.png"
     cp "$KEEK_FIXTURES_DIR/text-plain.txt" "$dir/files/b.txt"
+    cp "$KEEK_FIXTURES_DIR/video-clip.webm" "$dir/files/c.webm"
 
     env -u WAYLAND_DISPLAY -u DISPLAY -u XDG_ACTIVATION_TOKEN -u DBUS_SESSION_BUS_ADDRESS \
         KEEK_SESSION_DIR="$dir" QT_QPA_PLATFORM=wayland \
         XDG_RUNTIME_DIR="$dir/runtime" XDG_CONFIG_HOME="$dir/config" XDG_DATA_HOME="$dir/data" \
         XDG_CACHE_HOME="$dir/cache" XDG_STATE_HOME="$dir/state" \
-        timeout 100 dbus-run-session -- kwin_wayland --virtual --socket keek \
+        timeout 100 dbus-run-session -- kwin_wayland --virtual --width 1920 --height 1080 --socket keek \
         --no-lockscreen --no-global-shortcuts --no-kactivities --exit-with-session "$0" >"$dir/kwin.log" 2>&1
 
     cat "$dir/result.log" 2>/dev/null
@@ -94,6 +95,27 @@ trigger_until() {
     fail "$label: the popup never reached the expected state: $*"
 }
 
+popup_geometry() {
+    local match uuid
+    match=$(dbus-send --session --print-reply --dest=org.kde.KWin /WindowsRunner org.kde.krunner1.Match string:Keek) || return 1
+    uuid=$(grep -o '"[0-9]*_{[0-9a-f-]*}"' <<<"$match" | head -1 | tr -d '"' | sed 's/^[0-9]*_//')
+    [ -n "$uuid" ] || return 1
+    qdbus-qt6 org.kde.KWin /KWin org.kde.KWin.getWindowInfo "$uuid" | awk -F': ' '$1 == "x" || $1 == "y" || $1 == "width" || $1 == "height" { printf "%s=%s ", $1, $2 }'
+}
+
+popup_centred() {
+    local geometry state
+    geometry=$(popup_geometry) || return 1
+    state=$("$keek" state) || return 1
+    awk -v g="$geometry" -v w="$(grep -o '"width":[0-9]*' <<<"$state" | cut -d: -f2)" -v h="$(grep -o '"height":[0-9]*' <<<"$state" | cut -d: -f2)" 'BEGIN {
+        split(g, parts, " ")
+        for (i in parts) { split(parts[i], kv, "="); value[kv[1]] = kv[2] }
+        dx = value["x"] * 2 + value["width"] - 1920
+        dy = value["y"] * 2 + value["height"] - 1080
+        exit !(value["width"] == w && value["height"] == h && dx >= -1 && dx <= 1 && dy >= -1 && dy <= 1)
+    }'
+}
+
 close_dolphin() {
     "$keek" hide >/dev/null 2>&1
     kill "$dolphin_pid" 2>/dev/null
@@ -101,7 +123,7 @@ close_dolphin() {
     dolphin_pid=""
 }
 
-"$KEEK_BIN_DIR/keekd" 2>"$dir/keekd.log" &
+KEEK_AUTOPLAY=0 "$KEEK_BIN_DIR/keekd" 2>"$dir/keekd.log" &
 wait_for 100 "$keek" state || fail "keekd did not start"
 
 start_dolphin selection --select "$dir/files/a.png" "$dir/files/b.txt"
@@ -109,6 +131,15 @@ trigger_until selection '"visible":true' "\"$dir/files/a.png\"" "\"$dir/files/b.
 wait_for 50 state_has '"status":"ready"' || fail "selection: the preview did not become ready"
 wait_for 50 state_has '"active":true' || fail "selection: the popup did not get keyboard focus"
 echo "ok: two selected files reach the popup, with an activation token and keyboard focus"
+wait_for 30 popup_centred || fail "selection: the popup is not centred at its own size: $(popup_geometry)"
+"$keek" next || fail "selection: could not move to the next file"
+wait_for 50 state_has '"status":"ready"' "\"$dir/files/b.txt\"" || fail "next: the text preview did not become ready"
+wait_for 30 popup_centred || fail "next: the popup is not centred at its new size: $(popup_geometry)"
+"$keek" hide
+"$keek" show "$dir/files/c.webm" || fail "video: keek show failed"
+wait_for 50 state_has '"status":"ready"' '"renderer":"video"' || fail "video: the video preview did not become ready"
+wait_for 30 popup_centred || fail "video: the popup is not centred once the video has loaded: $(popup_geometry)"
+echo "ok: the popup is centred at its own size, and stays centred when the next file has another size or loads late"
 close_dolphin
 
 "$keek" quit || fail "keekd did not quit"

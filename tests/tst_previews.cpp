@@ -8,6 +8,7 @@
 #include <KIO/PreviewJob>
 
 #include <QDir>
+#include <QFileInfo>
 #include <QJsonObject>
 #include <QQuickItem>
 #include <QQuickWindow>
@@ -113,6 +114,46 @@ private Q_SLOTS:
             actual.save(actualPath);
             QFAIL(qPrintable(u"%1% of the pixels differ from the reference; the popup as drawn is in %2"_s.arg(difference * 100, 0, 'f', 2).arg(actualPath)));
         }
+    }
+
+    void thePopupFitsTheFile_data()
+    {
+        QTest::addColumn<QString>("file");
+        QTest::addColumn<QSize>("size");
+        QTest::newRow("wide image at its own size") << fixture(u"image-wide.webp"_s) << QSize(1600, 340);
+        QTest::newRow("small image at the minimum") << fixture(u"image-small.png"_s) << QSize(480, 320);
+        QTest::newRow("portrait image") << fixture(u"image-portrait.jpg"_s) << QSize(480, 640);
+        QTest::newRow("first PDF page whole") << fixture(u"pdf-document.pdf"_s) << QSize(608, 865);
+        QTest::newRow("large image shrunk to the screen") << m_copies.filePath(u"large.png"_s) << QSize(1171, 918);
+        QTest::newRow("error at the minimum") << fixture(u"image-broken.png"_s) << QSize(480, 320);
+    }
+
+    void thePopupFitsTheFile()
+    {
+        QFETCH(QString, file);
+        QFETCH(QSize, size);
+
+        QImage large(4000, 3000, QImage::Format_RGB32);
+        large.fill(Qt::darkCyan);
+        QVERIFY(QFileInfo::exists(m_copies.filePath(u"large.png"_s)) || large.save(m_copies.filePath(u"large.png"_s)));
+
+        Controller controller;
+        controller.show({file});
+        QTRY_VERIFY(settled(controller));
+        QTRY_COMPARE(controller.window()->size(), size);
+    }
+
+    void movingResizesThePopup()
+    {
+        Controller controller;
+        controller.show({fixture(u"image-small.png"_s), fixture(u"image-wide.webp"_s)});
+        QTRY_COMPARE(controller.window()->size(), QSize(480, 320));
+
+        QVERIFY(controller.next());
+        QTRY_COMPARE(controller.window()->size(), QSize(1600, 340));
+
+        QVERIFY(controller.previous());
+        QTRY_COMPARE(controller.window()->size(), QSize(480, 320));
     }
 
     void switchingFilesSwitchesTheRenderer()

@@ -5,6 +5,8 @@ PreviewView {
 
     ready: !details.exists || summary.finished
     error: view.controller ? view.controller.fileError : ""
+    preferredWidth: summary.implicitWidth + Metrics.margin * 2
+    preferredHeight: summary.implicitHeight + Metrics.margin * 2
 
     FileDetails {
         id: details

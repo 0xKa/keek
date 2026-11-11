@@ -36,7 +36,11 @@ Controller::Controller(QObject *parent)
     , m_opener(openWithDefaultApplication)
     , m_window(std::make_unique<PopupWindow>(this))
 {
-    connect(m_window.get(), &PopupWindow::visibleChanged, this, &Controller::showingChanged);
+    connect(m_window.get(), &PopupWindow::visibleChanged, this, [this] {
+        if (!m_window->isVisible()) {
+            setShowing(false);
+        }
+    });
     m_window->load();
 }
 
@@ -79,7 +83,16 @@ QString Controller::rendererComponent() const
 
 bool Controller::isShowing() const
 {
-    return m_window->isVisible();
+    return m_showing;
+}
+
+void Controller::setShowing(bool showing)
+{
+    if (m_showing == showing) {
+        return;
+    }
+    m_showing = showing;
+    Q_EMIT showingChanged();
 }
 
 void Controller::show(const QStringList &paths, const QString &activationToken)
@@ -94,6 +107,7 @@ void Controller::show(const QStringList &paths, const QString &activationToken)
     m_hadActivationToken = !activationToken.isEmpty();
     m_lastError.clear();
     selectCurrent();
+    setShowing(true);
 
     m_window->show(activationToken);
     qCInfo(lcKeek).noquote() << "show" << currentFile() << "renderer" << m_renderer->id;
@@ -180,6 +194,7 @@ void Controller::hide()
         return;
     }
     m_window->hide();
+    setShowing(false);
     qCInfo(lcKeek) << "hide";
 }
 

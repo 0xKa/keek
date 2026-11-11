@@ -3,6 +3,7 @@
 #include <QImage>
 #include <QObject>
 #include <QSize>
+#include <QTimer>
 
 #include <functional>
 #include <memory>
@@ -37,6 +38,21 @@ public:
 Q_SIGNALS:
     void visibleChanged();
 
+private Q_SLOTS:
+    void contentSizeChanged();
+
 private:
+    void present();
+    void updateAvailableSize();
+    void reassertSize();
+    void applyPreferredSize();
+    QSize preferredSize() const;
+    bool isContentSized() const;
+
     std::unique_ptr<QQuickView> m_view;
+    QTimer m_sizeWait;
+    QString m_pendingToken;
+    bool m_showPending = false;
+    bool m_drawn = false;
+    int m_corrections = 0;
 };

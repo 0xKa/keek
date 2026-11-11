@@ -17,6 +17,8 @@ PreviewView {
     }
 
     ready: !info.counting
+    preferredWidth: layout.implicitWidth + Metrics.margin * 2
+    preferredHeight: layout.implicitHeight + Metrics.margin * 2
 
     FolderInfo {
         id: info
@@ -32,6 +34,8 @@ PreviewView {
     }
 
     Column {
+        id: layout
+
         anchors.centerIn: parent
         spacing: Metrics.sectionSpacing
 

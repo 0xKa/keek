@@ -8,6 +8,8 @@ PreviewView {
 
     ready: file.ready
     error: file.error
+    preferredWidth: Math.min(file.columns, Metrics.textColumns) * metrics.averageCharacterWidth + Metrics.textPaddingX + Metrics.margin
+    preferredHeight: flickable.contentHeight + (notice.visible ? notice.height : 0)
 
     Keys.onPressed: event => {
         event.accepted = scroller.handle(event);
@@ -25,6 +27,7 @@ PreviewView {
         id: file
 
         source: view.controller ? view.controller.currentFileUrl : ""
+        tabWidth: Metrics.tabWidthInCharacters
     }
 
     FontMetrics {
@@ -53,7 +56,7 @@ PreviewView {
 
             x: Metrics.textPaddingX
             y: Metrics.textPaddingY
-            width: flickable.width - Metrics.textPaddingX - Metrics.margin
+            width: Math.ceil(flickable.width - Metrics.textPaddingX - Metrics.margin)
             text: file.text
             font: file.fixedFont
             color: view.palette.text
