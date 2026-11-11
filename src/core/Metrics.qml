@@ -8,6 +8,7 @@ QtObject {
     readonly property int popupDefaultHeight: 640
     readonly property int textColumns: 100
     readonly property int vectorImageSize: 512
+    readonly property int revealDuration: 120
 
     readonly property int margin: 24
     readonly property int titleHeight: 40

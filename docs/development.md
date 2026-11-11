@@ -135,6 +135,14 @@ The popup sizes itself to the file. Each view sets `preferredWidth` and `preferr
 - **KWin places the popup.** It centres a new window and keeps it centred when it resizes. A resize sent before the first frame is drawn can lose the centre, so `PopupWindow` holds resizes until then. When KWin answers with the old size, `PopupWindow` asks again, up to 3 times.
 - **The offscreen screen is 1920 × 1080.** The tests and the screenshot page use `tests/offscreen.json`, so the sizes do not depend on Qt's default offscreen screen.
 
+### Animation
+
+- **Opening and closing are KWin's.** Plasma's Scale effect, on by default, already animates the popup as it appears and disappears. Keek adds nothing of its own there, so a close is never delayed.
+- **The preview fades in.** When the popup opens, when the arrows move to another file and when a renderer gives up and the fallback takes over, the preview fades in over 120 ms, once its size is known. The title and errors are not faded.
+- **Plasma's animation speed applies.** `DesktopSettings` reads `AnimationDurationFactor` from the `[KDE]` group of `kdeglobals` and follows changes to it. The fade lasts 120 ms times that factor, and 0 turns it off.
+- **Resizing is not animated.** Every resize on Wayland is a round trip to KWin, and an early one can lose the centre, so the popup jumps to its new size.
+- **`ready` waits for the fade.** `keek state` reports `loading` until the preview is fully shown, so a screenshot taken at `ready` never catches it half faded.
+
 ### Errors
 
 A view sets `error` to one sentence that says what went wrong. `Popup.qml` then hides the view and draws the file's icon, type, size and date with the message and a warning icon below, sized to fit. `FileOverview.qml` draws this block, and the fallback view uses it too.
@@ -306,7 +314,7 @@ This shows every file in `tests/fixtures/` in an offscreen daemon and writes `bu
 | `renderers` | `unit` | Which renderer each sample file gets, text loading (encodings, truncation, binary data) and image sizes. |
 | `listing` | `unit` | The order of the list the arrows move through, and which files it leaves out. |
 | `controller` | `offscreen` | The controller and the popup in one process: show, toggle, hide, moving between files, Enter, the close keys and screenshots. |
-| `previews` | `offscreen` | Every sample file shown in the popup and compared with its reference screenshot, plus the popup's size, switching files, scrolling, the media keys and a thumbnail. |
+| `previews` | `offscreen` | Every sample file shown in the popup and compared with its reference screenshot, plus the popup's size, the fade-in, switching files, scrolling, the media keys and a thumbnail. |
 | `cli` | `session` | The real `keekd` and `keek` programs on a private session bus started by `dbus-run-session`. |
 | `dolphin` | `dolphin` | A real Dolphin in a headless KWin session with throwaway settings. It triggers the Quick Look action with two files selected, checks what reaches the popup, and checks that KWin keeps the popup centred as it changes size. |
 | `appstreamtest` | none | Added by a KDE build module. It passes because there is no metadata to check yet. |

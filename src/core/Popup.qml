@@ -5,12 +5,27 @@ Rectangle {
 
     required property Controller controller
     readonly property PreviewView view: content.item as PreviewView
-    readonly property bool contentReady: view ? view.ready : false
+    readonly property bool viewReady: view ? view.ready : false
+    property real revealProgress: 0
+    readonly property bool contentReady: viewReady && revealProgress >= 1
     readonly property string contentError: view ? view.error : ""
     property size availableSize: Qt.size(Metrics.popupDefaultWidth, Metrics.popupDefaultHeight)
     readonly property bool failed: contentError !== ""
     readonly property bool hasPreference: view !== null && !failed && view.preferredWidth > 0 && view.preferredHeight > 0
-    readonly property bool sized: failed || hasPreference || contentReady
+    readonly property bool sized: failed || hasPreference || viewReady
+
+    function reveal() {
+        if (!root.sized || root.revealProgress >= 1 || revealAnimation.running) {
+            return;
+        }
+        if (DesktopSettings.animationFactor <= 0) {
+            root.revealProgress = 1;
+            return;
+        }
+        revealAnimation.start();
+    }
+
+    onSizedChanged: root.reveal()
     readonly property real wantedWidth: failed ? errorOverview.implicitWidth : hasPreference ? view.preferredWidth : Metrics.popupDefaultWidth
     readonly property real wantedHeight: (failed ? errorOverview.implicitHeight : hasPreference ? view.preferredHeight : Metrics.popupDefaultHeight) + Metrics.titleHeight
     readonly property size preferredSize: Qt.size(Math.ceil(Math.min(availableSize.width, Math.max(Metrics.popupMinimumWidth, wantedWidth))), Math.ceil(Math.min(availableSize.height, Math.max(Metrics.popupMinimumHeight, wantedHeight))))
@@ -76,7 +91,28 @@ Rectangle {
         anchors.bottom: parent.bottom
         active: root.controller.showing
         source: root.controller.rendererComponent + ".qml"
-        opacity: root.failed ? 0 : 1
+        opacity: root.failed ? 0 : root.revealProgress
+    }
+
+    Connections {
+        target: root.controller
+
+        function onCurrentFileChanged() {
+            revealAnimation.stop();
+            root.revealProgress = 0;
+            Qt.callLater(root.reveal);
+        }
+    }
+
+    NumberAnimation {
+        id: revealAnimation
+
+        target: root
+        property: "revealProgress"
+        from: 0
+        to: 1
+        duration: Metrics.revealDuration * DesktopSettings.animationFactor
+        easing.type: Easing.OutCubic
     }
 
     Binding {

@@ -25,6 +25,8 @@ qt_add_qml_module(keekcore
     SOURCES
         controller.cpp
         controller.h
+        desktopsettings.cpp
+        desktopsettings.h
         fallbackrenderer.cpp
         filedetails.cpp
         filedetails.h

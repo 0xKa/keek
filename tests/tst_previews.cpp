@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "desktopsettings.h"
 #include "fixtures.h"
 #include "imagecompare.h"
 #include "mediasettings.h"
@@ -12,6 +13,7 @@
 #include <QJsonObject>
 #include <QQuickItem>
 #include <QQuickWindow>
+#include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTest>
 
@@ -173,6 +175,44 @@ private Q_SLOTS:
 
         QVERIFY(controller.previous());
         QTRY_COMPARE(controller.window()->size(), QSize(480, 320));
+    }
+
+    void readyMeansTheContentHasFadedIn()
+    {
+        Controller controller;
+        controller.show({fixture(u"text-plain.txt"_s), fixture(u"text-code.cpp"_s)});
+        QQuickItem *root = controller.window()->quickWindow()->contentItem()->childItems().value(0);
+        QVERIFY(root);
+        QTRY_COMPARE(status(controller), u"ready"_s);
+        QCOMPARE(root->property("revealProgress").toReal(), 1.0);
+
+        QVERIFY(controller.next());
+        QCOMPARE(root->property("revealProgress").toReal(), 0.0);
+        QCOMPARE(status(controller), u"loading"_s);
+        QTRY_COMPARE(status(controller), u"ready"_s);
+        QCOMPARE(root->property("revealProgress").toReal(), 1.0);
+    }
+
+    void theFadeFollowsThePlasmaAnimationSpeed()
+    {
+        const QString path = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + u"/kdeglobals"_s;
+        QVERIFY(QDir().mkpath(QFileInfo(path).path()));
+        const auto writeFactor = [&path](const char *factor) {
+            QFile file(path);
+            return file.open(QIODevice::WriteOnly) && file.write(QByteArray("[KDE]\nAnimationDurationFactor=") + factor + '\n') > 0;
+        };
+
+        QVERIFY(writeFactor("0.25"));
+        QCOMPARE(DesktopSettings().animationFactor(), 0.25);
+
+        QVERIFY(writeFactor("0"));
+        {
+            Controller controller;
+            controller.show({fixture(u"text-plain.txt"_s)});
+            QTRY_COMPARE(status(controller), u"ready"_s);
+        }
+        QVERIFY(QFile::remove(path));
+        QCOMPARE(DesktopSettings().animationFactor(), 1.0);
     }
 
     void switchingFilesSwitchesTheRenderer()
