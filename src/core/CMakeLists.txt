@@ -7,18 +7,21 @@ qt_add_qml_module(keekcore
     VERSION 1.0
     OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Keek
     QML_FILES
+        AudioView.qml
         CenteredMessage.qml
         FallbackView.qml
         FileSummary.qml
         FolderView.qml
         ImageView.qml
         KeyScroller.qml
+        MediaView.qml
         Metrics.qml
         Popup.qml
         PdfView.qml
         PreviewView.qml
         ScrollMarker.qml
         TextView.qml
+        VideoView.qml
     SOURCES
         controller.cpp
         controller.h
@@ -37,6 +40,9 @@ qt_add_qml_module(keekcore
         imagerenderer.cpp
         logging.cpp
         logging.h
+        mediarenderers.cpp
+        mediasettings.cpp
+        mediasettings.h
         pdfrenderer.cpp
         popupwindow.cpp
         popupwindow.h

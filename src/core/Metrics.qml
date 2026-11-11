@@ -28,6 +28,11 @@ QtObject {
     readonly property int linesKeptOnPageScroll: 2
     readonly property int noticeHeight: 28
 
+    readonly property int controlBarHeight: 48
+    readonly property int timeLabelWidth: 56
+    readonly property int seekStepMs: 5000
+    readonly property int firstFrameTimeoutMs: 3000
+
     readonly property int pageSpacing: 16
     readonly property int pdfLineStep: 40
     readonly property real pdfMaximumZoom: 96 / 72

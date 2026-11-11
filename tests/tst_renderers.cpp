@@ -1,6 +1,7 @@
 #include "fixtures.h"
 #include "folderinfo.h"
 #include "imageinfo.h"
+#include "mediasettings.h"
 #include "rendererregistry.h"
 #include "textfile.h"
 
@@ -45,6 +46,9 @@ private Q_SLOTS:
         QTest::newRow("json") << fixture("text-data.json") << u"text"_s;
         QTest::newRow("markdown") << fixture("text-notes.md") << u"text"_s;
         QTest::newRow("ini, by content") << fixture("text-settings.ini") << u"text"_s;
+        QTest::newRow("webm") << fixture("video-clip.webm") << u"video"_s;
+        QTest::newRow("broken mp4") << fixture("video-broken.mp4") << u"video"_s;
+        QTest::newRow("flac") << fixture("audio-tone.flac") << u"audio"_s;
         QTest::newRow("binary") << fixture("binary.bin") << u"fallback"_s;
         QTest::newRow("empty") << fixture("empty") << u"fallback"_s;
         QTest::newRow("folder") << fixture("folder") << u"folder"_s;
@@ -196,6 +200,23 @@ private Q_SLOTS:
             info.setSource(QUrl::fromLocalFile(u"/usr"_s));
             info.setSource(QUrl::fromLocalFile(fixture("folder")));
         }
+    }
+
+    void mediaSettingsAreRemembered()
+    {
+        {
+            MediaSettings settings;
+            settings.setVideoMuted(false);
+            settings.setAudioMuted(true);
+        }
+        MediaSettings settings;
+        QVERIFY(!settings.isVideoMuted());
+        QVERIFY(settings.isAudioMuted());
+        settings.setVideoMuted(true);
+        settings.setAudioMuted(false);
+        QVERIFY(settings.isVideoMuted());
+        QVERIFY(!settings.isAudioMuted());
+        QVERIFY(!settings.autoplay());
     }
 
     void imageInfoHasNoSizeForOtherFiles()

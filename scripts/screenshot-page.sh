@@ -10,7 +10,7 @@ if [ -z "${KEEK_PRIVATE_BUS:-}" ]; then
     home=$(mktemp -d)
     trap 'rm -rf "$home"' EXIT
     mkdir -p "$home/config" "$home/data" "$home/cache" "$home/state"
-    env KEEK_PRIVATE_BUS=1 \
+    env KEEK_PRIVATE_BUS=1 KEEK_AUTOPLAY=0 \
         XDG_CONFIG_HOME="$home/config" XDG_DATA_HOME="$home/data" \
         XDG_CACHE_HOME="$home/cache" XDG_STATE_HOME="$home/state" \
         QT_QPA_PLATFORM="${KEEK_PLATFORM:-offscreen}" \

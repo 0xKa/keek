@@ -150,6 +150,16 @@ void Controller::openCurrentFile()
     });
 }
 
+void Controller::useFallback()
+{
+    if (m_renderer == &m_registry.fallback()) {
+        return;
+    }
+    qCInfo(lcKeek).noquote() << "renderer" << m_renderer->id << "could not show" << currentFile() << "- using" << m_registry.fallback().id;
+    m_renderer = &m_registry.fallback();
+    Q_EMIT currentFileChanged();
+}
+
 void Controller::setFileOpener(FileOpener opener)
 {
     m_opener = std::move(opener);

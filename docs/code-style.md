@@ -52,6 +52,9 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 | Centre `ListView` delegates from inside | A `ListView` places its delegates at x = 0. Make the delegate as wide as the list and centre the content inside it. |
 | No stale content | Set `cache: false` on an `Image`, and keep the `Loader` inactive while the popup is hidden. |
 | Text for the user | Wrap it in `qsTr()`. |
+| Controls never take focus | Give every `Button`, `ToolButton` and `Slider` `focusPolicy: Qt.NoFocus`. A focused control would swallow Space and the arrows. |
+| Colour controls from the view's palette | Set `color` on a `Label` and `icon.color` on a button from `view.palette`. The Controls style may use other colours than the popup's background. |
+| No sound in tests | Anything that shows audio or video runs with `KEEK_AUTOPLAY=0`. |
 
 ## Bash
 

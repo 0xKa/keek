@@ -296,6 +296,20 @@ private Q_SLOTS:
         QVERIFY(!opened);
     }
 
+    void useFallbackSwitchesTheRenderer()
+    {
+        Controller controller;
+        controller.show({fileA()});
+        QCOMPARE(controller.state()["renderer"_L1].toString(), u"text"_s);
+
+        controller.useFallback();
+        QCOMPARE(controller.state()["renderer"_L1].toString(), u"fallback"_s);
+        QCOMPARE(controller.rendererComponent(), u"FallbackView"_s);
+
+        QVERIFY(controller.next());
+        QCOMPARE(controller.state()["renderer"_L1].toString(), u"text"_s);
+    }
+
     void screenshotSavesWhatThePopupDraws()
     {
         QTemporaryDir dir;

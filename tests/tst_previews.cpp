@@ -1,6 +1,7 @@
 #include "controller.h"
 #include "fixtures.h"
 #include "imagecompare.h"
+#include "mediasettings.h"
 #include "popupwindow.h"
 #include "thumbnail.h"
 
@@ -69,6 +70,9 @@ private Q_SLOTS:
         row("text-long.txt", "text", "ready");
         row("pdf-document.pdf", "pdf", "ready");
         row("pdf-broken.pdf", "pdf", "error");
+        row("video-clip.webm", "video", "ready");
+        row("video-broken.mp4", "fallback", "ready");
+        row("audio-tone.flac", "audio", "ready");
         row("binary.bin", "fallback", "ready");
         row("empty", "fallback", "ready");
         row("folder", "folder", "ready");
@@ -193,6 +197,58 @@ private Q_SLOTS:
         QTest::keyClick(window, Qt::Key_Home);
         QCOMPARE(stableGrab(window), before);
         QCOMPARE(controller.currentFile(), fixture(u"pdf-document.pdf"_s));
+    }
+
+    void mediaKeys_data()
+    {
+        QTest::addColumn<QString>("file");
+        QTest::addColumn<bool>("startsMuted");
+        QTest::newRow("video") << u"video-clip.webm"_s << true;
+        QTest::newRow("audio") << u"audio-tone.flac"_s << false;
+    }
+
+    void mediaKeys()
+    {
+        QFETCH(QString, file);
+        QFETCH(bool, startsMuted);
+
+        MediaSettings settings;
+        settings.setVideoMuted(true);
+        settings.setAudioMuted(false);
+
+        Controller controller;
+        controller.show({fixture(file)});
+        QTRY_COMPARE(status(controller), u"ready"_s);
+
+        QQuickWindow *window = controller.window()->quickWindow();
+        window->requestActivate();
+        QVERIFY(QTest::qWaitForWindowActive(window));
+
+        QObject *player = window->contentItem()->findChild<QObject *>(u"player"_s);
+        QVERIFY(player);
+        QObject *output = player->property("audioOutput").value<QObject *>();
+        QVERIFY(output);
+        QCOMPARE(output->property("muted").toBool(), startsMuted);
+        QCOMPARE(player->property("playbackState").toInt(), 2);
+
+        QTest::keyClick(window, Qt::Key_K);
+        QTRY_COMPARE(player->property("playbackState").toInt(), 1);
+        QTest::keyClick(window, Qt::Key_K);
+        QTRY_COMPARE(player->property("playbackState").toInt(), 2);
+
+        QTest::keyClick(window, Qt::Key_Right, Qt::ShiftModifier);
+        QTRY_VERIFY(player->property("position").toLongLong() > 0);
+        QTest::keyClick(window, Qt::Key_Left, Qt::ShiftModifier);
+        QTRY_COMPARE(player->property("position").toLongLong(), 0);
+
+        QTest::keyClick(window, Qt::Key_M);
+        QCOMPARE(output->property("muted").toBool(), !startsMuted);
+        QCOMPARE(file.startsWith("video"_L1) ? settings.isVideoMuted() : settings.isAudioMuted(), !startsMuted);
+
+        QCOMPARE(controller.currentFile(), fixture(file));
+        QCOMPARE(controller.state()["visible"_L1].toBool(), true);
+        settings.setVideoMuted(true);
+        settings.setAudioMuted(false);
     }
 
     void aThumbnailReplacesTheIcon()

@@ -14,5 +14,7 @@ struct Renderer {
 Renderer imageRenderer();
 Renderer pdfRenderer();
 Renderer textRenderer();
+Renderer audioRenderer();
+Renderer videoRenderer();
 Renderer folderRenderer();
 Renderer fallbackRenderer();

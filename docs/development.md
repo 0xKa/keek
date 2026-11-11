@@ -46,7 +46,7 @@ cmake --build --preset dev --target clang-format
 
 ## Install and uninstall
 
-Everything installs under `~/.local`, with no `sudo`:
+Everything installs under `~/.local`, with no `sudo`. `keekd` also writes `~/.config/keekrc` the first time a mute button is pressed.
 
 ```bash
 cmake --install build
@@ -66,11 +66,12 @@ The install writes four files:
 - **The first install on a login session** may need D-Bus to reread its service files: `busctl --user call org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus ReloadConfig`.
 - **Binding Space** is a separate, manual step. See [dolphin-shortcut.md](dolphin-shortcut.md).
 
-To remove the four files:
+To remove the four files and the settings:
 
 ```bash
 keek quit
 cmake --build --preset dev --target uninstall
+rm -f ~/.config/keekrc
 ```
 
 ## Layout
@@ -104,6 +105,8 @@ A renderer is a `Renderer` value: an ID, the name of a QML view, and a function 
 | `image` | `ImageView.qml` | Every type Qt's image reader can decode on this system, except PDF. | Shown at natural size, and shrunk only when larger than the popup. Vector images are scaled to fit. |
 | `pdf` | `PdfView.qml` | PDF documents. | Every page in one scrolling list, as wide as the popup allows but never above 100% zoom (72 points to 96 pixels). Pages are drawn on white paper in both themes. |
 | `text` | `TextView.qml` | Every type that inherits `text/plain`. | Highlighted by file name. Only the first 512 KiB is loaded. A file with NUL bytes is reported as not text. |
+| `audio` | `AudioView.qml` | Every `audio/*` type that is not text. | Qt Multimedia. Shows the cover from Dolphin's thumbnailer or the icon, with the title, artist and album when Qt can read them. Starts playing with sound. |
+| `video` | `VideoView.qml` | Every `video/*` type. | Qt Multimedia. Starts playing without sound. Clicking the picture plays or pauses. |
 | `folder` | `FolderView.qml` | Folders. | Shows how many files and folders it holds, its total size, its modification date and its first eight entries. Hidden entries are left out of the counts and the list, but not the size. |
 | `fallback` | `FallbackView.qml` | Everything else, and a missing file. | Shows the thumbnail Dolphin would show, or the file's icon when there is none, with the type, size and modification date. |
 
@@ -121,6 +124,24 @@ To add a renderer:
 - **`FileDetails`** gives a file's icon name, type, size and modification date, read through `KFileItem`.
 - **`FileSummary.qml`** puts the thumbnail or icon above a few lines of details.
 
+### Audio and video
+
+`MediaView.qml` holds the player and the control bar that `AudioView.qml` and `VideoView.qml` share.
+
+- **Mute is remembered** separately for audio and video, in `~/.config/keekrc`:
+
+  ```ini
+  [Media]
+  AudioMuted=false
+  VideoMuted=true
+  ```
+
+  These are the defaults when the file does not exist. `MediaSettings` reads and writes them.
+- **`KEEK_AUTOPLAY=0`** in `keekd`'s environment stops playback from starting on its own. The player pauses on the first frame instead. The tests and the screenshot page set it, so they never make a sound.
+- **Files that cannot be played fall back.** When the player reports an error, finds no picture in a video or no sound in an audio file, or no video frame arrives within 3 seconds, the view calls `Controller::useFallback()` and the popup shows the fallback view. This covers H.265 video on a Fedora install without RPM Fusion's codecs.
+- **A video is `ready`** once its first frame has arrived, so a screenshot taken then shows a picture.
+- **Qt reads tags only from the container.** FLAC and MP3 titles show; Ogg Vorbis and Opus titles do not, because they sit on the stream.
+
 ### Folder size
 
 `FolderInfo` adds up the size of every file under the folder on a Qt Concurrent worker thread, without following symbolic links. The popup shows the running total every 200 ms and the status stays `loading` until the count is done. Showing another file cancels the count.
@@ -134,6 +155,9 @@ To add a renderer:
 | Ctrl + ↑ or ↓ | Scroll one line. |
 | Page Up, Page Down | Scroll one page. |
 | Home, End | Go to the top or the bottom. |
+| K | Play or pause audio or video. |
+| M | Mute or unmute audio or video. |
+| Shift + ← or → | Go back or forward 5 seconds in audio or video. |
 | Enter | Close the popup and open the file in its default application. |
 | Space or Esc | Close the popup. |
 
@@ -193,7 +217,7 @@ Exit codes:
 | `files` | Every file passed to the last `show`. |
 | `index` | The position of `file` in the list the arrows move through, from 0, or `null`. |
 | `count` | How many files that list holds. |
-| `renderer` | The renderer for `file`: `image`, `pdf`, `text`, `folder` or `fallback`, or `null`. |
+| `renderer` | The renderer for `file`: `image`, `pdf`, `text`, `audio`, `video`, `folder` or `fallback`, or `null`. |
 | `mimeType` | The MIME type of `file`, or `null`. |
 | `width`, `height` | The popup's size. |
 | `activationToken` | Whether the last `show` carried an activation token. |
@@ -245,7 +269,7 @@ This shows every file in `tests/fixtures/` in an offscreen daemon and writes `bu
 | `renderers` | `unit` | Which renderer each sample file gets, text loading (encodings, truncation, binary data) and image sizes. |
 | `listing` | `unit` | The order of the list the arrows move through, and which files it leaves out. |
 | `controller` | `offscreen` | The controller and the popup in one process: show, toggle, hide, moving between files, Enter, the close keys and screenshots. |
-| `previews` | `offscreen` | Every sample file shown in the popup and compared with its reference screenshot, plus switching files, scrolling and a thumbnail. |
+| `previews` | `offscreen` | Every sample file shown in the popup and compared with its reference screenshot, plus switching files, scrolling, the media keys and a thumbnail. |
 | `cli` | `session` | The real `keekd` and `keek` programs on a private session bus started by `dbus-run-session`. |
 | `dolphin` | `dolphin` | A real Dolphin in a headless KWin session with throwaway settings. It triggers the Quick Look action with two files selected and checks what reaches the popup. |
 | `appstreamtest` | none | Added by a KDE build module. It passes because there is no metadata to check yet. |
@@ -257,6 +281,8 @@ This shows every file in `tests/fixtures/` in an offscreen daemon and writes `bu
 ### Reference screenshots
 
 `previews` fails when more than 0.1% of the pixels differ from the reference by more than 40 levels in a channel. On failure it saves what the popup drew to `build/test-output/<file>.actual.png`.
+
+The offscreen platform cannot draw video frames, so the video reference shows the control bar over an empty picture. A real or headless KWin session draws them; the commands under "Trying a change" work there too.
 
 The test shows copies of the sample files, all dated 2 January 2026 at 03:04, and runs with `TZ=UTC`, so the dates in the popup do not change between checkouts. A thumbnail depends on the plugins installed, so no reference screenshot shows one; `comic.cbz` is checked by a separate test that only asks whether a thumbnail appeared.
 

@@ -47,6 +47,7 @@ public:
     Q_INVOKABLE bool next();
     Q_INVOKABLE bool previous();
     Q_INVOKABLE void openCurrentFile();
+    Q_INVOKABLE void useFallback();
     void setFileOpener(FileOpener opener);
     bool screenshot(const QString &file, QString *error = nullptr);
     QJsonObject state() const;
