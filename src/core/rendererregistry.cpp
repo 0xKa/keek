@@ -4,7 +4,7 @@ RendererRegistry::RendererRegistry()
 {
     m_renderers.push_back(imageRenderer());
     m_renderers.push_back(textRenderer());
-    m_renderers.push_back(placeholderRenderer());
+    m_renderers.push_back(fallbackRenderer());
 }
 
 RendererRegistry::Match RendererRegistry::select(const QString &path) const

@@ -2,11 +2,11 @@
 
 using namespace Qt::StringLiterals;
 
-Renderer placeholderRenderer()
+Renderer fallbackRenderer()
 {
     return {
-        u"placeholder"_s,
-        u"PlaceholderView"_s,
+        u"fallback"_s,
+        u"FallbackView"_s,
         [](const QMimeType &) {
             return true;
         },

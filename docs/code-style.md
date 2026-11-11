@@ -67,5 +67,5 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 |---|---|
 | One source for names | The application ID is `KEEK_APP_ID` in the top-level file. Files that need it are generated with `configure_file`. |
 | New tests go through `keek_add_test` | Then add the test with a label: `unit`, `offscreen`, `session` or `dolphin`. Give it `KEEK_TEST_ENVIRONMENT` so it cannot read the user's settings. |
-| Shared test helpers | `tests/fixtures.h` gives the path of a sample file, and `tests/imagecompare.h` compares screenshots. Do not redefine them in a test. |
+| Shared test helpers | `tests/fixtures.h` gives the path of a sample file and copies the sample files with a fixed date, and `tests/imagecompare.h` compares screenshots. Do not redefine them in a test. |
 | Link only what is used | Do not add a Qt or KDE component to `find_package` until code needs it. |

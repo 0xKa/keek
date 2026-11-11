@@ -8,15 +8,21 @@ qt_add_qml_module(keekcore
     OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Keek
     QML_FILES
         CenteredMessage.qml
+        FallbackView.qml
+        FileSummary.qml
         ImageView.qml
         Metrics.qml
-        PlaceholderView.qml
         Popup.qml
         PreviewView.qml
         TextView.qml
     SOURCES
         controller.cpp
         controller.h
+        fallbackrenderer.cpp
+        filedetails.cpp
+        filedetails.h
+        fileicon.cpp
+        fileicon.h
         folderlisting.cpp
         folderlisting.h
         imageinfo.cpp
@@ -24,7 +30,6 @@ qt_add_qml_module(keekcore
         imagerenderer.cpp
         logging.cpp
         logging.h
-        placeholderrenderer.cpp
         popupwindow.cpp
         popupwindow.h
         renderer.h
@@ -33,7 +38,9 @@ qt_add_qml_module(keekcore
         textfile.cpp
         textfile.h
         textrenderer.cpp
+        thumbnail.cpp
+        thumbnail.h
 )
 
 target_include_directories(keekcore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(keekcore PUBLIC Qt6::Quick KF6::WindowSystem KF6::KIOGui keekconfig)
+target_link_libraries(keekcore PUBLIC Qt6::Quick KF6::WindowSystem KF6::KIOGui KF6::CoreAddons KF6::ConfigCore keekconfig)

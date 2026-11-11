@@ -44,10 +44,10 @@ private Q_SLOTS:
         QTest::newRow("json") << fixture("text-data.json") << u"text"_s;
         QTest::newRow("markdown") << fixture("text-notes.md") << u"text"_s;
         QTest::newRow("ini, by content") << fixture("text-settings.ini") << u"text"_s;
-        QTest::newRow("binary") << fixture("binary.bin") << u"placeholder"_s;
-        QTest::newRow("empty") << fixture("empty") << u"placeholder"_s;
-        QTest::newRow("folder") << QStringLiteral(KEEK_FIXTURES_DIR) << u"placeholder"_s;
-        QTest::newRow("pdf, by name") << u"/nonexistent/document.pdf"_s << u"placeholder"_s;
+        QTest::newRow("binary") << fixture("binary.bin") << u"fallback"_s;
+        QTest::newRow("empty") << fixture("empty") << u"fallback"_s;
+        QTest::newRow("folder") << QStringLiteral(KEEK_FIXTURES_DIR) << u"fallback"_s;
+        QTest::newRow("pdf, by name") << u"/nonexistent/document.pdf"_s << u"fallback"_s;
         QTest::newRow("png, by name") << u"/nonexistent/picture.png"_s << u"image"_s;
     }
 

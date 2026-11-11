@@ -6,22 +6,34 @@
 #include <KWindowSystem>
 
 #include <QFuture>
+#include <QIcon>
 
 #include <QQmlError>
 #include <QQuickItem>
 #include <QQuickView>
+#include <QStandardPaths>
 
 using namespace Qt::StringLiterals;
 
 namespace
 {
 constexpr QSize defaultSize(960, 640);
+
+void ensureIconTheme()
+{
+    if (!QIcon::themeName().isEmpty()) {
+        return;
+    }
+    QIcon::setThemeSearchPaths(QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, u"icons"_s, QStandardPaths::LocateDirectory));
+    QIcon::setThemeName(u"breeze"_s);
+}
 }
 
 PopupWindow::PopupWindow(QObject *controller, QObject *parent)
     : QObject(parent)
     , m_view(std::make_unique<QQuickView>())
 {
+    ensureIconTheme();
     m_view->setTitle(u"Keek"_s);
     m_view->setFlags(Qt::Window | Qt::FramelessWindowHint);
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);

@@ -103,14 +103,21 @@ A renderer is a `Renderer` value: an ID, the name of a QML view, and a function 
 |---|---|---|---|
 | `image` | `ImageView.qml` | Every type Qt's image reader can decode on this system, except PDF. | Shown at natural size, and shrunk only when larger than the popup. Vector images are scaled to fit. |
 | `text` | `TextView.qml` | Every type that inherits `text/plain`. | Highlighted by file name. Only the first 512 KiB is loaded. A file with NUL bytes is reported as not text. |
-| `placeholder` | `PlaceholderView.qml` | Everything else. | Shows the type's description. |
+| `fallback` | `FallbackView.qml` | Everything else, and a missing file. | Shows the thumbnail Dolphin would show, or the file's icon when there is none, with the type, size and modification date. |
 
 To add a renderer:
 
 1. Add a `<name>renderer.cpp` that returns the `Renderer`, and declare it in `renderer.h`.
 2. Add a `<Name>View.qml` whose root is `PreviewView`. It reads the file from `controller.currentFileUrl`, and sets `ready` and `error`.
-3. Register it in `RendererRegistry`'s constructor, before the placeholder, and list the files in `src/core/CMakeLists.txt`.
+3. Register it in `RendererRegistry`'s constructor, before the fallback, and list the files in `src/core/CMakeLists.txt`.
 4. Add sample files to `tests/fixtures/`, rows to the tables in `tst_renderers.cpp` and `tst_previews.cpp`, and generate the reference screenshots.
+
+### Thumbnails and icons
+
+- **`Thumbnail`** asks `KIO::PreviewJob` for the same thumbnail Dolphin shows. It uses the plugins enabled in Dolphin's settings (`dolphinrc`, `[PreviewSettings] Plugins`), or KIO's defaults when Dolphin has none.
+- **`FileIcon`** draws an icon from the icon theme. When no platform theme sets one, as in the offscreen tests, `PopupWindow` falls back to Breeze from the system icon folders.
+- **`FileDetails`** gives a file's icon name, type, size and modification date, read through `KFileItem`.
+- **`FileSummary.qml`** puts the thumbnail or icon above a few lines of details.
 
 ## Keys
 
@@ -180,7 +187,7 @@ Exit codes:
 | `files` | Every file passed to the last `show`. |
 | `index` | The position of `file` in the list the arrows move through, from 0, or `null`. |
 | `count` | How many files that list holds. |
-| `renderer` | The renderer for `file`: `image`, `text` or `placeholder`, or `null`. |
+| `renderer` | The renderer for `file`: `image`, `text` or `fallback`, or `null`. |
 | `mimeType` | The MIME type of `file`, or `null`. |
 | `width`, `height` | The popup's size. |
 | `activationToken` | Whether the last `show` carried an activation token. |
@@ -232,7 +239,7 @@ This shows every file in `tests/fixtures/` in an offscreen daemon and writes `bu
 | `renderers` | `unit` | Which renderer each sample file gets, text loading (encodings, truncation, binary data) and image sizes. |
 | `listing` | `unit` | The order of the list the arrows move through, and which files it leaves out. |
 | `controller` | `offscreen` | The controller and the popup in one process: show, toggle, hide, moving between files, Enter, the close keys and screenshots. |
-| `previews` | `offscreen` | Every sample file shown in the popup and compared with its reference screenshot, plus switching files and scrolling. |
+| `previews` | `offscreen` | Every sample file shown in the popup and compared with its reference screenshot, plus switching files, scrolling and a thumbnail. |
 | `cli` | `session` | The real `keekd` and `keek` programs on a private session bus started by `dbus-run-session`. |
 | `dolphin` | `dolphin` | A real Dolphin in a headless KWin session with throwaway settings. It triggers the Quick Look action with two files selected and checks what reaches the popup. |
 | `appstreamtest` | none | Added by a KDE build module. It passes because there is no metadata to check yet. |
@@ -245,7 +252,9 @@ This shows every file in `tests/fixtures/` in an offscreen daemon and writes `bu
 
 `previews` fails when more than 0.1% of the pixels differ from the reference by more than 40 levels in a channel. On failure it saves what the popup drew to `build/test-output/<file>.actual.png`.
 
-The references depend on the fonts installed on the machine, so a font or Qt update can change them. After checking that the new output is right, regenerate them:
+The test shows copies of the sample files, all dated 2 January 2026 at 03:04, and runs with `TZ=UTC`, so the dates in the popup do not change between checkouts. A thumbnail depends on the plugins installed, so no reference screenshot shows one; `comic.cbz` is checked by a separate test that only asks whether a thumbnail appeared.
+
+The references depend on the fonts and the Breeze icons installed on the machine, so a font or Qt update can change them. After checking that the new output is right, regenerate them:
 
 ```bash
 KEEK_UPDATE_REFERENCES=1 ctest --preset dev -R previews

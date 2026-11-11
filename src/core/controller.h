@@ -21,7 +21,7 @@ class Controller : public QObject
     Q_PROPERTY(QString currentFile READ currentFile NOTIFY currentFileChanged FINAL)
     Q_PROPERTY(QString currentFileName READ currentFileName NOTIFY currentFileChanged FINAL)
     Q_PROPERTY(QUrl currentFileUrl READ currentFileUrl NOTIFY currentFileChanged FINAL)
-    Q_PROPERTY(QString fileDescription READ fileDescription NOTIFY currentFileChanged FINAL)
+    Q_PROPERTY(QString fileError READ fileError NOTIFY currentFileChanged FINAL)
     Q_PROPERTY(QString rendererComponent READ rendererComponent NOTIFY currentFileChanged FINAL)
     Q_PROPERTY(bool showing READ isShowing NOTIFY showingChanged FINAL)
 
@@ -37,7 +37,7 @@ public:
     QString currentFile() const;
     QString currentFileName() const;
     QUrl currentFileUrl() const;
-    QString fileDescription() const;
+    QString fileError() const;
     QString rendererComponent() const;
     bool isShowing() const;
 

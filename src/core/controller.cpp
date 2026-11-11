@@ -67,9 +67,9 @@ QUrl Controller::currentFileUrl() const
     return m_files.isEmpty() ? QUrl() : QUrl::fromLocalFile(currentFile());
 }
 
-QString Controller::fileDescription() const
+QString Controller::fileError() const
 {
-    return m_fileError.isEmpty() ? m_mimeType.comment() : m_fileError;
+    return m_fileError;
 }
 
 QString Controller::rendererComponent() const

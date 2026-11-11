@@ -8,6 +8,11 @@ QtObject {
     readonly property int messageFontSize: 16
     readonly property real mutedOpacity: 0.7
 
+    readonly property int iconSize: 128
+    readonly property int thumbnailSize: 256
+    readonly property int detailSpacing: 6
+    readonly property int detailFontSize: 13
+
     readonly property int textPaddingX: 16
     readonly property int textPaddingY: 12
     readonly property int tabWidthInCharacters: 4

@@ -2,10 +2,15 @@
 #include "fixtures.h"
 #include "imagecompare.h"
 #include "popupwindow.h"
+#include "thumbnail.h"
+
+#include <KIO/PreviewJob>
 
 #include <QDir>
 #include <QJsonObject>
+#include <QQuickItem>
 #include <QQuickWindow>
+#include <QTemporaryDir>
 #include <QTest>
 
 using namespace Qt::StringLiterals;
@@ -30,7 +35,16 @@ class PreviewsTest : public QObject
 {
     Q_OBJECT
 
+private:
+    QTemporaryDir m_copies;
+
 private Q_SLOTS:
+    void initTestCase()
+    {
+        QVERIFY(m_copies.isValid());
+        QVERIFY(copyFixtures(m_copies.path()));
+    }
+
     void fixtures_data()
     {
         QTest::addColumn<QString>("file");
@@ -53,8 +67,8 @@ private Q_SLOTS:
         row("text-notes.md", "text", "ready");
         row("text-settings.ini", "text", "ready");
         row("text-long.txt", "text", "ready");
-        row("binary.bin", "placeholder", "ready");
-        row("empty", "placeholder", "ready");
+        row("binary.bin", "fallback", "ready");
+        row("empty", "fallback", "ready");
     }
 
     void fixtures()
@@ -65,7 +79,7 @@ private Q_SLOTS:
 
         Controller controller;
         QVERIFY(controller.isReady());
-        controller.show({fixture(file)});
+        controller.show({m_copies.filePath(file)});
         QTRY_VERIFY(settled(controller));
 
         const QJsonObject state = controller.state();
@@ -111,7 +125,7 @@ private Q_SLOTS:
 
         controller.show({fixture(u"binary.bin"_s)});
         QTRY_COMPARE(status(controller), u"ready"_s);
-        QCOMPARE(controller.state()["renderer"_L1].toString(), u"placeholder"_s);
+        QCOMPARE(controller.state()["renderer"_L1].toString(), u"fallback"_s);
         QVERIFY(controller.state()["lastError"_L1].isNull());
     }
 
@@ -135,7 +149,7 @@ private Q_SLOTS:
 
         const QJsonObject state = controller.state();
         QCOMPARE(state["status"_L1].toString(), u"error"_s);
-        QCOMPARE(state["renderer"_L1].toString(), u"placeholder"_s);
+        QCOMPARE(state["renderer"_L1].toString(), u"fallback"_s);
         QVERIFY(!state["lastError"_L1].isNull());
     }
 
@@ -157,6 +171,23 @@ private Q_SLOTS:
         QTest::keyClick(window, Qt::Key_Home);
         QCOMPARE(stableGrab(window), before);
         QCOMPARE(controller.state()["visible"_L1].toBool(), true);
+    }
+
+    void aThumbnailReplacesTheIcon()
+    {
+        if (!KIO::PreviewJob::defaultPlugins().contains(u"comicbookthumbnail"_s)) {
+            QSKIP("The comic book thumbnailer is not installed");
+        }
+
+        Controller controller;
+        controller.show({fixture(u"comic.cbz"_s)});
+        QTRY_COMPARE_WITH_TIMEOUT(status(controller), u"ready"_s, 10000);
+        QCOMPARE(controller.state()["renderer"_L1].toString(), u"fallback"_s);
+
+        const auto *thumbnail = controller.window()->quickWindow()->contentItem()->findChild<Thumbnail *>();
+        QVERIFY(thumbnail);
+        QVERIFY(thumbnail->isAvailable());
+        QVERIFY(thumbnail->implicitWidth() > 0);
     }
 
     void controlDownScrollsTextByALine()
