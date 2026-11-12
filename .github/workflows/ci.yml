@@ -52,7 +52,8 @@ jobs:
       - name: Install fonts and icons
         run: >
           dnf install -y --setopt=install_weak_deps=False
-          google-noto-sans-fonts google-noto-sans-mono-fonts breeze-icon-theme
+          google-noto-sans-fonts google-noto-sans-mono-fonts google-noto-sans-arabic-vf-fonts
+          breeze-icon-theme
 
       - name: Render the screenshot page
         run: cmake --build --preset dev --target screenshot-page
