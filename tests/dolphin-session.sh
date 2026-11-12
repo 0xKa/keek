@@ -35,6 +35,8 @@ if [ -z "${KEEK_SESSION_DIR:-}" ]; then
     fi
     echo "--- keekd log"
     cat "$dir/keekd.log" 2>/dev/null
+    echo "--- kwin log"
+    tail -n 40 "$dir/kwin.log" 2>/dev/null
     exit 1
 fi
 
