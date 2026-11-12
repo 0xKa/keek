@@ -2,17 +2,18 @@
 #include <string>
 #include <vector>
 
-struct Preview {
-    std::string file;
-    int width = 960;
-    int height = 640;
+struct Cat {
+    std::string name;
+    int napsPerDay = 16;
+    bool knocksThingsOver = true;
 };
 
 int main()
 {
-    const std::vector<Preview> previews{{"a.png"}, {"b.txt", 800, 600}};
-    for (const Preview &preview : previews) {
-        std::cout << preview.file << ": " << preview.width << 'x' << preview.height << '\n';
+    const std::vector<Cat> cats{{"Biscuit"}, {"Professor Whiskers", 22, false}};
+    for (const Cat &cat : cats) {
+        std::cout << cat.name << " naps " << cat.napsPerDay << " times a day";
+        std::cout << (cat.knocksThingsOver ? " and breaks things\n" : "\n");
     }
     return 0;
 }

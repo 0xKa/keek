@@ -1,7 +1,9 @@
 {
-  "name": "keek",
-  "visible": true,
-  "size": { "width": 960, "height": 640 },
-  "renderers": ["image", "text", "placeholder"],
-  "lastError": null
+  "name": "Biscuit",
+  "species": "cat",
+  "age": 9,
+  "indoors": true,
+  "favouriteSpots": ["keyboard", "laundry basket", "your chair"],
+  "dinnerTime": { "hour": 6, "minute": 0 },
+  "respectsBoundaries": null
 }

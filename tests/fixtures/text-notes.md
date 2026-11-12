@@ -1,10 +1,10 @@
-# Fixture notes
+# House rules, by the cat
 
-A *Markdown* file with a list and some `inline code`.
+The *humans* live here too, but only with `permission`.
 
-- First item
-- Second item with a [link](https://example.org)
+- Breakfast is at 5 a.m., not a minute later
+- Any closed door is a [personal insult](https://example.org)
 
 ```sh
-keek show README.md
+keek show my-food-bowl.jpg
 ```

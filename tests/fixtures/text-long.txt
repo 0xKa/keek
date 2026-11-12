@@ -1,400 +1,400 @@
-Line 001: the quick brown fox jumps over the lazy dog.
-Line 002: the quick brown fox jumps over the lazy dog.
-Line 003: the quick brown fox jumps over the lazy dog.
-Line 004: the quick brown fox jumps over the lazy dog.
-Line 005: the quick brown fox jumps over the lazy dog.
-Line 006: the quick brown fox jumps over the lazy dog.
-Line 007: the quick brown fox jumps over the lazy dog.
-Line 008: the quick brown fox jumps over the lazy dog.
-Line 009: the quick brown fox jumps over the lazy dog.
-Line 010: the quick brown fox jumps over the lazy dog.
-Line 011: the quick brown fox jumps over the lazy dog.
-Line 012: the quick brown fox jumps over the lazy dog.
-Line 013: the quick brown fox jumps over the lazy dog.
-Line 014: the quick brown fox jumps over the lazy dog.
-Line 015: the quick brown fox jumps over the lazy dog.
-Line 016: the quick brown fox jumps over the lazy dog.
-Line 017: the quick brown fox jumps over the lazy dog.
-Line 018: the quick brown fox jumps over the lazy dog.
-Line 019: the quick brown fox jumps over the lazy dog.
-Line 020: the quick brown fox jumps over the lazy dog.
-Line 021: the quick brown fox jumps over the lazy dog.
-Line 022: the quick brown fox jumps over the lazy dog.
-Line 023: the quick brown fox jumps over the lazy dog.
-Line 024: the quick brown fox jumps over the lazy dog.
-Line 025: the quick brown fox jumps over the lazy dog.
-Line 026: the quick brown fox jumps over the lazy dog.
-Line 027: the quick brown fox jumps over the lazy dog.
-Line 028: the quick brown fox jumps over the lazy dog.
-Line 029: the quick brown fox jumps over the lazy dog.
-Line 030: the quick brown fox jumps over the lazy dog.
-Line 031: the quick brown fox jumps over the lazy dog.
-Line 032: the quick brown fox jumps over the lazy dog.
-Line 033: the quick brown fox jumps over the lazy dog.
-Line 034: the quick brown fox jumps over the lazy dog.
-Line 035: the quick brown fox jumps over the lazy dog.
-Line 036: the quick brown fox jumps over the lazy dog.
-Line 037: the quick brown fox jumps over the lazy dog.
-Line 038: the quick brown fox jumps over the lazy dog.
-Line 039: the quick brown fox jumps over the lazy dog.
-Line 040: the quick brown fox jumps over the lazy dog.
-Line 041: the quick brown fox jumps over the lazy dog.
-Line 042: the quick brown fox jumps over the lazy dog.
-Line 043: the quick brown fox jumps over the lazy dog.
-Line 044: the quick brown fox jumps over the lazy dog.
-Line 045: the quick brown fox jumps over the lazy dog.
-Line 046: the quick brown fox jumps over the lazy dog.
-Line 047: the quick brown fox jumps over the lazy dog.
-Line 048: the quick brown fox jumps over the lazy dog.
-Line 049: the quick brown fox jumps over the lazy dog.
-Line 050: the quick brown fox jumps over the lazy dog.
-Line 051: the quick brown fox jumps over the lazy dog.
-Line 052: the quick brown fox jumps over the lazy dog.
-Line 053: the quick brown fox jumps over the lazy dog.
-Line 054: the quick brown fox jumps over the lazy dog.
-Line 055: the quick brown fox jumps over the lazy dog.
-Line 056: the quick brown fox jumps over the lazy dog.
-Line 057: the quick brown fox jumps over the lazy dog.
-Line 058: the quick brown fox jumps over the lazy dog.
-Line 059: the quick brown fox jumps over the lazy dog.
-Line 060: the quick brown fox jumps over the lazy dog.
-Line 061: the quick brown fox jumps over the lazy dog.
-Line 062: the quick brown fox jumps over the lazy dog.
-Line 063: the quick brown fox jumps over the lazy dog.
-Line 064: the quick brown fox jumps over the lazy dog.
-Line 065: the quick brown fox jumps over the lazy dog.
-Line 066: the quick brown fox jumps over the lazy dog.
-Line 067: the quick brown fox jumps over the lazy dog.
-Line 068: the quick brown fox jumps over the lazy dog.
-Line 069: the quick brown fox jumps over the lazy dog.
-Line 070: the quick brown fox jumps over the lazy dog.
-Line 071: the quick brown fox jumps over the lazy dog.
-Line 072: the quick brown fox jumps over the lazy dog.
-Line 073: the quick brown fox jumps over the lazy dog.
-Line 074: the quick brown fox jumps over the lazy dog.
-Line 075: the quick brown fox jumps over the lazy dog.
-Line 076: the quick brown fox jumps over the lazy dog.
-Line 077: the quick brown fox jumps over the lazy dog.
-Line 078: the quick brown fox jumps over the lazy dog.
-Line 079: the quick brown fox jumps over the lazy dog.
-Line 080: the quick brown fox jumps over the lazy dog.
-Line 081: the quick brown fox jumps over the lazy dog.
-Line 082: the quick brown fox jumps over the lazy dog.
-Line 083: the quick brown fox jumps over the lazy dog.
-Line 084: the quick brown fox jumps over the lazy dog.
-Line 085: the quick brown fox jumps over the lazy dog.
-Line 086: the quick brown fox jumps over the lazy dog.
-Line 087: the quick brown fox jumps over the lazy dog.
-Line 088: the quick brown fox jumps over the lazy dog.
-Line 089: the quick brown fox jumps over the lazy dog.
-Line 090: the quick brown fox jumps over the lazy dog.
-Line 091: the quick brown fox jumps over the lazy dog.
-Line 092: the quick brown fox jumps over the lazy dog.
-Line 093: the quick brown fox jumps over the lazy dog.
-Line 094: the quick brown fox jumps over the lazy dog.
-Line 095: the quick brown fox jumps over the lazy dog.
-Line 096: the quick brown fox jumps over the lazy dog.
-Line 097: the quick brown fox jumps over the lazy dog.
-Line 098: the quick brown fox jumps over the lazy dog.
-Line 099: the quick brown fox jumps over the lazy dog.
-Line 100: the quick brown fox jumps over the lazy dog.
-Line 101: the quick brown fox jumps over the lazy dog.
-Line 102: the quick brown fox jumps over the lazy dog.
-Line 103: the quick brown fox jumps over the lazy dog.
-Line 104: the quick brown fox jumps over the lazy dog.
-Line 105: the quick brown fox jumps over the lazy dog.
-Line 106: the quick brown fox jumps over the lazy dog.
-Line 107: the quick brown fox jumps over the lazy dog.
-Line 108: the quick brown fox jumps over the lazy dog.
-Line 109: the quick brown fox jumps over the lazy dog.
-Line 110: the quick brown fox jumps over the lazy dog.
-Line 111: the quick brown fox jumps over the lazy dog.
-Line 112: the quick brown fox jumps over the lazy dog.
-Line 113: the quick brown fox jumps over the lazy dog.
-Line 114: the quick brown fox jumps over the lazy dog.
-Line 115: the quick brown fox jumps over the lazy dog.
-Line 116: the quick brown fox jumps over the lazy dog.
-Line 117: the quick brown fox jumps over the lazy dog.
-Line 118: the quick brown fox jumps over the lazy dog.
-Line 119: the quick brown fox jumps over the lazy dog.
-Line 120: the quick brown fox jumps over the lazy dog.
-Line 121: the quick brown fox jumps over the lazy dog.
-Line 122: the quick brown fox jumps over the lazy dog.
-Line 123: the quick brown fox jumps over the lazy dog.
-Line 124: the quick brown fox jumps over the lazy dog.
-Line 125: the quick brown fox jumps over the lazy dog.
-Line 126: the quick brown fox jumps over the lazy dog.
-Line 127: the quick brown fox jumps over the lazy dog.
-Line 128: the quick brown fox jumps over the lazy dog.
-Line 129: the quick brown fox jumps over the lazy dog.
-Line 130: the quick brown fox jumps over the lazy dog.
-Line 131: the quick brown fox jumps over the lazy dog.
-Line 132: the quick brown fox jumps over the lazy dog.
-Line 133: the quick brown fox jumps over the lazy dog.
-Line 134: the quick brown fox jumps over the lazy dog.
-Line 135: the quick brown fox jumps over the lazy dog.
-Line 136: the quick brown fox jumps over the lazy dog.
-Line 137: the quick brown fox jumps over the lazy dog.
-Line 138: the quick brown fox jumps over the lazy dog.
-Line 139: the quick brown fox jumps over the lazy dog.
-Line 140: the quick brown fox jumps over the lazy dog.
-Line 141: the quick brown fox jumps over the lazy dog.
-Line 142: the quick brown fox jumps over the lazy dog.
-Line 143: the quick brown fox jumps over the lazy dog.
-Line 144: the quick brown fox jumps over the lazy dog.
-Line 145: the quick brown fox jumps over the lazy dog.
-Line 146: the quick brown fox jumps over the lazy dog.
-Line 147: the quick brown fox jumps over the lazy dog.
-Line 148: the quick brown fox jumps over the lazy dog.
-Line 149: the quick brown fox jumps over the lazy dog.
-Line 150: the quick brown fox jumps over the lazy dog.
-Line 151: the quick brown fox jumps over the lazy dog.
-Line 152: the quick brown fox jumps over the lazy dog.
-Line 153: the quick brown fox jumps over the lazy dog.
-Line 154: the quick brown fox jumps over the lazy dog.
-Line 155: the quick brown fox jumps over the lazy dog.
-Line 156: the quick brown fox jumps over the lazy dog.
-Line 157: the quick brown fox jumps over the lazy dog.
-Line 158: the quick brown fox jumps over the lazy dog.
-Line 159: the quick brown fox jumps over the lazy dog.
-Line 160: the quick brown fox jumps over the lazy dog.
-Line 161: the quick brown fox jumps over the lazy dog.
-Line 162: the quick brown fox jumps over the lazy dog.
-Line 163: the quick brown fox jumps over the lazy dog.
-Line 164: the quick brown fox jumps over the lazy dog.
-Line 165: the quick brown fox jumps over the lazy dog.
-Line 166: the quick brown fox jumps over the lazy dog.
-Line 167: the quick brown fox jumps over the lazy dog.
-Line 168: the quick brown fox jumps over the lazy dog.
-Line 169: the quick brown fox jumps over the lazy dog.
-Line 170: the quick brown fox jumps over the lazy dog.
-Line 171: the quick brown fox jumps over the lazy dog.
-Line 172: the quick brown fox jumps over the lazy dog.
-Line 173: the quick brown fox jumps over the lazy dog.
-Line 174: the quick brown fox jumps over the lazy dog.
-Line 175: the quick brown fox jumps over the lazy dog.
-Line 176: the quick brown fox jumps over the lazy dog.
-Line 177: the quick brown fox jumps over the lazy dog.
-Line 178: the quick brown fox jumps over the lazy dog.
-Line 179: the quick brown fox jumps over the lazy dog.
-Line 180: the quick brown fox jumps over the lazy dog.
-Line 181: the quick brown fox jumps over the lazy dog.
-Line 182: the quick brown fox jumps over the lazy dog.
-Line 183: the quick brown fox jumps over the lazy dog.
-Line 184: the quick brown fox jumps over the lazy dog.
-Line 185: the quick brown fox jumps over the lazy dog.
-Line 186: the quick brown fox jumps over the lazy dog.
-Line 187: the quick brown fox jumps over the lazy dog.
-Line 188: the quick brown fox jumps over the lazy dog.
-Line 189: the quick brown fox jumps over the lazy dog.
-Line 190: the quick brown fox jumps over the lazy dog.
-Line 191: the quick brown fox jumps over the lazy dog.
-Line 192: the quick brown fox jumps over the lazy dog.
-Line 193: the quick brown fox jumps over the lazy dog.
-Line 194: the quick brown fox jumps over the lazy dog.
-Line 195: the quick brown fox jumps over the lazy dog.
-Line 196: the quick brown fox jumps over the lazy dog.
-Line 197: the quick brown fox jumps over the lazy dog.
-Line 198: the quick brown fox jumps over the lazy dog.
-Line 199: the quick brown fox jumps over the lazy dog.
-Line 200: the quick brown fox jumps over the lazy dog.
-Line 201: the quick brown fox jumps over the lazy dog.
-Line 202: the quick brown fox jumps over the lazy dog.
-Line 203: the quick brown fox jumps over the lazy dog.
-Line 204: the quick brown fox jumps over the lazy dog.
-Line 205: the quick brown fox jumps over the lazy dog.
-Line 206: the quick brown fox jumps over the lazy dog.
-Line 207: the quick brown fox jumps over the lazy dog.
-Line 208: the quick brown fox jumps over the lazy dog.
-Line 209: the quick brown fox jumps over the lazy dog.
-Line 210: the quick brown fox jumps over the lazy dog.
-Line 211: the quick brown fox jumps over the lazy dog.
-Line 212: the quick brown fox jumps over the lazy dog.
-Line 213: the quick brown fox jumps over the lazy dog.
-Line 214: the quick brown fox jumps over the lazy dog.
-Line 215: the quick brown fox jumps over the lazy dog.
-Line 216: the quick brown fox jumps over the lazy dog.
-Line 217: the quick brown fox jumps over the lazy dog.
-Line 218: the quick brown fox jumps over the lazy dog.
-Line 219: the quick brown fox jumps over the lazy dog.
-Line 220: the quick brown fox jumps over the lazy dog.
-Line 221: the quick brown fox jumps over the lazy dog.
-Line 222: the quick brown fox jumps over the lazy dog.
-Line 223: the quick brown fox jumps over the lazy dog.
-Line 224: the quick brown fox jumps over the lazy dog.
-Line 225: the quick brown fox jumps over the lazy dog.
-Line 226: the quick brown fox jumps over the lazy dog.
-Line 227: the quick brown fox jumps over the lazy dog.
-Line 228: the quick brown fox jumps over the lazy dog.
-Line 229: the quick brown fox jumps over the lazy dog.
-Line 230: the quick brown fox jumps over the lazy dog.
-Line 231: the quick brown fox jumps over the lazy dog.
-Line 232: the quick brown fox jumps over the lazy dog.
-Line 233: the quick brown fox jumps over the lazy dog.
-Line 234: the quick brown fox jumps over the lazy dog.
-Line 235: the quick brown fox jumps over the lazy dog.
-Line 236: the quick brown fox jumps over the lazy dog.
-Line 237: the quick brown fox jumps over the lazy dog.
-Line 238: the quick brown fox jumps over the lazy dog.
-Line 239: the quick brown fox jumps over the lazy dog.
-Line 240: the quick brown fox jumps over the lazy dog.
-Line 241: the quick brown fox jumps over the lazy dog.
-Line 242: the quick brown fox jumps over the lazy dog.
-Line 243: the quick brown fox jumps over the lazy dog.
-Line 244: the quick brown fox jumps over the lazy dog.
-Line 245: the quick brown fox jumps over the lazy dog.
-Line 246: the quick brown fox jumps over the lazy dog.
-Line 247: the quick brown fox jumps over the lazy dog.
-Line 248: the quick brown fox jumps over the lazy dog.
-Line 249: the quick brown fox jumps over the lazy dog.
-Line 250: the quick brown fox jumps over the lazy dog.
-Line 251: the quick brown fox jumps over the lazy dog.
-Line 252: the quick brown fox jumps over the lazy dog.
-Line 253: the quick brown fox jumps over the lazy dog.
-Line 254: the quick brown fox jumps over the lazy dog.
-Line 255: the quick brown fox jumps over the lazy dog.
-Line 256: the quick brown fox jumps over the lazy dog.
-Line 257: the quick brown fox jumps over the lazy dog.
-Line 258: the quick brown fox jumps over the lazy dog.
-Line 259: the quick brown fox jumps over the lazy dog.
-Line 260: the quick brown fox jumps over the lazy dog.
-Line 261: the quick brown fox jumps over the lazy dog.
-Line 262: the quick brown fox jumps over the lazy dog.
-Line 263: the quick brown fox jumps over the lazy dog.
-Line 264: the quick brown fox jumps over the lazy dog.
-Line 265: the quick brown fox jumps over the lazy dog.
-Line 266: the quick brown fox jumps over the lazy dog.
-Line 267: the quick brown fox jumps over the lazy dog.
-Line 268: the quick brown fox jumps over the lazy dog.
-Line 269: the quick brown fox jumps over the lazy dog.
-Line 270: the quick brown fox jumps over the lazy dog.
-Line 271: the quick brown fox jumps over the lazy dog.
-Line 272: the quick brown fox jumps over the lazy dog.
-Line 273: the quick brown fox jumps over the lazy dog.
-Line 274: the quick brown fox jumps over the lazy dog.
-Line 275: the quick brown fox jumps over the lazy dog.
-Line 276: the quick brown fox jumps over the lazy dog.
-Line 277: the quick brown fox jumps over the lazy dog.
-Line 278: the quick brown fox jumps over the lazy dog.
-Line 279: the quick brown fox jumps over the lazy dog.
-Line 280: the quick brown fox jumps over the lazy dog.
-Line 281: the quick brown fox jumps over the lazy dog.
-Line 282: the quick brown fox jumps over the lazy dog.
-Line 283: the quick brown fox jumps over the lazy dog.
-Line 284: the quick brown fox jumps over the lazy dog.
-Line 285: the quick brown fox jumps over the lazy dog.
-Line 286: the quick brown fox jumps over the lazy dog.
-Line 287: the quick brown fox jumps over the lazy dog.
-Line 288: the quick brown fox jumps over the lazy dog.
-Line 289: the quick brown fox jumps over the lazy dog.
-Line 290: the quick brown fox jumps over the lazy dog.
-Line 291: the quick brown fox jumps over the lazy dog.
-Line 292: the quick brown fox jumps over the lazy dog.
-Line 293: the quick brown fox jumps over the lazy dog.
-Line 294: the quick brown fox jumps over the lazy dog.
-Line 295: the quick brown fox jumps over the lazy dog.
-Line 296: the quick brown fox jumps over the lazy dog.
-Line 297: the quick brown fox jumps over the lazy dog.
-Line 298: the quick brown fox jumps over the lazy dog.
-Line 299: the quick brown fox jumps over the lazy dog.
-Line 300: the quick brown fox jumps over the lazy dog.
-Line 301: the quick brown fox jumps over the lazy dog.
-Line 302: the quick brown fox jumps over the lazy dog.
-Line 303: the quick brown fox jumps over the lazy dog.
-Line 304: the quick brown fox jumps over the lazy dog.
-Line 305: the quick brown fox jumps over the lazy dog.
-Line 306: the quick brown fox jumps over the lazy dog.
-Line 307: the quick brown fox jumps over the lazy dog.
-Line 308: the quick brown fox jumps over the lazy dog.
-Line 309: the quick brown fox jumps over the lazy dog.
-Line 310: the quick brown fox jumps over the lazy dog.
-Line 311: the quick brown fox jumps over the lazy dog.
-Line 312: the quick brown fox jumps over the lazy dog.
-Line 313: the quick brown fox jumps over the lazy dog.
-Line 314: the quick brown fox jumps over the lazy dog.
-Line 315: the quick brown fox jumps over the lazy dog.
-Line 316: the quick brown fox jumps over the lazy dog.
-Line 317: the quick brown fox jumps over the lazy dog.
-Line 318: the quick brown fox jumps over the lazy dog.
-Line 319: the quick brown fox jumps over the lazy dog.
-Line 320: the quick brown fox jumps over the lazy dog.
-Line 321: the quick brown fox jumps over the lazy dog.
-Line 322: the quick brown fox jumps over the lazy dog.
-Line 323: the quick brown fox jumps over the lazy dog.
-Line 324: the quick brown fox jumps over the lazy dog.
-Line 325: the quick brown fox jumps over the lazy dog.
-Line 326: the quick brown fox jumps over the lazy dog.
-Line 327: the quick brown fox jumps over the lazy dog.
-Line 328: the quick brown fox jumps over the lazy dog.
-Line 329: the quick brown fox jumps over the lazy dog.
-Line 330: the quick brown fox jumps over the lazy dog.
-Line 331: the quick brown fox jumps over the lazy dog.
-Line 332: the quick brown fox jumps over the lazy dog.
-Line 333: the quick brown fox jumps over the lazy dog.
-Line 334: the quick brown fox jumps over the lazy dog.
-Line 335: the quick brown fox jumps over the lazy dog.
-Line 336: the quick brown fox jumps over the lazy dog.
-Line 337: the quick brown fox jumps over the lazy dog.
-Line 338: the quick brown fox jumps over the lazy dog.
-Line 339: the quick brown fox jumps over the lazy dog.
-Line 340: the quick brown fox jumps over the lazy dog.
-Line 341: the quick brown fox jumps over the lazy dog.
-Line 342: the quick brown fox jumps over the lazy dog.
-Line 343: the quick brown fox jumps over the lazy dog.
-Line 344: the quick brown fox jumps over the lazy dog.
-Line 345: the quick brown fox jumps over the lazy dog.
-Line 346: the quick brown fox jumps over the lazy dog.
-Line 347: the quick brown fox jumps over the lazy dog.
-Line 348: the quick brown fox jumps over the lazy dog.
-Line 349: the quick brown fox jumps over the lazy dog.
-Line 350: the quick brown fox jumps over the lazy dog.
-Line 351: the quick brown fox jumps over the lazy dog.
-Line 352: the quick brown fox jumps over the lazy dog.
-Line 353: the quick brown fox jumps over the lazy dog.
-Line 354: the quick brown fox jumps over the lazy dog.
-Line 355: the quick brown fox jumps over the lazy dog.
-Line 356: the quick brown fox jumps over the lazy dog.
-Line 357: the quick brown fox jumps over the lazy dog.
-Line 358: the quick brown fox jumps over the lazy dog.
-Line 359: the quick brown fox jumps over the lazy dog.
-Line 360: the quick brown fox jumps over the lazy dog.
-Line 361: the quick brown fox jumps over the lazy dog.
-Line 362: the quick brown fox jumps over the lazy dog.
-Line 363: the quick brown fox jumps over the lazy dog.
-Line 364: the quick brown fox jumps over the lazy dog.
-Line 365: the quick brown fox jumps over the lazy dog.
-Line 366: the quick brown fox jumps over the lazy dog.
-Line 367: the quick brown fox jumps over the lazy dog.
-Line 368: the quick brown fox jumps over the lazy dog.
-Line 369: the quick brown fox jumps over the lazy dog.
-Line 370: the quick brown fox jumps over the lazy dog.
-Line 371: the quick brown fox jumps over the lazy dog.
-Line 372: the quick brown fox jumps over the lazy dog.
-Line 373: the quick brown fox jumps over the lazy dog.
-Line 374: the quick brown fox jumps over the lazy dog.
-Line 375: the quick brown fox jumps over the lazy dog.
-Line 376: the quick brown fox jumps over the lazy dog.
-Line 377: the quick brown fox jumps over the lazy dog.
-Line 378: the quick brown fox jumps over the lazy dog.
-Line 379: the quick brown fox jumps over the lazy dog.
-Line 380: the quick brown fox jumps over the lazy dog.
-Line 381: the quick brown fox jumps over the lazy dog.
-Line 382: the quick brown fox jumps over the lazy dog.
-Line 383: the quick brown fox jumps over the lazy dog.
-Line 384: the quick brown fox jumps over the lazy dog.
-Line 385: the quick brown fox jumps over the lazy dog.
-Line 386: the quick brown fox jumps over the lazy dog.
-Line 387: the quick brown fox jumps over the lazy dog.
-Line 388: the quick brown fox jumps over the lazy dog.
-Line 389: the quick brown fox jumps over the lazy dog.
-Line 390: the quick brown fox jumps over the lazy dog.
-Line 391: the quick brown fox jumps over the lazy dog.
-Line 392: the quick brown fox jumps over the lazy dog.
-Line 393: the quick brown fox jumps over the lazy dog.
-Line 394: the quick brown fox jumps over the lazy dog.
-Line 395: the quick brown fox jumps over the lazy dog.
-Line 396: the quick brown fox jumps over the lazy dog.
-Line 397: the quick brown fox jumps over the lazy dog.
-Line 398: the quick brown fox jumps over the lazy dog.
-Line 399: the quick brown fox jumps over the lazy dog.
-Line 400: the quick brown fox jumps over the lazy dog.
+Excuse 001: my cat sat on the alarm clock.
+Excuse 002: the bus left early, out of spite.
+Excuse 003: I was stuck in a very long meeting with myself.
+Excuse 004: my socks did not match and I had to start over.
+Excuse 005: a pigeon blocked the door and would not negotiate.
+Excuse 006: I took a wrong turn at the coffee machine.
+Excuse 007: my phone updated itself and so did my plans.
+Excuse 008: the stairs were longer than usual today.
+Excuse 009: I was waiting for the kettle, and it was watching me.
+Excuse 010: my keys were in the fridge, next to the butter.
+Excuse 011: the lift stopped at every floor to say hello.
+Excuse 012: I forgot which day it was. Still not sure.
+Excuse 013: my plant needed emotional support.
+Excuse 014: the traffic light was red for a personal reason.
+Excuse 015: I was chased by a very determined goose.
+Excuse 016: my umbrella opened inside the house. Bad luck.
+Excuse 017: the cat brought me a present and I had to say thanks.
+Excuse 018: I set the alarm for 7 p.m. by mistake.
+Excuse 019: my shoelaces formed a union and went on strike.
+Excuse 020: I was early, but in the wrong building.
+Excuse 021: my cat sat on the alarm clock.
+Excuse 022: the bus left early, out of spite.
+Excuse 023: I was stuck in a very long meeting with myself.
+Excuse 024: my socks did not match and I had to start over.
+Excuse 025: a pigeon blocked the door and would not negotiate.
+Excuse 026: I took a wrong turn at the coffee machine.
+Excuse 027: my phone updated itself and so did my plans.
+Excuse 028: the stairs were longer than usual today.
+Excuse 029: I was waiting for the kettle, and it was watching me.
+Excuse 030: my keys were in the fridge, next to the butter.
+Excuse 031: the lift stopped at every floor to say hello.
+Excuse 032: I forgot which day it was. Still not sure.
+Excuse 033: my plant needed emotional support.
+Excuse 034: the traffic light was red for a personal reason.
+Excuse 035: I was chased by a very determined goose.
+Excuse 036: my umbrella opened inside the house. Bad luck.
+Excuse 037: the cat brought me a present and I had to say thanks.
+Excuse 038: I set the alarm for 7 p.m. by mistake.
+Excuse 039: my shoelaces formed a union and went on strike.
+Excuse 040: I was early, but in the wrong building.
+Excuse 041: my cat sat on the alarm clock.
+Excuse 042: the bus left early, out of spite.
+Excuse 043: I was stuck in a very long meeting with myself.
+Excuse 044: my socks did not match and I had to start over.
+Excuse 045: a pigeon blocked the door and would not negotiate.
+Excuse 046: I took a wrong turn at the coffee machine.
+Excuse 047: my phone updated itself and so did my plans.
+Excuse 048: the stairs were longer than usual today.
+Excuse 049: I was waiting for the kettle, and it was watching me.
+Excuse 050: my keys were in the fridge, next to the butter.
+Excuse 051: the lift stopped at every floor to say hello.
+Excuse 052: I forgot which day it was. Still not sure.
+Excuse 053: my plant needed emotional support.
+Excuse 054: the traffic light was red for a personal reason.
+Excuse 055: I was chased by a very determined goose.
+Excuse 056: my umbrella opened inside the house. Bad luck.
+Excuse 057: the cat brought me a present and I had to say thanks.
+Excuse 058: I set the alarm for 7 p.m. by mistake.
+Excuse 059: my shoelaces formed a union and went on strike.
+Excuse 060: I was early, but in the wrong building.
+Excuse 061: my cat sat on the alarm clock.
+Excuse 062: the bus left early, out of spite.
+Excuse 063: I was stuck in a very long meeting with myself.
+Excuse 064: my socks did not match and I had to start over.
+Excuse 065: a pigeon blocked the door and would not negotiate.
+Excuse 066: I took a wrong turn at the coffee machine.
+Excuse 067: my phone updated itself and so did my plans.
+Excuse 068: the stairs were longer than usual today.
+Excuse 069: I was waiting for the kettle, and it was watching me.
+Excuse 070: my keys were in the fridge, next to the butter.
+Excuse 071: the lift stopped at every floor to say hello.
+Excuse 072: I forgot which day it was. Still not sure.
+Excuse 073: my plant needed emotional support.
+Excuse 074: the traffic light was red for a personal reason.
+Excuse 075: I was chased by a very determined goose.
+Excuse 076: my umbrella opened inside the house. Bad luck.
+Excuse 077: the cat brought me a present and I had to say thanks.
+Excuse 078: I set the alarm for 7 p.m. by mistake.
+Excuse 079: my shoelaces formed a union and went on strike.
+Excuse 080: I was early, but in the wrong building.
+Excuse 081: my cat sat on the alarm clock.
+Excuse 082: the bus left early, out of spite.
+Excuse 083: I was stuck in a very long meeting with myself.
+Excuse 084: my socks did not match and I had to start over.
+Excuse 085: a pigeon blocked the door and would not negotiate.
+Excuse 086: I took a wrong turn at the coffee machine.
+Excuse 087: my phone updated itself and so did my plans.
+Excuse 088: the stairs were longer than usual today.
+Excuse 089: I was waiting for the kettle, and it was watching me.
+Excuse 090: my keys were in the fridge, next to the butter.
+Excuse 091: the lift stopped at every floor to say hello.
+Excuse 092: I forgot which day it was. Still not sure.
+Excuse 093: my plant needed emotional support.
+Excuse 094: the traffic light was red for a personal reason.
+Excuse 095: I was chased by a very determined goose.
+Excuse 096: my umbrella opened inside the house. Bad luck.
+Excuse 097: the cat brought me a present and I had to say thanks.
+Excuse 098: I set the alarm for 7 p.m. by mistake.
+Excuse 099: my shoelaces formed a union and went on strike.
+Excuse 100: I was early, but in the wrong building.
+Excuse 101: my cat sat on the alarm clock.
+Excuse 102: the bus left early, out of spite.
+Excuse 103: I was stuck in a very long meeting with myself.
+Excuse 104: my socks did not match and I had to start over.
+Excuse 105: a pigeon blocked the door and would not negotiate.
+Excuse 106: I took a wrong turn at the coffee machine.
+Excuse 107: my phone updated itself and so did my plans.
+Excuse 108: the stairs were longer than usual today.
+Excuse 109: I was waiting for the kettle, and it was watching me.
+Excuse 110: my keys were in the fridge, next to the butter.
+Excuse 111: the lift stopped at every floor to say hello.
+Excuse 112: I forgot which day it was. Still not sure.
+Excuse 113: my plant needed emotional support.
+Excuse 114: the traffic light was red for a personal reason.
+Excuse 115: I was chased by a very determined goose.
+Excuse 116: my umbrella opened inside the house. Bad luck.
+Excuse 117: the cat brought me a present and I had to say thanks.
+Excuse 118: I set the alarm for 7 p.m. by mistake.
+Excuse 119: my shoelaces formed a union and went on strike.
+Excuse 120: I was early, but in the wrong building.
+Excuse 121: my cat sat on the alarm clock.
+Excuse 122: the bus left early, out of spite.
+Excuse 123: I was stuck in a very long meeting with myself.
+Excuse 124: my socks did not match and I had to start over.
+Excuse 125: a pigeon blocked the door and would not negotiate.
+Excuse 126: I took a wrong turn at the coffee machine.
+Excuse 127: my phone updated itself and so did my plans.
+Excuse 128: the stairs were longer than usual today.
+Excuse 129: I was waiting for the kettle, and it was watching me.
+Excuse 130: my keys were in the fridge, next to the butter.
+Excuse 131: the lift stopped at every floor to say hello.
+Excuse 132: I forgot which day it was. Still not sure.
+Excuse 133: my plant needed emotional support.
+Excuse 134: the traffic light was red for a personal reason.
+Excuse 135: I was chased by a very determined goose.
+Excuse 136: my umbrella opened inside the house. Bad luck.
+Excuse 137: the cat brought me a present and I had to say thanks.
+Excuse 138: I set the alarm for 7 p.m. by mistake.
+Excuse 139: my shoelaces formed a union and went on strike.
+Excuse 140: I was early, but in the wrong building.
+Excuse 141: my cat sat on the alarm clock.
+Excuse 142: the bus left early, out of spite.
+Excuse 143: I was stuck in a very long meeting with myself.
+Excuse 144: my socks did not match and I had to start over.
+Excuse 145: a pigeon blocked the door and would not negotiate.
+Excuse 146: I took a wrong turn at the coffee machine.
+Excuse 147: my phone updated itself and so did my plans.
+Excuse 148: the stairs were longer than usual today.
+Excuse 149: I was waiting for the kettle, and it was watching me.
+Excuse 150: my keys were in the fridge, next to the butter.
+Excuse 151: the lift stopped at every floor to say hello.
+Excuse 152: I forgot which day it was. Still not sure.
+Excuse 153: my plant needed emotional support.
+Excuse 154: the traffic light was red for a personal reason.
+Excuse 155: I was chased by a very determined goose.
+Excuse 156: my umbrella opened inside the house. Bad luck.
+Excuse 157: the cat brought me a present and I had to say thanks.
+Excuse 158: I set the alarm for 7 p.m. by mistake.
+Excuse 159: my shoelaces formed a union and went on strike.
+Excuse 160: I was early, but in the wrong building.
+Excuse 161: my cat sat on the alarm clock.
+Excuse 162: the bus left early, out of spite.
+Excuse 163: I was stuck in a very long meeting with myself.
+Excuse 164: my socks did not match and I had to start over.
+Excuse 165: a pigeon blocked the door and would not negotiate.
+Excuse 166: I took a wrong turn at the coffee machine.
+Excuse 167: my phone updated itself and so did my plans.
+Excuse 168: the stairs were longer than usual today.
+Excuse 169: I was waiting for the kettle, and it was watching me.
+Excuse 170: my keys were in the fridge, next to the butter.
+Excuse 171: the lift stopped at every floor to say hello.
+Excuse 172: I forgot which day it was. Still not sure.
+Excuse 173: my plant needed emotional support.
+Excuse 174: the traffic light was red for a personal reason.
+Excuse 175: I was chased by a very determined goose.
+Excuse 176: my umbrella opened inside the house. Bad luck.
+Excuse 177: the cat brought me a present and I had to say thanks.
+Excuse 178: I set the alarm for 7 p.m. by mistake.
+Excuse 179: my shoelaces formed a union and went on strike.
+Excuse 180: I was early, but in the wrong building.
+Excuse 181: my cat sat on the alarm clock.
+Excuse 182: the bus left early, out of spite.
+Excuse 183: I was stuck in a very long meeting with myself.
+Excuse 184: my socks did not match and I had to start over.
+Excuse 185: a pigeon blocked the door and would not negotiate.
+Excuse 186: I took a wrong turn at the coffee machine.
+Excuse 187: my phone updated itself and so did my plans.
+Excuse 188: the stairs were longer than usual today.
+Excuse 189: I was waiting for the kettle, and it was watching me.
+Excuse 190: my keys were in the fridge, next to the butter.
+Excuse 191: the lift stopped at every floor to say hello.
+Excuse 192: I forgot which day it was. Still not sure.
+Excuse 193: my plant needed emotional support.
+Excuse 194: the traffic light was red for a personal reason.
+Excuse 195: I was chased by a very determined goose.
+Excuse 196: my umbrella opened inside the house. Bad luck.
+Excuse 197: the cat brought me a present and I had to say thanks.
+Excuse 198: I set the alarm for 7 p.m. by mistake.
+Excuse 199: my shoelaces formed a union and went on strike.
+Excuse 200: I was early, but in the wrong building.
+Excuse 201: my cat sat on the alarm clock.
+Excuse 202: the bus left early, out of spite.
+Excuse 203: I was stuck in a very long meeting with myself.
+Excuse 204: my socks did not match and I had to start over.
+Excuse 205: a pigeon blocked the door and would not negotiate.
+Excuse 206: I took a wrong turn at the coffee machine.
+Excuse 207: my phone updated itself and so did my plans.
+Excuse 208: the stairs were longer than usual today.
+Excuse 209: I was waiting for the kettle, and it was watching me.
+Excuse 210: my keys were in the fridge, next to the butter.
+Excuse 211: the lift stopped at every floor to say hello.
+Excuse 212: I forgot which day it was. Still not sure.
+Excuse 213: my plant needed emotional support.
+Excuse 214: the traffic light was red for a personal reason.
+Excuse 215: I was chased by a very determined goose.
+Excuse 216: my umbrella opened inside the house. Bad luck.
+Excuse 217: the cat brought me a present and I had to say thanks.
+Excuse 218: I set the alarm for 7 p.m. by mistake.
+Excuse 219: my shoelaces formed a union and went on strike.
+Excuse 220: I was early, but in the wrong building.
+Excuse 221: my cat sat on the alarm clock.
+Excuse 222: the bus left early, out of spite.
+Excuse 223: I was stuck in a very long meeting with myself.
+Excuse 224: my socks did not match and I had to start over.
+Excuse 225: a pigeon blocked the door and would not negotiate.
+Excuse 226: I took a wrong turn at the coffee machine.
+Excuse 227: my phone updated itself and so did my plans.
+Excuse 228: the stairs were longer than usual today.
+Excuse 229: I was waiting for the kettle, and it was watching me.
+Excuse 230: my keys were in the fridge, next to the butter.
+Excuse 231: the lift stopped at every floor to say hello.
+Excuse 232: I forgot which day it was. Still not sure.
+Excuse 233: my plant needed emotional support.
+Excuse 234: the traffic light was red for a personal reason.
+Excuse 235: I was chased by a very determined goose.
+Excuse 236: my umbrella opened inside the house. Bad luck.
+Excuse 237: the cat brought me a present and I had to say thanks.
+Excuse 238: I set the alarm for 7 p.m. by mistake.
+Excuse 239: my shoelaces formed a union and went on strike.
+Excuse 240: I was early, but in the wrong building.
+Excuse 241: my cat sat on the alarm clock.
+Excuse 242: the bus left early, out of spite.
+Excuse 243: I was stuck in a very long meeting with myself.
+Excuse 244: my socks did not match and I had to start over.
+Excuse 245: a pigeon blocked the door and would not negotiate.
+Excuse 246: I took a wrong turn at the coffee machine.
+Excuse 247: my phone updated itself and so did my plans.
+Excuse 248: the stairs were longer than usual today.
+Excuse 249: I was waiting for the kettle, and it was watching me.
+Excuse 250: my keys were in the fridge, next to the butter.
+Excuse 251: the lift stopped at every floor to say hello.
+Excuse 252: I forgot which day it was. Still not sure.
+Excuse 253: my plant needed emotional support.
+Excuse 254: the traffic light was red for a personal reason.
+Excuse 255: I was chased by a very determined goose.
+Excuse 256: my umbrella opened inside the house. Bad luck.
+Excuse 257: the cat brought me a present and I had to say thanks.
+Excuse 258: I set the alarm for 7 p.m. by mistake.
+Excuse 259: my shoelaces formed a union and went on strike.
+Excuse 260: I was early, but in the wrong building.
+Excuse 261: my cat sat on the alarm clock.
+Excuse 262: the bus left early, out of spite.
+Excuse 263: I was stuck in a very long meeting with myself.
+Excuse 264: my socks did not match and I had to start over.
+Excuse 265: a pigeon blocked the door and would not negotiate.
+Excuse 266: I took a wrong turn at the coffee machine.
+Excuse 267: my phone updated itself and so did my plans.
+Excuse 268: the stairs were longer than usual today.
+Excuse 269: I was waiting for the kettle, and it was watching me.
+Excuse 270: my keys were in the fridge, next to the butter.
+Excuse 271: the lift stopped at every floor to say hello.
+Excuse 272: I forgot which day it was. Still not sure.
+Excuse 273: my plant needed emotional support.
+Excuse 274: the traffic light was red for a personal reason.
+Excuse 275: I was chased by a very determined goose.
+Excuse 276: my umbrella opened inside the house. Bad luck.
+Excuse 277: the cat brought me a present and I had to say thanks.
+Excuse 278: I set the alarm for 7 p.m. by mistake.
+Excuse 279: my shoelaces formed a union and went on strike.
+Excuse 280: I was early, but in the wrong building.
+Excuse 281: my cat sat on the alarm clock.
+Excuse 282: the bus left early, out of spite.
+Excuse 283: I was stuck in a very long meeting with myself.
+Excuse 284: my socks did not match and I had to start over.
+Excuse 285: a pigeon blocked the door and would not negotiate.
+Excuse 286: I took a wrong turn at the coffee machine.
+Excuse 287: my phone updated itself and so did my plans.
+Excuse 288: the stairs were longer than usual today.
+Excuse 289: I was waiting for the kettle, and it was watching me.
+Excuse 290: my keys were in the fridge, next to the butter.
+Excuse 291: the lift stopped at every floor to say hello.
+Excuse 292: I forgot which day it was. Still not sure.
+Excuse 293: my plant needed emotional support.
+Excuse 294: the traffic light was red for a personal reason.
+Excuse 295: I was chased by a very determined goose.
+Excuse 296: my umbrella opened inside the house. Bad luck.
+Excuse 297: the cat brought me a present and I had to say thanks.
+Excuse 298: I set the alarm for 7 p.m. by mistake.
+Excuse 299: my shoelaces formed a union and went on strike.
+Excuse 300: I was early, but in the wrong building.
+Excuse 301: my cat sat on the alarm clock.
+Excuse 302: the bus left early, out of spite.
+Excuse 303: I was stuck in a very long meeting with myself.
+Excuse 304: my socks did not match and I had to start over.
+Excuse 305: a pigeon blocked the door and would not negotiate.
+Excuse 306: I took a wrong turn at the coffee machine.
+Excuse 307: my phone updated itself and so did my plans.
+Excuse 308: the stairs were longer than usual today.
+Excuse 309: I was waiting for the kettle, and it was watching me.
+Excuse 310: my keys were in the fridge, next to the butter.
+Excuse 311: the lift stopped at every floor to say hello.
+Excuse 312: I forgot which day it was. Still not sure.
+Excuse 313: my plant needed emotional support.
+Excuse 314: the traffic light was red for a personal reason.
+Excuse 315: I was chased by a very determined goose.
+Excuse 316: my umbrella opened inside the house. Bad luck.
+Excuse 317: the cat brought me a present and I had to say thanks.
+Excuse 318: I set the alarm for 7 p.m. by mistake.
+Excuse 319: my shoelaces formed a union and went on strike.
+Excuse 320: I was early, but in the wrong building.
+Excuse 321: my cat sat on the alarm clock.
+Excuse 322: the bus left early, out of spite.
+Excuse 323: I was stuck in a very long meeting with myself.
+Excuse 324: my socks did not match and I had to start over.
+Excuse 325: a pigeon blocked the door and would not negotiate.
+Excuse 326: I took a wrong turn at the coffee machine.
+Excuse 327: my phone updated itself and so did my plans.
+Excuse 328: the stairs were longer than usual today.
+Excuse 329: I was waiting for the kettle, and it was watching me.
+Excuse 330: my keys were in the fridge, next to the butter.
+Excuse 331: the lift stopped at every floor to say hello.
+Excuse 332: I forgot which day it was. Still not sure.
+Excuse 333: my plant needed emotional support.
+Excuse 334: the traffic light was red for a personal reason.
+Excuse 335: I was chased by a very determined goose.
+Excuse 336: my umbrella opened inside the house. Bad luck.
+Excuse 337: the cat brought me a present and I had to say thanks.
+Excuse 338: I set the alarm for 7 p.m. by mistake.
+Excuse 339: my shoelaces formed a union and went on strike.
+Excuse 340: I was early, but in the wrong building.
+Excuse 341: my cat sat on the alarm clock.
+Excuse 342: the bus left early, out of spite.
+Excuse 343: I was stuck in a very long meeting with myself.
+Excuse 344: my socks did not match and I had to start over.
+Excuse 345: a pigeon blocked the door and would not negotiate.
+Excuse 346: I took a wrong turn at the coffee machine.
+Excuse 347: my phone updated itself and so did my plans.
+Excuse 348: the stairs were longer than usual today.
+Excuse 349: I was waiting for the kettle, and it was watching me.
+Excuse 350: my keys were in the fridge, next to the butter.
+Excuse 351: the lift stopped at every floor to say hello.
+Excuse 352: I forgot which day it was. Still not sure.
+Excuse 353: my plant needed emotional support.
+Excuse 354: the traffic light was red for a personal reason.
+Excuse 355: I was chased by a very determined goose.
+Excuse 356: my umbrella opened inside the house. Bad luck.
+Excuse 357: the cat brought me a present and I had to say thanks.
+Excuse 358: I set the alarm for 7 p.m. by mistake.
+Excuse 359: my shoelaces formed a union and went on strike.
+Excuse 360: I was early, but in the wrong building.
+Excuse 361: my cat sat on the alarm clock.
+Excuse 362: the bus left early, out of spite.
+Excuse 363: I was stuck in a very long meeting with myself.
+Excuse 364: my socks did not match and I had to start over.
+Excuse 365: a pigeon blocked the door and would not negotiate.
+Excuse 366: I took a wrong turn at the coffee machine.
+Excuse 367: my phone updated itself and so did my plans.
+Excuse 368: the stairs were longer than usual today.
+Excuse 369: I was waiting for the kettle, and it was watching me.
+Excuse 370: my keys were in the fridge, next to the butter.
+Excuse 371: the lift stopped at every floor to say hello.
+Excuse 372: I forgot which day it was. Still not sure.
+Excuse 373: my plant needed emotional support.
+Excuse 374: the traffic light was red for a personal reason.
+Excuse 375: I was chased by a very determined goose.
+Excuse 376: my umbrella opened inside the house. Bad luck.
+Excuse 377: the cat brought me a present and I had to say thanks.
+Excuse 378: I set the alarm for 7 p.m. by mistake.
+Excuse 379: my shoelaces formed a union and went on strike.
+Excuse 380: I was early, but in the wrong building.
+Excuse 381: my cat sat on the alarm clock.
+Excuse 382: the bus left early, out of spite.
+Excuse 383: I was stuck in a very long meeting with myself.
+Excuse 384: my socks did not match and I had to start over.
+Excuse 385: a pigeon blocked the door and would not negotiate.
+Excuse 386: I took a wrong turn at the coffee machine.
+Excuse 387: my phone updated itself and so did my plans.
+Excuse 388: the stairs were longer than usual today.
+Excuse 389: I was waiting for the kettle, and it was watching me.
+Excuse 390: my keys were in the fridge, next to the butter.
+Excuse 391: the lift stopped at every floor to say hello.
+Excuse 392: I forgot which day it was. Still not sure.
+Excuse 393: my plant needed emotional support.
+Excuse 394: the traffic light was red for a personal reason.
+Excuse 395: I was chased by a very determined goose.
+Excuse 396: my umbrella opened inside the house. Bad luck.
+Excuse 397: the cat brought me a present and I had to say thanks.
+Excuse 398: I set the alarm for 7 p.m. by mistake.
+Excuse 399: my shoelaces formed a union and went on strike.
+Excuse 400: I was early, but in the wrong building.
