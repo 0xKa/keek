@@ -339,6 +339,8 @@ GitHub Actions runs `.github/workflows/ci.yml` on every push to `main` and every
 5. Runs the `clang-format` target and fails if it changed any file.
 6. Renders the screenshot page and attaches it to the run as the `screenshots` artifact. Download it from the run's summary page to see how a change looks before merging it.
 
+Dependabot checks the actions the workflow uses once a week, set in `.github/dependabot.yml`, and opens one pull request for all their updates.
+
 The `previews` and `dolphin` tests do not run in CI. The reference screenshots depend on this machine's fonts, and the `dolphin` test does not run reliably in the container. Run them locally when a change touches what they cover.
 
 ### Reference screenshots
