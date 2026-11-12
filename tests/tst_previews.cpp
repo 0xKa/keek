@@ -291,6 +291,24 @@ private Q_SLOTS:
         QCOMPARE(controller.state()["visible"_L1].toBool(), true);
     }
 
+    void movingFromLongTextToMarkdownKeepsRunning()
+    {
+        Controller controller;
+        controller.show({fixture(u"text-long.txt"_s), fixture(u"text-notes.md"_s)});
+        QTRY_COMPARE(status(controller), u"ready"_s);
+
+        for (int i = 0; i < 50; ++i) {
+            QVERIFY(controller.next());
+            QTest::qWait(1);
+            QVERIFY(controller.previous());
+            QTest::qWait(1);
+        }
+        QVERIFY(controller.next());
+        QTRY_COMPARE(status(controller), u"ready"_s);
+        QTest::qWait(100);
+        QCOMPARE(controller.state()["visible"_L1].toBool(), true);
+    }
+
     void pageDownScrollsAPdf()
     {
         Controller controller;

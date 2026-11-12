@@ -53,10 +53,12 @@ qt_add_qml_module(keekcore
         rendererregistry.h
         textfile.cpp
         textfile.h
+        texthighlighter.cpp
+        texthighlighter.h
         textrenderer.cpp
         thumbnail.cpp
         thumbnail.h
 )
 
 target_include_directories(keekcore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(keekcore PUBLIC Qt6::Quick KF6::WindowSystem KF6::KIOGui KF6::CoreAddons KF6::ConfigCore Qt6::Concurrent keekconfig)
+target_link_libraries(keekcore PUBLIC Qt6::Quick KF6::WindowSystem KF6::KIOGui KF6::CoreAddons KF6::ConfigCore KF6::SyntaxHighlighting Qt6::Concurrent keekconfig)

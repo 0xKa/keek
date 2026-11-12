@@ -108,7 +108,7 @@ A renderer is a `Renderer` value: an ID, the name of a QML view, and a function 
 |---|---|---|---|
 | `image` | `ImageView.qml` | Every type Qt's image reader can decode on this system, except PDF. | Shown at natural size, and shrunk only when larger than the popup. Vector images are scaled to fit. |
 | `pdf` | `PdfView.qml` | PDF documents. | Every page in one scrolling list, as wide as the popup allows but never above 100% zoom (72 points to 96 pixels). Pages are drawn on white paper in both themes. |
-| `text` | `TextView.qml` | Every type that inherits `text/plain`. | Highlighted by file name. Only the first 512 KiB is loaded. A file with NUL bytes is reported as not text. |
+| `text` | `TextView.qml` | Every type that inherits `text/plain`. | Highlighted by file name through `TextHighlighter`, which sets the text and the highlighting together. Only the first 512 KiB is loaded. A file with NUL bytes is reported as not text. |
 | `audio` | `AudioView.qml` | Every `audio/*` type that is not text. | Qt Multimedia. Shows the cover from Dolphin's thumbnailer or the icon, with the title, artist and album when Qt can read them. Starts playing with sound. |
 | `video` | `VideoView.qml` | Every `video/*` type. | Qt Multimedia. Starts playing without sound. Clicking the picture plays or pauses. |
 | `folder` | `FolderView.qml` | Folders. | Shows how many files and folders it holds, its total size, its modification date and its first eight entries. Hidden entries are left out of the counts and the list, but not the size. |

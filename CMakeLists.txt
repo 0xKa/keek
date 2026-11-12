@@ -15,7 +15,7 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 
 find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui DBus Qml Quick Concurrent Test)
-find_package(KF6 6.0 REQUIRED COMPONENTS WindowSystem KIO CoreAddons Config)
+find_package(KF6 6.0 REQUIRED COMPONENTS WindowSystem KIO CoreAddons Config SyntaxHighlighting)
 
 qt_standard_project_setup(REQUIRES 6.8)
 

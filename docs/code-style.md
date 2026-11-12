@@ -14,6 +14,7 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 | Views only report | A QML view draws one file and sets `ready` and `error`. It does not decide which file or which renderer. |
 | Read QML state on demand | C++ asks the root item for `contentReady` and `contentError` when it needs them. Do not mirror them into C++ members; a missed change signal leaves the copy stale. |
 | File work is C++ | Reading, decoding and measuring files belong in a C++ type exposed to QML, such as `TextFile` and `ImageInfo`. QML does not read files. |
+| Highlight through `TextHighlighter` | It sets the text and the highlighting together. Do not use `SyntaxHighlighter` from `org.kde.syntaxhighlighting` in QML: it queues work on the old text's blocks, and replacing the text before that work runs crashed the daemon. |
 
 ## C++
 

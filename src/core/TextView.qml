@@ -1,5 +1,4 @@
 import QtQuick
-import org.kde.syntaxhighlighting
 
 PreviewView {
     id: view
@@ -57,7 +56,6 @@ PreviewView {
             x: Metrics.textPaddingX
             y: Metrics.textPaddingY
             width: Math.ceil(flickable.width - Metrics.textPaddingX - Metrics.margin)
-            text: file.text
             font: file.fixedFont
             color: view.palette.text
             textFormat: TextEdit.PlainText
@@ -90,9 +88,9 @@ PreviewView {
         }
     }
 
-    SyntaxHighlighter {
-        textEdit: text
-        definition: Repository.definitionForFileName(file.fileName)
-        theme: Repository.defaultTheme(view.dark ? Repository.DarkTheme : Repository.LightTheme)
+    TextHighlighter {
+        document: text.textDocument
+        textFile: file
+        dark: view.dark
     }
 }
