@@ -83,6 +83,7 @@ private Q_SLOTS:
         row("text-settings.ini", "text", "ready");
         row("text-long.txt", "text", "ready");
         row("text-arabic.txt", "text", "ready");
+        row("text-arabic-first.txt", "text", "ready");
         row("pdf-document.pdf", "pdf", "ready");
         row("pdf-broken.pdf", "pdf", "error");
         row("pdf-password.pdf", "pdf", "error");
