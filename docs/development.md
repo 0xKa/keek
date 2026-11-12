@@ -328,6 +328,17 @@ This shows every file in `tests/fixtures/` in an offscreen daemon and writes `bu
 - **The `cli` test skips itself when run directly**, so that it can never talk to a daemon on the real session bus. Run it through `ctest`.
 - **The `dolphin` test triggers the action over D-Bus.** It does not press the real Space key, and a headless session cannot show whether KWin would refuse focus at stricter settings.
 
+### CI
+
+GitHub Actions runs `.github/workflows/ci.yml` on every push to `main` and every pull request, in a `fedora:44` container. A newer push cancels the run still going for the same branch. It installs the build packages, then:
+
+1. Builds with `cmake --workflow --preset build`.
+2. Runs the `unit` tests.
+3. Runs the QML linter.
+4. Runs the `clang-format` target and fails if it changed any file.
+
+The `offscreen`, `session` and `dolphin` tests do not run in CI. The reference screenshots depend on this machine's fonts, and the session tests need a KWin and a Dolphin. Run them locally when a change touches what they cover.
+
 ### Reference screenshots
 
 `previews` fails when more than 0.1% of the pixels differ from the reference by more than 40 levels in a channel. On failure it saves what the popup drew to `build/test-output/<file>.actual.png`.

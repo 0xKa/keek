@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: fedora:44
+    steps:
+      - name: Install dependencies
+        run: >
+          dnf install -y --setopt=install_weak_deps=False
+          git gcc-c++ cmake ninja-build extra-cmake-modules
+          qt6-qtbase-devel qt6-qtdeclarative-devel qt6-qtpdf-devel qt6-qtmultimedia-devel
+          kf6-kwindowsystem-devel kf6-kio-devel kf6-syntax-highlighting-devel
+          kf6-kcoreaddons-devel kf6-kdbusaddons-devel
+          clang-tools-extra dbus-daemon procps-ng
+
+      - uses: actions/checkout@v4
+
+      - name: Trust the checkout
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Build
+        run: cmake --workflow --preset build
+
+      - name: Run the unit tests
+        run: ctest --preset dev -L unit
+
+      - name: Lint the QML
+        run: cmake --build --preset dev --target all_qmllint
+
+      - name: Check the C++ formatting
+        run: |
+          cmake --build --preset dev --target clang-format
+          git diff --exit-code
