@@ -46,6 +46,7 @@ private Q_SLOTS:
         QTest::newRow("json") << fixture("text-data.json") << u"text"_s;
         QTest::newRow("markdown") << fixture("text-notes.md") << u"text"_s;
         QTest::newRow("ini, by content") << fixture("text-settings.ini") << u"text"_s;
+        QTest::newRow("arabic") << fixture("text-arabic.txt") << u"text"_s;
         QTest::newRow("webm") << fixture("video-clip.webm") << u"video"_s;
         QTest::newRow("broken mp4") << fixture("video-broken.mp4") << u"video"_s;
         QTest::newRow("flac") << fixture("audio-tone.flac") << u"audio"_s;
