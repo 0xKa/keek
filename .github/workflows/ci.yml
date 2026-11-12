@@ -3,7 +3,13 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore: &docs-only
+      - 'docs/**'
+      - 'README.md'
+      - 'LICENSE'
   pull_request:
+    paths-ignore: *docs-only
+  workflow_dispatch:
 
 permissions:
   contents: read

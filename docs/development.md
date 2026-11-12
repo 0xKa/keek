@@ -330,7 +330,7 @@ This shows every file in `tests/fixtures/` in an offscreen daemon and writes `bu
 
 ### CI
 
-GitHub Actions runs `.github/workflows/ci.yml` on every push to `main` and every pull request, in a `fedora:44` container. A newer push cancels the run still going for the same branch. It installs the build packages, then:
+GitHub Actions runs `.github/workflows/ci.yml` on every push to `main` and every pull request, in a `fedora:44` container. A push or pull request that only changes `docs/`, `README.md` or `LICENSE` does not start a run; start one by hand from the Actions tab if needed. A newer push cancels the run still going for the same branch. It installs the build packages, then:
 
 1. Builds with `cmake --workflow --preset build`.
 2. Runs the `unit` tests.
