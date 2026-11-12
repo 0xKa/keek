@@ -38,6 +38,9 @@ jobs:
       - name: Run the unit tests
         run: ctest --preset dev -L unit
 
+      - name: Run the controller and command-line tests
+        run: ctest --preset dev -R '^(controller|cli)$'
+
       - name: Lint the QML
         run: cmake --build --preset dev --target all_qmllint
 
