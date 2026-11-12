@@ -24,7 +24,8 @@ jobs:
           qt6-qtbase-devel qt6-qtdeclarative-devel qt6-qtpdf-devel qt6-qtmultimedia-devel
           kf6-kwindowsystem-devel kf6-kio-devel kf6-syntax-highlighting-devel
           kf6-kcoreaddons-devel kf6-kdbusaddons-devel
-          clang-tools-extra dbus-daemon procps-ng
+          qt6-qtimageformats
+          clang-tools-extra dbus-daemon procps-ng diffutils
 
       - uses: actions/checkout@v4
 
