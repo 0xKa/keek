@@ -33,7 +33,7 @@ jobs:
           qt6-qtimageformats
           clang-tools-extra dbus-daemon procps-ng diffutils
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Trust the checkout
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -65,7 +65,7 @@ jobs:
         run: cmake --build --preset dev --target screenshot-page
 
       - name: Upload the screenshot page
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: screenshots
           path: build/screenshots/
