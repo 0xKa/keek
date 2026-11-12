@@ -53,7 +53,10 @@ jobs:
         run: >
           dnf install -y --setopt=install_weak_deps=False
           google-noto-sans-fonts google-noto-sans-mono-fonts breeze-icon-theme
-          /usr/bin/kwin_wayland /usr/bin/dolphin /usr/bin/qdbus-qt6
+          /usr/bin/kwin_wayland /usr/bin/dolphin /usr/bin/qdbus-qt6 /usr/sbin/setcap
+
+      - name: Let KWin start without extra privileges
+        run: setcap -r /usr/bin/kwin_wayland
 
       - name: Render the screenshot page
         run: cmake --build --preset dev --target screenshot-page
