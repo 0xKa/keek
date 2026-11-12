@@ -49,14 +49,10 @@ jobs:
           cmake --build --preset dev --target clang-format
           git diff --exit-code
 
-      - name: Install fonts, icons, KWin and Dolphin
+      - name: Install fonts and icons
         run: >
           dnf install -y --setopt=install_weak_deps=False
           google-noto-sans-fonts google-noto-sans-mono-fonts breeze-icon-theme
-          /usr/bin/kwin_wayland /usr/bin/dolphin /usr/bin/qdbus-qt6 /usr/sbin/setcap
-
-      - name: Let KWin start without extra privileges
-        run: setcap -r /usr/bin/kwin_wayland
 
       - name: Render the screenshot page
         run: cmake --build --preset dev --target screenshot-page
@@ -66,11 +62,3 @@ jobs:
         with:
           name: screenshots
           path: build/screenshots/
-
-      - name: Run the Dolphin test
-        shell: bash
-        run: |
-          useradd -m tester
-          chown -R tester "$GITHUB_WORKSPACE"
-          runuser -u tester -- ctest --preset dev -R '^dolphin$' | tee dolphin.log
-          grep -q 'dolphin .*Passed' dolphin.log

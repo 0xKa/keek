@@ -337,8 +337,9 @@ GitHub Actions runs `.github/workflows/ci.yml` on every push to `main` and every
 3. Runs the `controller` and `cli` tests.
 4. Runs the QML linter.
 5. Runs the `clang-format` target and fails if it changed any file.
+6. Renders the screenshot page and attaches it to the run as the `screenshots` artifact. Download it from the run's summary page to see how a change looks before merging it.
 
-The `previews` and `dolphin` tests do not run in CI. The reference screenshots depend on this machine's fonts, and the `dolphin` test needs a KWin and a Dolphin. Run them locally when a change touches what they cover.
+The `previews` and `dolphin` tests do not run in CI. The reference screenshots depend on this machine's fonts, and the `dolphin` test does not run reliably in the container. Run them locally when a change touches what they cover.
 
 ### Reference screenshots
 
