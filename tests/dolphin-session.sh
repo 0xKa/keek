@@ -37,6 +37,11 @@ if [ -z "${KEEK_SESSION_DIR:-}" ]; then
     cat "$dir/keekd.log" 2>/dev/null
     echo "--- kwin log"
     tail -n 40 "$dir/kwin.log" 2>/dev/null
+    for log in "$dir"/dolphin-*.log; do
+        [ -e "$log" ] || continue
+        echo "--- $(basename "$log")"
+        tail -n 40 "$log"
+    done
     exit 1
 fi
 
