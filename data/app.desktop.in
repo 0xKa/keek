@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Keek
+GenericName=File Previewer
+Comment=Settings for Quick Look previews in Dolphin
+Icon=view-preview
+Exec=@KDE_INSTALL_FULL_BINDIR@/keek
+Categories=Qt;KDE;Utility;
+StartupNotify=true

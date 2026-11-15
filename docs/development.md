@@ -60,7 +60,7 @@ scripts/uninstall.sh             # remove everything and give Space back
 `install.sh` does these steps in order:
 
 1. **Refuses to go on while a Dolphin window is open**, unless `--no-shortcut` is given. A running Dolphin can overwrite the shortcut change.
-2. **Runs `cmake --install build`**, which writes the five files below.
+2. **Runs `cmake --install build`**, which writes the six files below.
 3. **Asks D-Bus to reread its service files**, so the first `keek` call can start the new `keekd`, and stops a running daemon with `keek quit`.
 4. **Binds Space** with `scripts/dolphin-shortcut.sh bind`. The details are in [dolphin-shortcut.md](dolphin-shortcut.md).
 5. **With `--autostart`, copies the autostart entry** to `~/.config/autostart/keekd.desktop`.
@@ -70,6 +70,7 @@ scripts/uninstall.sh             # remove everything and give Space back
 | `~/.local/bin/keek` | The command Dolphin runs. |
 | `~/.local/bin/keekd` | The daemon. |
 | `~/.local/share/kio/servicemenus/keek.desktop` | The "Quick Look" action for Dolphin. |
+| `~/.local/share/applications/io.github._0xKa.keek.desktop` | The "Keek" entry in the application menu. It runs `keek`, which opens the Keek window. Its name matches the application ID, so Plasma shows the right name and icon for Keek's windows. |
 | `~/.local/share/dbus-1/services/io.github._0xKa.keek.service` | Lets D-Bus start `keekd` on the first call. |
 | `~/.local/share/keek/keekd.desktop` | The autostart entry. Plasma reads only `~/.config/autostart/`, which is outside the install prefix, so `install.sh --autostart` copies it there. |
 
@@ -198,7 +199,7 @@ Audio and video that cannot be played are not errors. The view calls `Controller
 
 ## The Keek window
 
-Running `keek` with no command opens the Keek window. `keekd` shows it, so `keek` stays a small D-Bus client. Running `keek` again while it is open brings it to the front.
+Running `keek` with no command, or choosing Keek in the application menu, opens the Keek window. `keekd` shows it, so `keek` stays a small D-Bus client. Running `keek` again while it is open brings it to the front.
 
 - **Tabs run along the top.** For now there is one, Settings. `MainWindow.qml` holds the tab bar and one page per tab.
 - **The window is destroyed when it closes,** so it costs nothing while closed.
