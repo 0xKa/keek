@@ -33,5 +33,6 @@ prefix=$(sed -n 's/^CMAKE_INSTALL_PREFIX:PATH=//p' "$build/CMakeCache.txt")
 "$root/scripts/dolphin-shortcut.sh" unbind
 rm -f "$config/autostart/keekd.desktop" "$config/keekrc"
 cmake --build "$build" --target uninstall >/dev/null
+busctl --user emit /KIconLoader org.kde.KIconLoader iconChanged i 0 >/dev/null 2>&1 || true
 rmdir --ignore-fail-on-non-empty "$prefix/share/keek" 2>/dev/null || true
 echo "Keek is removed and Space is back on Select Files and Folders."

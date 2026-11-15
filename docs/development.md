@@ -61,7 +61,7 @@ scripts/uninstall.sh             # remove everything and give Space back
 
 1. **Refuses to go on while a Dolphin window is open**, unless `--no-shortcut` is given. A running Dolphin can overwrite the shortcut change.
 2. **Runs `cmake --install build`**, which writes the seven files below.
-3. **Asks D-Bus to reread its service files**, so the first `keek` call can start the new `keekd`, and stops a running daemon with `keek quit`.
+3. **Asks D-Bus to reread its service files**, so the first `keek` call can start the new `keekd`, and stops a running daemon with `keek quit`. It also sends KDE's `iconChanged` signal, so a Plasma that was already running finds the Keek icon. Without it, the application menu shows a blank icon until the next login.
 4. **Binds Space** with `scripts/dolphin-shortcut.sh bind`. The details are in [dolphin-shortcut.md](dolphin-shortcut.md).
 5. **With `--autostart`, copies the autostart entry** to `~/.config/autostart/keekd.desktop`.
 
@@ -78,7 +78,7 @@ scripts/uninstall.sh             # remove everything and give Space back
 - **Starting at login is optional.** Without it, D-Bus starts `keekd` on the first Space press, which makes that one press slower. If D-Bus has already started a daemon, the one from autostart logs "keekd is already running" and exits.
 - **`uninstall.sh` reverses all of it:** it stops the daemon, unbinds Space, removes the autostart copy and `~/.config/keekrc`, and runs the `uninstall` target, which reads `build/install_manifest.txt`. It too refuses while a Dolphin window is open, if Space is still bound.
 - **Both scripts read the prefix from `build/`.** Set `KEEK_BUILD_DIR` to use another build folder.
-- **During development**, `cmake --install build && keek quit` is enough to try a new build. It does not touch Dolphin's shortcuts.
+- **During development**, `cmake --install build && keek quit` is enough to try a new build. It does not touch Dolphin's shortcuts. After the first install, send `busctl --user emit /KIconLoader org.kde.KIconLoader iconChanged i 0` once so Plasma finds the icon.
 
 ## Layout
 

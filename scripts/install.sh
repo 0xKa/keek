@@ -44,6 +44,7 @@ cmake --install "$build" >/dev/null
 echo "Installed under $prefix"
 
 busctl --user call org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus ReloadConfig >/dev/null 2>&1 || true
+busctl --user emit /KIconLoader org.kde.KIconLoader iconChanged i 0 >/dev/null 2>&1 || true
 "$prefix/bin/keek" quit >/dev/null 2>&1 || true
 
 if $shortcut; then
