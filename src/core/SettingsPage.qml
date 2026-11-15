@@ -66,7 +66,7 @@ Item {
             RadioButton {
                 id: stop
 
-            objectName: "stop"
+                objectName: "stop"
                 text: qsTr("Stop Keek after")
                 ButtonGroup.group: whenClosedGroup
                 onClicked: GeneralSettings.whenClosed = GeneralSettings.WhenClosed.Stop
@@ -77,28 +77,37 @@ Item {
             }
 
             SpinBox {
-                id: minutes
+                id: count
 
-                from: GeneralSettings.minimumStopAfterMinutes
-                to: GeneralSettings.maximumStopAfterMinutes
+                objectName: "stopAfter"
+                from: 0
+                to: GeneralSettings.maximumStopAfter
                 editable: true
                 enabled: stop.checked
-                onValueModified: GeneralSettings.stopAfterMinutes = minutes.value
+                onValueModified: GeneralSettings.stopAfter = count.value
 
                 Binding on value {
-                    value: GeneralSettings.stopAfterMinutes
+                    value: GeneralSettings.stopAfter
                 }
             }
 
-            Label {
-                text: qsTr("minutes", "", minutes.value)
+            ComboBox {
+                id: unit
+
+                objectName: "stopAfterUnit"
+                model: [qsTr("seconds", "", count.value), qsTr("minutes", "", count.value)]
                 enabled: stop.checked
+                onActivated: index => GeneralSettings.stopAfterUnit = index === 0 ? GeneralSettings.Unit.Seconds : GeneralSettings.Unit.Minutes
+
+                Binding on currentIndex {
+                    value: GeneralSettings.stopAfterUnit === GeneralSettings.Unit.Seconds ? 0 : 1
+                }
             }
         }
 
         SettingDescription {
             button: stop
-            text: qsTr("Keek uses no memory once it has stopped. The next preview takes as long as the first one after login.")
+            text: qsTr("Keek uses no memory once it has stopped. The next preview takes as long as the first one after login. With 0, Keek stops as soon as the popup closes.")
         }
 
         Label {

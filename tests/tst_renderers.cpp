@@ -230,31 +230,41 @@ private Q_SLOTS:
     void generalSettingsAreRemembered()
     {
         GeneralSettings *settings = GeneralSettings::instance();
+        QCOMPARE(settings->stopAfter(), 10);
+        QCOMPARE(settings->stopAfterUnit(), GeneralSettings::Unit::Minutes);
+        QCOMPARE(settings->stopDelay(), std::chrono::minutes(10));
+
         QSignalSpy changed(settings, &GeneralSettings::changed);
-
         settings->setWhenClosed(GeneralSettings::WhenClosed::Stop);
-        settings->setStopAfterMinutes(25);
-        QCOMPARE(changed.count(), 2);
+        settings->setStopAfter(25);
+        settings->setStopAfterUnit(GeneralSettings::Unit::Seconds);
+        QCOMPARE(changed.count(), 3);
         QCOMPARE(settings->whenClosed(), GeneralSettings::WhenClosed::Stop);
-        QCOMPARE(settings->stopAfterMinutes(), 25);
+        QCOMPARE(settings->stopDelay(), std::chrono::seconds(25));
 
         settings->setWhenClosed(GeneralSettings::WhenClosed::Stop);
-        QCOMPARE(changed.count(), 2);
+        QCOMPARE(changed.count(), 3);
 
-        settings->setStopAfterMinutes(0);
-        QCOMPARE(settings->stopAfterMinutes(), settings->minimumStopAfterMinutes());
-        settings->setStopAfterMinutes(100000);
-        QCOMPARE(settings->stopAfterMinutes(), settings->maximumStopAfterMinutes());
+        settings->setStopAfter(0);
+        QCOMPARE(settings->stopDelay(), std::chrono::seconds(0));
+        settings->setStopAfter(-5);
+        QCOMPARE(settings->stopAfter(), 0);
+        settings->setStopAfter(100000);
+        QCOMPARE(settings->stopAfter(), settings->maximumStopAfter());
 
         KConfigGroup group = KSharedConfig::openConfig(u"keekrc"_s, KConfig::SimpleConfig)->group(u"General"_s);
         QCOMPARE(group.readEntry("WhenClosed", QString()), u"stop"_s);
+        QCOMPARE(group.readEntry("StopAfterUnit", QString()), u"seconds"_s);
         group.writeEntry("WhenClosed", u"bogus"_s);
+        group.writeEntry("StopAfterUnit", u"bogus"_s);
         QCOMPARE(settings->whenClosed(), GeneralSettings::WhenClosed::KeepReady);
+        QCOMPARE(settings->stopAfterUnit(), GeneralSettings::Unit::Minutes);
 
         settings->setWhenClosed(GeneralSettings::WhenClosed::FreeMemory);
         QCOMPARE(group.readEntry("WhenClosed", QString()), u"free"_s);
-        settings->setWhenClosed(GeneralSettings::WhenClosed::KeepReady);
-        settings->setStopAfterMinutes(10);
+        group.deleteGroup();
+        group.sync();
+        QCOMPARE(settings->whenClosed(), GeneralSettings::WhenClosed::KeepReady);
     }
 
     void imageInfoHasNoSizeForOtherFiles()

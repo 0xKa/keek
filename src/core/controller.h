@@ -90,6 +90,7 @@ private:
     QString m_lastError;
     bool m_hadActivationToken = false;
     bool m_showing = false;
+    int m_openingFiles = 0;
     QTimer m_idleTimer;
     std::optional<std::chrono::milliseconds> m_idleInterval;
     std::unique_ptr<MainWindow> m_mainWindow;

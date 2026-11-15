@@ -213,7 +213,8 @@ Every setting applies and is saved as soon as it changes. There is no Apply butt
 ```ini
 [General]
 WhenClosed=keep
-StopAfterMinutes=10
+StopAfter=10
+StopAfterUnit=minutes
 ```
 
 `WhenClosed` decides what `keekd` does once the popup has closed and the Keek window is not open:
@@ -222,9 +223,11 @@ StopAfterMinutes=10
 |---|---|---|
 | `keep` | Keep Keek ready | Nothing. Everything stays loaded and the next preview opens instantly. This is the default and the value used for anything unknown. |
 | `free` | Free memory | 10 seconds after the popup closes, `PopupWindow` destroys its QML view and `malloc_trim` hands the freed memory back. The next `show` loads the view again. |
-| `stop` | Stop Keek after N minutes | After `StopAfterMinutes` minutes, from 1 to 120, `Controller` emits `stopRequested` and `keekd` exits. D-Bus starts it again on the next `keek` call. |
+| `stop` | Stop Keek after N seconds or minutes | After `StopAfter` units of `StopAfterUnit` (`seconds` or `minutes`), `Controller` emits `stopRequested` and `keekd` exits. `StopAfter` runs from 0 to 999, and 0 stops it as soon as the popup closes. D-Bus starts it again on the next `keek` call. |
 
 - **The timer starts when both are closed** and stops when either opens, so `keekd` never unloads or stops under an open window.
+- **The first timer after start-up lasts at least 5 seconds.** D-Bus starts `keekd` to deliver a call such as `Show`, and with no delay it could otherwise stop before that call arrives.
+- **A file being opened with Enter holds the timer** until `KIO::OpenUrlJob` finishes, so stopping at once does not cut the launch short.
 - **Measured in a headless KWin session** after showing one file of each kind: Keep ready held about 60 MB of the daemon's own memory, Free memory brought it down to about 35 MB, and reopening took no measurable extra time. What stays is loaded once per process, such as Qt Multimedia and the compiled QML types.
 - **Tests shorten the timers** with `Controller::setIdleInterval`.
 

@@ -20,8 +20,9 @@ using namespace Qt::StringLiterals;
 namespace
 {
 constexpr std::chrono::seconds freeMemoryDelay(10);
+constexpr std::chrono::seconds startupGrace(5);
 
-void openWithDefaultApplication(const QString &file, const QString &activationToken)
+void openWithDefaultApplication(const QString &file, const QString &activationToken, QObject *context, std::function<void()> finished)
 {
     auto *job = new KIO::OpenUrlJob(QUrl::fromLocalFile(file));
     job->setStartupId(activationToken.toUtf8());
@@ -31,6 +32,7 @@ void openWithDefaultApplication(const QString &file, const QString &activationTo
             qCWarning(lcKeek).noquote() << "could not open" << file << ":" << job->errorString();
         }
     });
+    QObject::connect(job, &KJob::finished, context, std::move(finished));
     job->start();
 }
 }
@@ -38,7 +40,13 @@ void openWithDefaultApplication(const QString &file, const QString &activationTo
 Controller::Controller(QObject *parent)
     : QObject(parent)
     , m_renderer(&m_registry.fallback())
-    , m_opener(openWithDefaultApplication)
+    , m_opener([this](const QString &file, const QString &activationToken) {
+        ++m_openingFiles;
+        openWithDefaultApplication(file, activationToken, this, [this] {
+            --m_openingFiles;
+            updateIdleTimer();
+        });
+    })
     , m_window(std::make_unique<PopupWindow>(this))
 {
     m_idleTimer.setSingleShot(true);
@@ -52,6 +60,9 @@ Controller::Controller(QObject *parent)
     });
     m_window->load();
     updateIdleTimer();
+    if (m_idleTimer.isActive() && m_idleTimer.intervalAsDuration() < startupGrace) {
+        m_idleTimer.start(startupGrace);
+    }
 }
 
 Controller::~Controller() = default;
@@ -303,7 +314,7 @@ void Controller::updateIdleTimer()
 {
     m_idleTimer.stop();
     const GeneralSettings::WhenClosed whenClosed = GeneralSettings::instance()->whenClosed();
-    if (whenClosed == GeneralSettings::WhenClosed::KeepReady || m_window->isVisible() || m_mainWindow) {
+    if (whenClosed == GeneralSettings::WhenClosed::KeepReady || m_window->isVisible() || m_mainWindow || m_openingFiles > 0) {
         return;
     }
     if (whenClosed == GeneralSettings::WhenClosed::FreeMemory && !m_window->isLoaded()) {
@@ -314,14 +325,14 @@ void Controller::updateIdleTimer()
     } else if (whenClosed == GeneralSettings::WhenClosed::FreeMemory) {
         m_idleTimer.setInterval(freeMemoryDelay);
     } else {
-        m_idleTimer.setInterval(std::chrono::minutes(GeneralSettings::instance()->stopAfterMinutes()));
+        m_idleTimer.setInterval(GeneralSettings::instance()->stopDelay());
     }
     m_idleTimer.start();
 }
 
 void Controller::idleTimeout()
 {
-    if (m_window->isVisible() || m_mainWindow) {
+    if (m_window->isVisible() || m_mainWindow || m_openingFiles > 0) {
         return;
     }
     switch (GeneralSettings::instance()->whenClosed()) {

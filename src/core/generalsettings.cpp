@@ -13,14 +13,18 @@ using namespace Qt::StringLiterals;
 
 namespace
 {
-constexpr int defaultStopAfterMinutes = 10;
-constexpr int minimumMinutes = 1;
-constexpr int maximumMinutes = 120;
+constexpr int defaultStopAfter = 10;
+constexpr int maximumCount = 999;
 
 constexpr std::array whenClosedNames = {
     std::pair{GeneralSettings::WhenClosed::KeepReady, "keep"},
     std::pair{GeneralSettings::WhenClosed::FreeMemory, "free"},
     std::pair{GeneralSettings::WhenClosed::Stop, "stop"},
+};
+
+constexpr std::array unitNames = {
+    std::pair{GeneralSettings::Unit::Seconds, "seconds"},
+    std::pair{GeneralSettings::Unit::Minutes, "minutes"},
 };
 
 KConfigGroup generalGroup()
@@ -33,6 +37,28 @@ void write(const char *key, const QVariant &value)
     KConfigGroup group = generalGroup();
     group.writeEntry(key, value);
     group.sync();
+}
+
+template<typename Names, typename Value>
+Value readName(const Names &names, const char *key, Value fallback)
+{
+    const QString name = generalGroup().readEntry(key, QString());
+    for (const auto &[value, text] : names) {
+        if (name == QLatin1StringView(text)) {
+            return value;
+        }
+    }
+    return fallback;
+}
+
+template<typename Names, typename Value>
+void writeName(const Names &names, const char *key, Value wanted)
+{
+    for (const auto &[value, text] : names) {
+        if (value == wanted) {
+            write(key, QString::fromLatin1(text));
+        }
+    }
 }
 }
 
@@ -56,13 +82,7 @@ GeneralSettings *GeneralSettings::create(QQmlEngine *, QJSEngine *)
 
 GeneralSettings::WhenClosed GeneralSettings::whenClosed() const
 {
-    const QString name = generalGroup().readEntry("WhenClosed", QString());
-    for (const auto &[value, key] : whenClosedNames) {
-        if (name == QLatin1StringView(key)) {
-            return value;
-        }
-    }
-    return WhenClosed::KeepReady;
+    return readName(whenClosedNames, "WhenClosed", WhenClosed::KeepReady);
 }
 
 void GeneralSettings::setWhenClosed(WhenClosed whenClosed)
@@ -70,35 +90,46 @@ void GeneralSettings::setWhenClosed(WhenClosed whenClosed)
     if (whenClosed == this->whenClosed()) {
         return;
     }
-    for (const auto &[value, key] : whenClosedNames) {
-        if (value == whenClosed) {
-            write("WhenClosed", QString::fromLatin1(key));
-        }
-    }
+    writeName(whenClosedNames, "WhenClosed", whenClosed);
     Q_EMIT changed();
 }
 
-int GeneralSettings::stopAfterMinutes() const
+int GeneralSettings::stopAfter() const
 {
-    return std::clamp(generalGroup().readEntry("StopAfterMinutes", defaultStopAfterMinutes), minimumMinutes, maximumMinutes);
+    return std::clamp(generalGroup().readEntry("StopAfter", defaultStopAfter), 0, maximumCount);
 }
 
-void GeneralSettings::setStopAfterMinutes(int minutes)
+void GeneralSettings::setStopAfter(int count)
 {
-    minutes = std::clamp(minutes, minimumMinutes, maximumMinutes);
-    if (minutes == stopAfterMinutes()) {
+    count = std::clamp(count, 0, maximumCount);
+    if (count == stopAfter()) {
         return;
     }
-    write("StopAfterMinutes", minutes);
+    write("StopAfter", count);
     Q_EMIT changed();
 }
 
-int GeneralSettings::minimumStopAfterMinutes() const
+GeneralSettings::Unit GeneralSettings::stopAfterUnit() const
 {
-    return minimumMinutes;
+    return readName(unitNames, "StopAfterUnit", Unit::Minutes);
 }
 
-int GeneralSettings::maximumStopAfterMinutes() const
+void GeneralSettings::setStopAfterUnit(Unit unit)
 {
-    return maximumMinutes;
+    if (unit == stopAfterUnit()) {
+        return;
+    }
+    writeName(unitNames, "StopAfterUnit", unit);
+    Q_EMIT changed();
+}
+
+int GeneralSettings::maximumStopAfter() const
+{
+    return maximumCount;
+}
+
+std::chrono::seconds GeneralSettings::stopDelay() const
+{
+    const std::chrono::seconds count(stopAfter());
+    return stopAfterUnit() == Unit::Minutes ? count * 60 : count;
 }

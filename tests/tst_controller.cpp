@@ -390,7 +390,10 @@ private Q_SLOTS:
 
     void cleanup()
     {
-        GeneralSettings::instance()->setWhenClosed(GeneralSettings::WhenClosed::KeepReady);
+        GeneralSettings *settings = GeneralSettings::instance();
+        settings->setWhenClosed(GeneralSettings::WhenClosed::KeepReady);
+        settings->setStopAfter(10);
+        settings->setStopAfterUnit(GeneralSettings::Unit::Minutes);
     }
 
     void openWindowShowsTheMainWindow()
@@ -452,6 +455,18 @@ private Q_SLOTS:
         QCOMPARE(GeneralSettings::instance()->whenClosed(), GeneralSettings::WhenClosed::FreeMemory);
         QVERIFY(freeMemory->property("checked").toBool());
         QVERIFY(!stop->property("checked").toBool());
+
+        auto *count = window->contentItem()->findChild<QQuickItem *>(u"stopAfter"_s);
+        auto *unit = window->contentItem()->findChild<QQuickItem *>(u"stopAfterUnit"_s);
+        QVERIFY(count && unit);
+        QCOMPARE(count->property("value").toInt(), 10);
+        QCOMPARE(count->property("from").toInt(), 0);
+        QCOMPARE(unit->property("currentIndex").toInt(), 1);
+
+        GeneralSettings::instance()->setStopAfter(30);
+        GeneralSettings::instance()->setStopAfterUnit(GeneralSettings::Unit::Seconds);
+        QCOMPARE(count->property("value").toInt(), 30);
+        QCOMPARE(unit->property("currentIndex").toInt(), 0);
     }
 
     void keepReadyKeepsThePopupLoaded()
@@ -502,6 +517,21 @@ private Q_SLOTS:
 
         QVERIFY(closeMainWindow(controller));
         QTRY_COMPARE(stopRequested.count(), 1);
+    }
+
+    void stopWithNoDelayWaitsForStartupThenStopsOnClose()
+    {
+        GeneralSettings::instance()->setWhenClosed(GeneralSettings::WhenClosed::Stop);
+        GeneralSettings::instance()->setStopAfter(0);
+        Controller controller;
+        QSignalSpy stopRequested(&controller, &Controller::stopRequested);
+        QTest::qWait(200);
+        QCOMPARE(stopRequested.count(), 0);
+
+        controller.show({fileA()});
+        QTRY_COMPARE(status(controller), u"ready"_s);
+        controller.hide();
+        QTRY_COMPARE_WITH_TIMEOUT(stopRequested.count(), 1, 1000);
     }
 };
 
