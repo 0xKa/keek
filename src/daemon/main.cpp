@@ -31,6 +31,8 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    QObject::connect(&controller, &Controller::stopRequested, &app, &QCoreApplication::quit, Qt::QueuedConnection);
+
     DBusService service(&controller);
     QString error;
     if (!service.registerOnBus(&error)) {

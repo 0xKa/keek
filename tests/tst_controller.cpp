@@ -1,5 +1,7 @@
 #include "controller.h"
 #include "fixtures.h"
+#include "generalsettings.h"
+#include "mainwindow.h"
 #include "popupwindow.h"
 
 #include <QFileInfo>
@@ -7,11 +9,14 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QKeyEvent>
+#include <QQuickItem>
 #include <QQuickWindow>
+#include <QSignalSpy>
 #include <QTemporaryDir>
 #include <QTest>
 
 using namespace Qt::StringLiterals;
+using namespace std::chrono_literals;
 
 class ControllerTest : public QObject
 {
@@ -51,6 +56,19 @@ private:
     QString inFolder(const QString &name) const
     {
         return m_folder.filePath(name);
+    }
+
+    static QString status(const Controller &controller)
+    {
+        return controller.state()["status"_L1].toString();
+    }
+
+    static bool closeMainWindow(Controller &controller)
+    {
+        controller.mainWindow()->close();
+        return QTest::qWaitFor([&controller] {
+            return controller.mainWindow() == nullptr;
+        });
     }
 
 private Q_SLOTS:
@@ -368,6 +386,122 @@ private Q_SLOTS:
 
         controller.show({fileA()});
         QVERIFY(controller.state()["lastError"_L1].isNull());
+    }
+
+    void cleanup()
+    {
+        GeneralSettings::instance()->setWhenClosed(GeneralSettings::WhenClosed::KeepReady);
+    }
+
+    void openWindowShowsTheMainWindow()
+    {
+        Controller controller;
+        QVERIFY(controller.mainWindow() == nullptr);
+        QCOMPARE(controller.state()["window"_L1].toBool(), false);
+
+        QVERIFY(controller.openWindow());
+        QVERIFY(controller.mainWindow());
+        QVERIFY(QTest::qWaitForWindowExposed(controller.mainWindow()->quickWindow()));
+        QCOMPARE(controller.state()["window"_L1].toBool(), true);
+        QCOMPARE(controller.state()["visible"_L1].toBool(), false);
+
+        MainWindow *window = controller.mainWindow();
+        QVERIFY(controller.openWindow());
+        QCOMPARE(controller.mainWindow(), window);
+
+        QVERIFY(closeMainWindow(controller));
+        QCOMPARE(controller.state()["window"_L1].toBool(), false);
+    }
+
+    void windowScreenshotSavesWhatTheWindowDraws()
+    {
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString file = dir.filePath(u"window.png"_s);
+
+        Controller controller;
+        QString error;
+        QVERIFY(!controller.screenshotWindow(file, &error));
+        QVERIFY(!error.isEmpty());
+
+        QVERIFY(controller.openWindow());
+        QVERIFY(QTest::qWaitForWindowExposed(controller.mainWindow()->quickWindow()));
+        QVERIFY(controller.screenshotWindow(file));
+        const QImage image(file);
+        QCOMPARE(image.size(), controller.mainWindow()->size());
+    }
+
+    void settingsTabFollowsTheSettings()
+    {
+        Controller controller;
+        QVERIFY(controller.openWindow());
+        QQuickWindow *window = controller.mainWindow()->quickWindow();
+        QVERIFY(QTest::qWaitForWindowExposed(window));
+
+        auto *keepReady = window->contentItem()->findChild<QQuickItem *>(u"keepReady"_s);
+        auto *freeMemory = window->contentItem()->findChild<QQuickItem *>(u"freeMemory"_s);
+        auto *stop = window->contentItem()->findChild<QQuickItem *>(u"stop"_s);
+        QVERIFY(keepReady && freeMemory && stop);
+        QVERIFY(keepReady->property("checked").toBool());
+
+        GeneralSettings::instance()->setWhenClosed(GeneralSettings::WhenClosed::Stop);
+        QVERIFY(stop->property("checked").toBool());
+        QVERIFY(!keepReady->property("checked").toBool());
+
+        QTest::mouseClick(window, Qt::LeftButton, {}, freeMemory->mapToScene(QPointF(freeMemory->width() / 2, freeMemory->height() / 2)).toPoint());
+        QCOMPARE(GeneralSettings::instance()->whenClosed(), GeneralSettings::WhenClosed::FreeMemory);
+        QVERIFY(freeMemory->property("checked").toBool());
+        QVERIFY(!stop->property("checked").toBool());
+    }
+
+    void keepReadyKeepsThePopupLoaded()
+    {
+        Controller controller;
+        controller.setIdleInterval(10ms);
+        controller.show({fileA()});
+        QTRY_COMPARE(status(controller), u"ready"_s);
+        controller.hide();
+        QTest::qWait(100);
+        QCOMPARE(controller.state()["loaded"_L1].toBool(), true);
+    }
+
+    void freeMemoryUnloadsThePopupOnceClosed()
+    {
+        GeneralSettings::instance()->setWhenClosed(GeneralSettings::WhenClosed::FreeMemory);
+        Controller controller;
+        controller.setIdleInterval(10ms);
+        QTRY_COMPARE(controller.state()["loaded"_L1].toBool(), false);
+
+        controller.show({fileA()});
+        QCOMPARE(controller.state()["loaded"_L1].toBool(), true);
+        QTRY_COMPARE(status(controller), u"ready"_s);
+        QTest::qWait(50);
+        QCOMPARE(controller.state()["loaded"_L1].toBool(), true);
+
+        controller.hide();
+        QTRY_COMPARE(controller.state()["loaded"_L1].toBool(), false);
+        QCOMPARE(controller.state()["file"_L1].toString(), fileA());
+
+        controller.show({fileB()});
+        QTRY_COMPARE(status(controller), u"ready"_s);
+        QCOMPARE(controller.state()["renderer"_L1].toString(), u"text"_s);
+    }
+
+    void stopIsRequestedOnlyWhenEverythingIsClosed()
+    {
+        GeneralSettings::instance()->setWhenClosed(GeneralSettings::WhenClosed::Stop);
+        Controller controller;
+        QSignalSpy stopRequested(&controller, &Controller::stopRequested);
+        QVERIFY(controller.openWindow());
+        controller.show({fileA()});
+        controller.setIdleInterval(10ms);
+
+        controller.hide();
+        QTest::qWait(100);
+        QCOMPARE(stopRequested.count(), 0);
+
+        QVERIFY(closeMainWindow(controller));
+        QTRY_COMPARE(stopRequested.count(), 1);
     }
 };
 

@@ -5,12 +5,16 @@
 #include <QJsonObject>
 #include <QObject>
 #include <QStringList>
+#include <QTimer>
 #include <QUrl>
 #include <QtQmlIntegration/qqmlintegration.h>
 
+#include <chrono>
 #include <functional>
 #include <memory>
+#include <optional>
 
+class MainWindow;
 class PopupWindow;
 
 class Controller : public QObject
@@ -34,6 +38,7 @@ public:
 
     bool isReady() const;
     PopupWindow *window() const;
+    MainWindow *mainWindow() const;
 
     QString currentFile() const;
     QString currentFileName() const;
@@ -52,14 +57,23 @@ public:
     Q_INVOKABLE void useFallback(const QString &reason = {});
     void setFileOpener(FileOpener opener);
     bool screenshot(const QString &file, QString *error = nullptr);
+    bool openWindow(const QString &activationToken = {}, QString *error = nullptr);
+    bool screenshotWindow(const QString &file, QString *error = nullptr);
+    void setIdleInterval(std::chrono::milliseconds interval);
     QJsonObject state() const;
 
 Q_SIGNALS:
     void currentFileChanged();
     void showingChanged();
+    void stopRequested();
 
 private:
     QString status() const;
+    bool saveScreenshot(const QImage &image, const QString &what, const QString &file, QString *error);
+    bool fail(const QString &problem, QString *error);
+    void mainWindowClosed();
+    void updateIdleTimer();
+    void idleTimeout();
     void setShowing(bool showing);
     bool moveBy(int step);
     void selectCurrent();
@@ -76,5 +90,8 @@ private:
     QString m_lastError;
     bool m_hadActivationToken = false;
     bool m_showing = false;
+    QTimer m_idleTimer;
+    std::optional<std::chrono::milliseconds> m_idleInterval;
+    std::unique_ptr<MainWindow> m_mainWindow;
     std::unique_ptr<PopupWindow> m_window;
 };

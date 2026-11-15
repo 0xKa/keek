@@ -25,7 +25,9 @@ constexpr int callTimeoutMs = 3000;
 
 void printUsage(QTextStream &out)
 {
-    out << "Usage: keek <command> [arguments]\n"
+    out << "Usage: keek [command] [arguments]\n"
+           "\n"
+           "With no command, opens the Keek window.\n"
            "\n"
            "Commands:\n"
            "  show <paths>        Show the popup for these files\n"
@@ -35,6 +37,8 @@ void printUsage(QTextStream &out)
            "  previous            Show the previous file\n"
            "  state               Print the current state as JSON\n"
            "  screenshot <file>   Save what the popup is drawing to an image file\n"
+           "  screenshot --window <file>\n"
+           "                      Save what the Keek window is drawing to an image file\n"
            "  quit                Stop the daemon\n"
            "\n"
            "Exit codes: 0 success, 1 usage error, 2 keekd not reachable, 3 keekd reported an error\n";
@@ -124,8 +128,9 @@ int main(int argc, char **argv)
     app.setApplicationVersion(QStringLiteral(KEEK_VERSION));
 
     QStringList arguments = app.arguments().mid(1);
+    const QString token = qEnvironmentVariable("XDG_ACTIVATION_TOKEN");
     if (arguments.isEmpty()) {
-        return usageError(u"no command given"_s);
+        return call(u"OpenWindow"_s, {token});
     }
 
     QTextStream out(stdout);
@@ -144,15 +149,18 @@ int main(int argc, char **argv)
         if (arguments.isEmpty()) {
             return usageError(u"%1 needs at least one path"_s.arg(command));
         }
-        const QString token = qEnvironmentVariable("XDG_ACTIVATION_TOKEN");
         return call(command == "show"_L1 ? u"Show"_s : u"Toggle"_s, {absolutePaths(arguments), token});
     }
 
     if (command == "screenshot"_L1) {
+        const bool window = !arguments.isEmpty() && arguments.constFirst() == "--window"_L1;
+        if (window) {
+            arguments.removeFirst();
+        }
         if (arguments.size() != 1) {
             return usageError(u"screenshot needs exactly one file"_s);
         }
-        return call(u"Screenshot"_s, {absolutePaths(arguments).constFirst()});
+        return call(window ? u"ScreenshotWindow"_s : u"Screenshot"_s, {absolutePaths(arguments).constFirst()});
     }
 
     const QStringList simpleCommands = {u"hide"_s, u"next"_s, u"previous"_s, u"state"_s, u"quit"_s};

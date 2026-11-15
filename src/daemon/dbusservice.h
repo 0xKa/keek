@@ -26,6 +26,8 @@ public Q_SLOTS:
     void Previous();
     QString State();
     void Screenshot(const QString &file);
+    void OpenWindow(const QString &activationToken);
+    void ScreenshotWindow(const QString &file);
     void Quit();
 
 private:

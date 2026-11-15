@@ -10,7 +10,7 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 |---|---|
 | State lives in `Controller` | The files being shown, the chosen renderer and the last error. Nothing else keeps a copy. |
 | `DBusService` holds no logic | Each method checks its arguments, calls the controller, and turns a failure into a D-Bus error reply. |
-| `PopupWindow` is the only window code | Creating, showing, focusing and grabbing the window happen there and nowhere else. |
+| Window code lives in two classes | Creating, showing, focusing and grabbing the popup happen in `PopupWindow`, and the same for the Keek window in `MainWindow`. Nowhere else. |
 | Views only report | A QML view draws one file and sets `ready` and `error`. It does not decide which file or which renderer. |
 | Read QML state on demand | C++ asks the root item for `contentReady` and `contentError` when it needs them. Do not mirror them into C++ members; a missed change signal leaves the copy stale. |
 | File work is C++ | Reading, decoding and measuring files belong in a C++ type exposed to QML, such as `TextFile` and `ImageInfo`. QML does not read files. |
@@ -23,6 +23,7 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 | No comments | Names and small functions carry the meaning. This includes licence headers. |
 | Never load QML from a constructor | QML reads the controller's properties the moment it loads. Load it in a separate step once the object is fully built, as `PopupWindow::load()` does. This crashed the daemon twice. |
 | Declare members in dependency order | A member used by another member's constructor comes first. In `Controller`, `m_window` is last. |
+| Settings are one object per process | A settings type exposed to QML is a `QML_SINGLETON` with a static `create()` that returns `instance()` and keeps C++ ownership. Each window has its own QML engine, and a second instance would miss the other's change signals. |
 | Qt macros, not keywords | `Q_SIGNALS`, `Q_SLOTS` and `Q_EMIT`, never `signals`, `slots` or `emit`. |
 | String literals | `u"text"_s` for a `QString`, `"text"_L1` for comparisons and JSON keys, `QStringLiteral(MACRO)` when the text comes from a macro. No bare `"text"` where a `QString` is expected. |
 | Ownership | `std::unique_ptr` for an object with no Qt parent, a parent for a `QObject` that has one. No bare `new` without one of the two. A `KJob` is the exception: it deletes itself when it finishes. |
@@ -54,7 +55,8 @@ It lists only what is specific to Keek or has already caused a bug here. When an
 | Centre `ListView` delegates from inside | A `ListView` places its delegates at x = 0. Make the delegate as wide as the list and centre the content inside it. |
 | No stale content | Set `cache: false` on an `Image`, and keep the `Loader` inactive while the popup is hidden. |
 | Text for the user | Wrap it in `qsTr()`. |
-| Controls never take focus | Give every `Button`, `ToolButton` and `Slider` `focusPolicy: Qt.NoFocus`. A focused control would swallow Space and the arrows. |
+| Popup controls never take focus | In the popup's views, give every `Button`, `ToolButton` and `Slider` `focusPolicy: Qt.NoFocus`. A focused control would swallow Space and the arrows. Controls in the Keek window keep their focus, so it works from the keyboard. |
+| Follow a setting with `Binding on` | A control that shows a setting sets it in `onClicked` or `onToggled` and follows it with `Binding on checked { value: ... }`. A plain `checked: ...` binding breaks the first time the control is clicked, and then misses changes made elsewhere, such as M in the popup. |
 | Colour controls from the view's palette | Set `color` on a `Label` and `icon.color` on a button from `view.palette`. The Controls style may use other colours than the popup's background. |
 | No sound in tests | Anything that shows audio or video runs with `KEEK_AUTOPLAY=0`. |
 

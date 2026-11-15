@@ -8,6 +8,7 @@
 #include <functional>
 #include <memory>
 
+class QQuickItem;
 class QQuickView;
 class QQuickWindow;
 
@@ -20,6 +21,8 @@ public:
     ~PopupWindow() override;
 
     void load();
+    void unload();
+    bool isLoaded() const;
     bool isReady() const;
     QQuickWindow *quickWindow() const;
 
@@ -48,7 +51,9 @@ private:
     void applyPreferredSize();
     QSize preferredSize() const;
     bool isContentSized() const;
+    QQuickItem *rootItem() const;
 
+    QObject *m_controller;
     std::unique_ptr<QQuickView> m_view;
     QTimer m_sizeWait;
     QString m_pendingToken;

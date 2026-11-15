@@ -1,6 +1,7 @@
 #include "popupwindow.h"
 
 #include "logging.h"
+#include "memory.h"
 
 #include <KWaylandExtras>
 #include <KWindowSystem>
@@ -39,16 +40,27 @@ void ensureIconTheme()
 
 PopupWindow::PopupWindow(QObject *controller, QObject *parent)
     : QObject(parent)
-    , m_view(std::make_unique<QQuickView>())
+    , m_controller(controller)
 {
     ensureIconTheme();
-    m_view->setTitle(u"Keek"_s);
-    m_view->setFlags(Qt::Window | Qt::FramelessWindowHint);
-    m_view->setResizeMode(QQuickView::SizeRootObjectToView);
-    m_view->setInitialProperties({{u"controller"_s, QVariant::fromValue(controller)}});
     m_sizeWait.setSingleShot(true);
     m_sizeWait.setInterval(maximumSizeWait);
     connect(&m_sizeWait, &QTimer::timeout, this, &PopupWindow::present);
+}
+
+PopupWindow::~PopupWindow() = default;
+
+void PopupWindow::load()
+{
+    if (m_view) {
+        return;
+    }
+    m_drawn = false;
+    m_view = std::make_unique<QQuickView>();
+    m_view->setTitle(u"Keek"_s);
+    m_view->setFlags(Qt::Window | Qt::FramelessWindowHint);
+    m_view->setResizeMode(QQuickView::SizeRootObjectToView);
+    m_view->setInitialProperties({{u"controller"_s, QVariant::fromValue(m_controller)}});
     connect(m_view.get(), &QWindow::visibleChanged, this, &PopupWindow::visibleChanged);
     connect(m_view.get(), &QWindow::screenChanged, this, &PopupWindow::updateAvailableSize);
     connect(m_view.get(), &QQuickWindow::frameSwapped, this, [this] {
@@ -59,12 +71,7 @@ PopupWindow::PopupWindow(QObject *controller, QObject *parent)
     });
     connect(m_view.get(), &QWindow::widthChanged, this, &PopupWindow::reassertSize, Qt::QueuedConnection);
     connect(m_view.get(), &QWindow::heightChanged, this, &PopupWindow::reassertSize, Qt::QueuedConnection);
-}
 
-PopupWindow::~PopupWindow() = default;
-
-void PopupWindow::load()
-{
     m_view->loadFromModule("Keek", "Popup");
 
     const QList<QQmlError> errors = m_view->errors();
@@ -84,9 +91,24 @@ void PopupWindow::load()
     updateAvailableSize();
 }
 
+void PopupWindow::unload()
+{
+    if (!m_view || isVisible()) {
+        return;
+    }
+    m_view.reset();
+    releaseFreedMemory();
+    qCInfo(lcKeek) << "popup unloaded";
+}
+
+bool PopupWindow::isLoaded() const
+{
+    return m_view != nullptr;
+}
+
 void PopupWindow::updateAvailableSize()
 {
-    QQuickItem *root = m_view->rootObject();
+    QQuickItem *root = m_view ? m_view->rootObject() : nullptr;
     if (!root) {
         return;
     }
@@ -98,13 +120,13 @@ void PopupWindow::updateAvailableSize()
 
 QSize PopupWindow::preferredSize() const
 {
-    const QQuickItem *root = m_view->rootObject();
+    const QQuickItem *root = rootItem();
     return root ? root->property("preferredSize").toSizeF().toSize() : QSize();
 }
 
 bool PopupWindow::isContentSized() const
 {
-    const QQuickItem *root = m_view->rootObject();
+    const QQuickItem *root = rootItem();
     return root && root->property("sized").toBool();
 }
 
@@ -122,7 +144,7 @@ void PopupWindow::contentSizeChanged()
 
 void PopupWindow::reassertSize()
 {
-    if (!m_view->isVisible() || m_corrections >= maximumCorrections || preferredSize() == m_view->size()) {
+    if (!m_view || !m_view->isVisible() || m_corrections >= maximumCorrections || preferredSize() == m_view->size()) {
         return;
     }
     ++m_corrections;
@@ -131,7 +153,7 @@ void PopupWindow::reassertSize()
 
 void PopupWindow::applyPreferredSize()
 {
-    QQuickItem *root = m_view->rootObject();
+    QQuickItem *root = rootItem();
     if (!root || (m_view->isVisible() && !m_drawn)) {
         return;
     }
@@ -145,7 +167,7 @@ void PopupWindow::applyPreferredSize()
 
 bool PopupWindow::isReady() const
 {
-    return m_view->status() == QQuickView::Ready;
+    return m_view && m_view->status() == QQuickView::Ready;
 }
 
 QQuickWindow *PopupWindow::quickWindow() const
@@ -153,8 +175,17 @@ QQuickWindow *PopupWindow::quickWindow() const
     return m_view.get();
 }
 
+QQuickItem *PopupWindow::rootItem() const
+{
+    return m_view ? m_view->rootObject() : nullptr;
+}
+
 void PopupWindow::show(const QString &activationToken)
 {
+    load();
+    if (!m_view) {
+        return;
+    }
     m_pendingToken = activationToken;
     if (m_view->isVisible() || isContentSized()) {
         present();
@@ -166,6 +197,9 @@ void PopupWindow::show(const QString &activationToken)
 
 void PopupWindow::present()
 {
+    if (!m_view) {
+        return;
+    }
     const bool wasVisible = m_view->isVisible();
     m_showPending = false;
     m_sizeWait.stop();
@@ -190,12 +224,14 @@ void PopupWindow::hide()
     m_showPending = false;
     m_sizeWait.stop();
     m_pendingToken.clear();
-    m_view->hide();
+    if (m_view) {
+        m_view->hide();
+    }
 }
 
 void PopupWindow::requestActivationToken(std::function<void(const QString &)> callback)
 {
-    if (!KWindowSystem::isPlatformWayland()) {
+    if (!m_view || !KWindowSystem::isPlatformWayland()) {
         callback({});
         return;
     }
@@ -204,32 +240,32 @@ void PopupWindow::requestActivationToken(std::function<void(const QString &)> ca
 
 bool PopupWindow::isVisible() const
 {
-    return m_showPending || m_view->isVisible();
+    return m_showPending || (m_view && m_view->isVisible());
 }
 
 bool PopupWindow::isActive() const
 {
-    return m_view->isActive();
+    return m_view && m_view->isActive();
 }
 
 QSize PopupWindow::size() const
 {
-    return m_view->size();
+    return m_view ? m_view->size() : QSize();
 }
 
 QImage PopupWindow::grab()
 {
-    return m_view->grabWindow();
+    return m_view ? m_view->grabWindow() : QImage();
 }
 
 bool PopupWindow::isContentReady() const
 {
-    const QQuickItem *root = m_view->rootObject();
+    const QQuickItem *root = rootItem();
     return root && root->property("contentReady").toBool();
 }
 
 QString PopupWindow::contentError() const
 {
-    const QQuickItem *root = m_view->rootObject();
+    const QQuickItem *root = rootItem();
     return root ? root->property("contentError").toString() : QString();
 }

@@ -1,11 +1,16 @@
 #include "fixtures.h"
 #include "folderinfo.h"
+#include "generalsettings.h"
 #include "imageinfo.h"
 #include "mediasettings.h"
 #include "rendererregistry.h"
 #include "textfile.h"
 
+#include <KConfigGroup>
+#include <KSharedConfig>
+
 #include <QFile>
+#include <QSignalSpy>
 #include <QTemporaryDir>
 #include <QTest>
 
@@ -220,6 +225,36 @@ private Q_SLOTS:
         QVERIFY(settings.isVideoMuted());
         QVERIFY(!settings.isAudioMuted());
         QVERIFY(!settings.autoplay());
+    }
+
+    void generalSettingsAreRemembered()
+    {
+        GeneralSettings *settings = GeneralSettings::instance();
+        QSignalSpy changed(settings, &GeneralSettings::changed);
+
+        settings->setWhenClosed(GeneralSettings::WhenClosed::Stop);
+        settings->setStopAfterMinutes(25);
+        QCOMPARE(changed.count(), 2);
+        QCOMPARE(settings->whenClosed(), GeneralSettings::WhenClosed::Stop);
+        QCOMPARE(settings->stopAfterMinutes(), 25);
+
+        settings->setWhenClosed(GeneralSettings::WhenClosed::Stop);
+        QCOMPARE(changed.count(), 2);
+
+        settings->setStopAfterMinutes(0);
+        QCOMPARE(settings->stopAfterMinutes(), settings->minimumStopAfterMinutes());
+        settings->setStopAfterMinutes(100000);
+        QCOMPARE(settings->stopAfterMinutes(), settings->maximumStopAfterMinutes());
+
+        KConfigGroup group = KSharedConfig::openConfig(u"keekrc"_s, KConfig::SimpleConfig)->group(u"General"_s);
+        QCOMPARE(group.readEntry("WhenClosed", QString()), u"stop"_s);
+        group.writeEntry("WhenClosed", u"bogus"_s);
+        QCOMPARE(settings->whenClosed(), GeneralSettings::WhenClosed::KeepReady);
+
+        settings->setWhenClosed(GeneralSettings::WhenClosed::FreeMemory);
+        QCOMPARE(group.readEntry("WhenClosed", QString()), u"free"_s);
+        settings->setWhenClosed(GeneralSettings::WhenClosed::KeepReady);
+        settings->setStopAfterMinutes(10);
     }
 
     void imageInfoHasNoSizeForOtherFiles()

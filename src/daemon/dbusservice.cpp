@@ -93,6 +93,22 @@ void DBusService::Screenshot(const QString &file)
     }
 }
 
+void DBusService::OpenWindow(const QString &activationToken)
+{
+    QString error;
+    if (!m_controller->openWindow(activationToken, &error) && calledFromDBus()) {
+        sendErrorReply(QDBusError::Failed, error);
+    }
+}
+
+void DBusService::ScreenshotWindow(const QString &file)
+{
+    QString error;
+    if (!m_controller->screenshotWindow(file, &error) && calledFromDBus()) {
+        sendErrorReply(QDBusError::Failed, error);
+    }
+}
+
 void DBusService::Quit()
 {
     QTimer::singleShot(0, qApp, &QCoreApplication::quit);

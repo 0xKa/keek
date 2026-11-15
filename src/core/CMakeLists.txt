@@ -14,12 +14,15 @@ qt_add_qml_module(keekcore
         FolderView.qml
         ImageView.qml
         KeyScroller.qml
+        MainWindow.qml
         MediaView.qml
         Metrics.qml
         Popup.qml
         PdfView.qml
         PreviewView.qml
         ScrollMarker.qml
+        SettingDescription.qml
+        SettingsPage.qml
         TextView.qml
         VideoView.qml
     SOURCES
@@ -37,14 +40,20 @@ qt_add_qml_module(keekcore
         folderinfo.h
         folderlisting.cpp
         folderlisting.h
+        generalsettings.cpp
+        generalsettings.h
         imageinfo.cpp
         imageinfo.h
         imagerenderer.cpp
         logging.cpp
         logging.h
+        mainwindow.cpp
+        mainwindow.h
         mediarenderers.cpp
         mediasettings.cpp
         mediasettings.h
+        memory.cpp
+        memory.h
         pdfrenderer.cpp
         popupwindow.cpp
         popupwindow.h

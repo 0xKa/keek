@@ -46,7 +46,7 @@ cmake --build --preset dev --target clang-format
 
 ## Install and uninstall
 
-Everything installs under `~/.local`, with no `sudo`. `keekd` also writes `~/.config/keekrc` the first time a mute button is pressed.
+Everything installs under `~/.local`, with no `sudo`. `keekd` also writes `~/.config/keekrc` the first time a setting changes, from the Keek window or a mute button.
 
 Build first, close every Dolphin window, then run:
 
@@ -94,7 +94,9 @@ The application ID is set once, as `KEEK_APP_ID` in the top-level `CMakeLists.tx
 
 - **`Controller`** holds the state: the list of files to move through, the current one, its renderer, the last error, and whether the last request carried an activation token. It is the object the QML binds to.
 - **`folderlisting`** builds the list the arrow keys move through, in Dolphin's default order.
-- **`PopupWindow`** is the one place that creates and shows the window. A later move to a layer-shell overlay changes this class and nothing else.
+- **`PopupWindow`** is the one place that creates and shows the popup. A later move to a layer-shell overlay changes this class and nothing else. It can unload its QML and load it again on the next show.
+- **`MainWindow`** creates and shows the Keek window. `Controller` creates it when it is opened and destroys it when it is closed.
+- **`GeneralSettings`** and **`MediaSettings`** read and write `~/.config/keekrc`. Each is one object for the whole process, shared by the controller and both windows, so a change made in the Keek window reaches the popup at once.
 - **`RendererRegistry`** picks a renderer for a file from its MIME type.
 - **`DBusService`** exposes the controller on the session bus. It contains no logic of its own.
 
@@ -194,6 +196,38 @@ Audio and video that cannot be played are not errors. The view calls `Controller
 
 `FolderInfo` adds up the size of every file under the folder on a Qt Concurrent worker thread, without following symbolic links. The popup shows the running total every 200 ms and the status stays `loading` until the count is done. Showing another file cancels the count.
 
+## The Keek window
+
+Running `keek` with no command opens the Keek window. `keekd` shows it, so `keek` stays a small D-Bus client. Running `keek` again while it is open brings it to the front.
+
+- **Tabs run along the top.** For now there is one, Settings. `MainWindow.qml` holds the tab bar and one page per tab.
+- **The window is destroyed when it closes,** so it costs nothing while closed.
+- **Ctrl + W closes it.**
+
+### Settings
+
+Every setting applies and is saved as soon as it changes. There is no Apply button.
+
+```ini
+[General]
+WhenClosed=keep
+StopAfterMinutes=10
+```
+
+`WhenClosed` decides what `keekd` does once the popup has closed and the Keek window is not open:
+
+| Value | Shown as | What happens |
+|---|---|---|
+| `keep` | Keep Keek ready | Nothing. Everything stays loaded and the next preview opens instantly. This is the default and the value used for anything unknown. |
+| `free` | Free memory | 10 seconds after the popup closes, `PopupWindow` destroys its QML view and `malloc_trim` hands the freed memory back. The next `show` loads the view again. |
+| `stop` | Stop Keek after N minutes | After `StopAfterMinutes` minutes, from 1 to 120, `Controller` emits `stopRequested` and `keekd` exits. D-Bus starts it again on the next `keek` call. |
+
+- **The timer starts when both are closed** and stops when either opens, so `keekd` never unloads or stops under an open window.
+- **Measured in a headless KWin session** after showing one file of each kind: Keep ready held about 60 MB of the daemon's own memory, Free memory brought it down to about 35 MB, and reopening took no measurable extra time. What stays is loaded once per process, such as Qt Multimedia and the compiled QML types.
+- **Tests shorten the timers** with `Controller::setIdleInterval`.
+
+The Audio and video section shows the two mute settings from `[Media]`. Pressing M in the popup changes the same values.
+
 ## Keys
 
 | Key | What it does |
@@ -230,6 +264,7 @@ Enter asks KWin for an activation token, so the application that opens gets focu
 
 | Command | What it does |
 |---|---|
+| `keek` | Open the Keek window, or bring it to the front. |
 | `keek show <paths>` | Show the popup for these files. |
 | `keek toggle <paths>` | Show the popup, or hide it if it is already showing the first of these files. |
 | `keek hide` | Hide the popup. |
@@ -237,9 +272,10 @@ Enter asks KWin for an activation token, so the application that opens gets focu
 | `keek previous` | Show the previous file, as ↑ does. It fails if the popup is hidden. |
 | `keek state` | Print the current state as one line of JSON. |
 | `keek screenshot <file>` | Save what the popup is drawing to an image file. It fails if the popup is hidden. |
+| `keek screenshot --window <file>` | Save what the Keek window is drawing to an image file. It fails if the window is not open. |
 | `keek quit` | Stop the daemon, and return once its bus name is free. |
 
-Relative paths are resolved against the directory `keek` was run from. If `XDG_ACTIVATION_TOKEN` is set, `show` and `toggle` pass it to the daemon.
+Relative paths are resolved against the directory `keek` was run from. If `XDG_ACTIVATION_TOKEN` is set, `show`, `toggle` and opening the window pass it to the daemon.
 
 Once Keek is installed, every command except `quit` starts the installed `keekd` if no daemon is running.
 
@@ -270,6 +306,8 @@ Exit codes:
 | `notice` | Why the fallback view is showing a file another renderer gave up on, such as a video that cannot be played, or `null`. |
 | `width`, `height` | The popup's size. |
 | `activationToken` | Whether the last `show` carried an activation token. |
+| `loaded` | Whether the popup's QML is loaded. It turns false when Free memory unloads it. |
+| `window` | Whether the Keek window is open. |
 | `lastError` | The last error, or `null`. A successful `show` clears it. |
 
 ### D-Bus
@@ -277,7 +315,7 @@ Exit codes:
 - **Service:** `io.github._0xKa.keek`
 - **Object:** `/Keek`
 - **Interface:** `io.github._0xKa.keek.Keek`
-- **Methods:** `Show(as paths, s activationToken)`, `Toggle(as paths, s activationToken)`, `Hide()`, `Next()`, `Previous()`, `State() → s`, `Screenshot(s file)`, `Quit()`
+- **Methods:** `Show(as paths, s activationToken)`, `Toggle(as paths, s activationToken)`, `Hide()`, `Next()`, `Previous()`, `State() → s`, `Screenshot(s file)`, `OpenWindow(s activationToken)`, `ScreenshotWindow(s file)`, `Quit()`
 
 Only one `keekd` can own the service name. A second one logs "keekd is already running" and exits with code 1.
 

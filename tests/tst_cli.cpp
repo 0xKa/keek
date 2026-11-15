@@ -87,12 +87,12 @@ private Q_SLOTS:
     void usageErrors_data()
     {
         QTest::addColumn<QStringList>("arguments");
-        QTest::newRow("no command") << QStringList{};
         QTest::newRow("unknown command") << QStringList{u"bogus"_s};
         QTest::newRow("unknown command with argument") << QStringList{u"bogus"_s, u"x"_s};
         QTest::newRow("show without paths") << QStringList{u"show"_s};
         QTest::newRow("toggle without paths") << QStringList{u"toggle"_s};
         QTest::newRow("screenshot without file") << QStringList{u"screenshot"_s};
+        QTest::newRow("window screenshot without file") << QStringList{u"screenshot"_s, u"--window"_s};
         QTest::newRow("hide with argument") << QStringList{u"hide"_s, u"x"_s};
         QTest::newRow("next with argument") << QStringList{u"next"_s, u"x"_s};
     }
@@ -123,6 +123,7 @@ private Q_SLOTS:
         QTest::newRow("show") << QStringList{u"show"_s, u"x"_s};
         QTest::newRow("hide") << QStringList{u"hide"_s};
         QTest::newRow("quit") << QStringList{u"quit"_s};
+        QTest::newRow("open the window") << QStringList{};
     }
 
     void commandsFailWithoutTheDaemon()
@@ -205,6 +206,16 @@ private Q_SLOTS:
         const QJsonObject current = state();
         QCOMPARE(image.width(), current["width"_L1].toInt());
         QCOMPARE(image.height(), current["height"_L1].toInt());
+    }
+
+    void noCommandOpensTheWindow()
+    {
+        QCOMPARE(keek({}).exitCode, 0);
+        QTRY_COMPARE(state()["window"_L1].toBool(), true);
+
+        const QString file = m_dir.filePath(u"window.png"_s);
+        QCOMPARE(keek({u"screenshot"_s, u"--window"_s, file}).exitCode, 0);
+        QVERIFY(!QImage(file).isNull());
     }
 
     void hideThenScreenshotFails()

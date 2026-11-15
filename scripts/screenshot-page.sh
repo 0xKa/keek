@@ -73,6 +73,17 @@ for file in "$fixtures_dir"/*; do
         "$name" "$name" "$status" "$name" "$renderer" "$status" >>"$page"
 done
 
+"$keek" hide
+"$keek"
+for _ in $(seq 100); do
+    [ "$(field window "$("$keek" state)")" = true ] && break
+    sleep 0.05
+done
+sleep 0.1
+"$keek" screenshot --window "$out_dir/keek-window.png"
+printf '%-24s %-12s %s\n' "keek window" "-" "settings"
+printf '<figure><img src="keek-window.png" alt="Keek window"><figcaption>Keek window: settings</figcaption></figure>\n' >>"$page"
+
 printf '</main>\n</html>\n' >>"$page"
 
 "$keek" quit

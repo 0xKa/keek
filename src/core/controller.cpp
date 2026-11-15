@@ -1,7 +1,10 @@
 #include "controller.h"
 
 #include "folderlisting.h"
+#include "generalsettings.h"
 #include "logging.h"
+#include "mainwindow.h"
+#include "memory.h"
 #include "popupwindow.h"
 
 #include <KIO/OpenUrlJob>
@@ -16,6 +19,8 @@ using namespace Qt::StringLiterals;
 
 namespace
 {
+constexpr std::chrono::seconds freeMemoryDelay(10);
+
 void openWithDefaultApplication(const QString &file, const QString &activationToken)
 {
     auto *job = new KIO::OpenUrlJob(QUrl::fromLocalFile(file));
@@ -36,12 +41,17 @@ Controller::Controller(QObject *parent)
     , m_opener(openWithDefaultApplication)
     , m_window(std::make_unique<PopupWindow>(this))
 {
+    m_idleTimer.setSingleShot(true);
+    connect(&m_idleTimer, &QTimer::timeout, this, &Controller::idleTimeout);
+    connect(GeneralSettings::instance(), &GeneralSettings::changed, this, &Controller::updateIdleTimer);
     connect(m_window.get(), &PopupWindow::visibleChanged, this, [this] {
         if (!m_window->isVisible()) {
             setShowing(false);
         }
+        updateIdleTimer();
     });
     m_window->load();
+    updateIdleTimer();
 }
 
 Controller::~Controller() = default;
@@ -54,6 +64,11 @@ bool Controller::isReady() const
 PopupWindow *Controller::window() const
 {
     return m_window.get();
+}
+
+MainWindow *Controller::mainWindow() const
+{
+    return m_mainWindow.get();
 }
 
 QString Controller::currentFile() const
@@ -213,28 +228,113 @@ void Controller::hide()
 
 bool Controller::screenshot(const QString &file, QString *error)
 {
-    QString problem;
     if (!m_window->isVisible()) {
-        problem = u"The popup is not visible"_s;
-    } else {
-        const QImage image = m_window->grab();
-        if (image.isNull()) {
-            problem = u"Could not grab the popup"_s;
-        } else if (!image.save(file)) {
-            problem = u"Could not write %1"_s.arg(file);
-        }
+        return fail(u"The popup is not visible"_s, error);
     }
+    return saveScreenshot(m_window->grab(), u"popup"_s, file, error);
+}
 
-    if (problem.isEmpty()) {
-        return true;
+bool Controller::screenshotWindow(const QString &file, QString *error)
+{
+    if (!m_mainWindow || !m_mainWindow->isVisible()) {
+        return fail(u"The Keek window is not open"_s, error);
     }
+    return saveScreenshot(m_mainWindow->grab(), u"window"_s, file, error);
+}
 
+bool Controller::saveScreenshot(const QImage &image, const QString &what, const QString &file, QString *error)
+{
+    if (image.isNull()) {
+        return fail(u"Could not grab the %1"_s.arg(what), error);
+    }
+    if (!image.save(file)) {
+        return fail(u"Could not write %1"_s.arg(file), error);
+    }
+    return true;
+}
+
+bool Controller::fail(const QString &problem, QString *error)
+{
     m_lastError = problem;
     if (error) {
         *error = problem;
     }
-    qCWarning(lcKeek).noquote() << "screenshot failed:" << problem;
+    qCWarning(lcKeek).noquote() << problem;
     return false;
+}
+
+bool Controller::openWindow(const QString &activationToken, QString *error)
+{
+    if (!m_mainWindow) {
+        auto window = std::make_unique<MainWindow>();
+        if (!window->load()) {
+            return fail(u"The Keek window could not be loaded"_s, error);
+        }
+        connect(window.get(), &MainWindow::closed, this, [this] {
+            QMetaObject::invokeMethod(this, &Controller::mainWindowClosed, Qt::QueuedConnection);
+        });
+        m_mainWindow = std::move(window);
+    }
+    m_lastError.clear();
+    m_mainWindow->show(activationToken);
+    updateIdleTimer();
+    qCInfo(lcKeek) << "open window";
+    return true;
+}
+
+void Controller::mainWindowClosed()
+{
+    if (!m_mainWindow || m_mainWindow->isVisible()) {
+        return;
+    }
+    m_mainWindow.reset();
+    releaseFreedMemory();
+    qCInfo(lcKeek) << "close window";
+    updateIdleTimer();
+}
+
+void Controller::setIdleInterval(std::chrono::milliseconds interval)
+{
+    m_idleInterval = interval;
+    updateIdleTimer();
+}
+
+void Controller::updateIdleTimer()
+{
+    m_idleTimer.stop();
+    const GeneralSettings::WhenClosed whenClosed = GeneralSettings::instance()->whenClosed();
+    if (whenClosed == GeneralSettings::WhenClosed::KeepReady || m_window->isVisible() || m_mainWindow) {
+        return;
+    }
+    if (whenClosed == GeneralSettings::WhenClosed::FreeMemory && !m_window->isLoaded()) {
+        return;
+    }
+    if (m_idleInterval) {
+        m_idleTimer.setInterval(*m_idleInterval);
+    } else if (whenClosed == GeneralSettings::WhenClosed::FreeMemory) {
+        m_idleTimer.setInterval(freeMemoryDelay);
+    } else {
+        m_idleTimer.setInterval(std::chrono::minutes(GeneralSettings::instance()->stopAfterMinutes()));
+    }
+    m_idleTimer.start();
+}
+
+void Controller::idleTimeout()
+{
+    if (m_window->isVisible() || m_mainWindow) {
+        return;
+    }
+    switch (GeneralSettings::instance()->whenClosed()) {
+    case GeneralSettings::WhenClosed::KeepReady:
+        break;
+    case GeneralSettings::WhenClosed::FreeMemory:
+        m_window->unload();
+        break;
+    case GeneralSettings::WhenClosed::Stop:
+        qCInfo(lcKeek) << "stopping after being idle";
+        Q_EMIT stopRequested();
+        break;
+    }
 }
 
 QString Controller::status() const
@@ -272,6 +372,8 @@ QJsonObject Controller::state() const
         {u"width"_s, size.width()},
         {u"height"_s, size.height()},
         {u"activationToken"_s, m_hadActivationToken},
+        {u"loaded"_s, m_window->isLoaded()},
+        {u"window"_s, m_mainWindow != nullptr && m_mainWindow->isVisible()},
         {u"lastError"_s, error.isEmpty() ? QJsonValue() : QJsonValue(error)},
     };
 }
