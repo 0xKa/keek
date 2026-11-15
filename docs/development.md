@@ -60,7 +60,7 @@ scripts/uninstall.sh             # remove everything and give Space back
 `install.sh` does these steps in order:
 
 1. **Refuses to go on while a Dolphin window is open**, unless `--no-shortcut` is given. A running Dolphin can overwrite the shortcut change.
-2. **Runs `cmake --install build`**, which writes the six files below.
+2. **Runs `cmake --install build`**, which writes the seven files below.
 3. **Asks D-Bus to reread its service files**, so the first `keek` call can start the new `keekd`, and stops a running daemon with `keek quit`.
 4. **Binds Space** with `scripts/dolphin-shortcut.sh bind`. The details are in [dolphin-shortcut.md](dolphin-shortcut.md).
 5. **With `--autostart`, copies the autostart entry** to `~/.config/autostart/keekd.desktop`.
@@ -71,6 +71,7 @@ scripts/uninstall.sh             # remove everything and give Space back
 | `~/.local/bin/keekd` | The daemon. |
 | `~/.local/share/kio/servicemenus/keek.desktop` | The "Quick Look" action for Dolphin. |
 | `~/.local/share/applications/io.github._0xKa.keek.desktop` | The "Keek" entry in the application menu. It runs `keek`, which opens the Keek window. Its name matches the application ID, so Plasma shows the right name and icon for Keek's windows. |
+| `~/.local/share/icons/hicolor/scalable/apps/io.github._0xKa.keek.svg` | The Keek logo from `data/icons/keek.svg`, used by the application-menu entry and Keek's windows. |
 | `~/.local/share/dbus-1/services/io.github._0xKa.keek.service` | Lets D-Bus start `keekd` on the first call. |
 | `~/.local/share/keek/keekd.desktop` | The autostart entry. Plasma reads only `~/.config/autostart/`, which is outside the install prefix, so `install.sh --autostart` copies it there. |
 
