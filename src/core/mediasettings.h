@@ -3,6 +3,9 @@
 #include <QObject>
 #include <QtQmlIntegration/qqmlintegration.h>
 
+class QJSEngine;
+class QQmlEngine;
+
 class MediaSettings : public QObject
 {
     Q_OBJECT
@@ -14,6 +17,9 @@ class MediaSettings : public QObject
 
 public:
     explicit MediaSettings(QObject *parent = nullptr);
+
+    static MediaSettings *instance();
+    static MediaSettings *create(QQmlEngine *qmlEngine, QJSEngine *jsEngine);
 
     bool isVideoMuted() const;
     void setVideoMuted(bool muted);

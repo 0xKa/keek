@@ -3,6 +3,8 @@
 #include <KConfigGroup>
 #include <KSharedConfig>
 
+#include <QJSEngine>
+
 using namespace Qt::StringLiterals;
 
 namespace
@@ -16,6 +18,19 @@ KConfigGroup mediaGroup()
 MediaSettings::MediaSettings(QObject *parent)
     : QObject(parent)
 {
+}
+
+MediaSettings *MediaSettings::instance()
+{
+    static MediaSettings settings;
+    return &settings;
+}
+
+MediaSettings *MediaSettings::create(QQmlEngine *, QJSEngine *)
+{
+    MediaSettings *settings = instance();
+    QJSEngine::setObjectOwnership(settings, QJSEngine::CppOwnership);
+    return settings;
 }
 
 bool MediaSettings::isVideoMuted() const
